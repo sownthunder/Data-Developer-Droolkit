@@ -1,0 +1,34 @@
+Signature: pyautogui.moveTo(
+    x=None,
+    y=None,
+    duration=0.0,
+    tween=<function linear at 0x0000020348062AE8>,
+    pause=None,
+    _pause=True,
+)
+Docstring:
+Moves the mouse cursor to a point on the screen.
+
+The x and y parameters detail where the mouse event happens. If None, the
+current mouse position is used. If a float value, it is rounded down. If
+outside the boundaries of the screen, the event happens at edge of the
+screen.
+
+Args:
+  x (int, float, None, tuple, optional): The x position on the screen where the
+    click happens. None by default. If tuple, this is used for x and y.
+    If x is a str, it's considered a filename of an image to find on
+    the screen with locateOnScreen() and click the center of.
+  y (int, float, None, optional): The y position on the screen where the
+    click happens. None by default.
+  duration (float, optional): The amount of time it takes to move the mouse
+    cursor to the xy coordinates. If 0, then the mouse cursor is moved
+    instantaneously. 0.0 by default.
+  tween (func, optional): The tweening function used if the duration is not
+    0. A linear tween is used by default. See the tweens.py file for
+    details.
+
+Returns:
+  None
+File:      c:\users\derbates\anaconda3\lib\site-packages\pyautogui\__init__.py
+Type:      function

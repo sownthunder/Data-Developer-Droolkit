@@ -1,0 +1,34 @@
+Init signature:
+pd.Timedelta(
+    value=<object object at 0x000001994F52C440>,
+    unit=None,
+    **kwargs,
+)
+Docstring:     
+Represents a duration, the difference between two dates or times.
+
+Timedelta is the pandas equivalent of python's ``datetime.timedelta``
+and is interchangeable with it in most cases.
+
+Parameters
+----------
+value : Timedelta, timedelta, np.timedelta64, string, or integer
+unit : str, optional
+    Denote the unit of the input, if input is an integer. Default 'ns'.
+    Possible values:
+    {'Y', 'M', 'W', 'D', 'days', 'day', 'hours', hour', 'hr', 'h',
+    'm', 'minute', 'min', 'minutes', 'T', 'S', 'seconds', 'sec', 'second',
+    'ms', 'milliseconds', 'millisecond', 'milli', 'millis', 'L',
+    'us', 'microseconds', 'microsecond', 'micro', 'micros', 'U',
+    'ns', 'nanoseconds', 'nano', 'nanos', 'nanosecond', 'N'}
+days, seconds, microseconds,
+milliseconds, minutes, hours, weeks : numeric, optional
+    Values for construction in compat with datetime.timedelta.
+    np ints and floats will be coerced to python ints and floats.
+
+Notes
+-----
+The ``.value`` attribute is always in ns.
+File:           c:\users\derbates\anaconda3\lib\site-packages\pandas\_libs\tslibs\timedeltas.cp37-win_amd64.pyd
+Type:           type
+Subclasses:     
