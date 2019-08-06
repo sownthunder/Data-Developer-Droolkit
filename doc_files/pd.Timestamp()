@@ -1,0 +1,84 @@
+Init signature:
+pd.Timestamp(
+    ts_input=<object object at 0x000001E0895616F0>,
+    freq=None,
+    tz=None,
+    unit=None,
+    year=None,
+    month=None,
+    day=None,
+    hour=None,
+    minute=None,
+    second=None,
+    microsecond=None,
+    nanosecond=None,
+    tzinfo=None,
+)
+Docstring:     
+Pandas replacement for python datetime.datetime object.
+
+Timestamp is the pandas equivalent of python's Datetime
+and is interchangeable with it in most cases. It's the type used
+for the entries that make up a DatetimeIndex, and other timeseries
+oriented data structures in pandas.
+
+Parameters
+----------
+ts_input : datetime-like, str, int, float
+    Value to be converted to Timestamp.
+freq : str, DateOffset
+    Offset which Timestamp will have.
+tz : str, pytz.timezone, dateutil.tz.tzfile or None
+    Time zone for time which Timestamp will have.
+unit : str
+    Unit used for conversion if ts_input is of type int or float. The
+    valid values are 'D', 'h', 'm', 's', 'ms', 'us', and 'ns'. For
+    example, 's' means seconds and 'ms' means milliseconds.
+year, month, day : int
+    .. versionadded:: 0.19.0
+hour, minute, second, microsecond : int, optional, default 0
+    .. versionadded:: 0.19.0
+nanosecond : int, optional, default 0
+    .. versionadded:: 0.23.0
+tzinfo : datetime.tzinfo, optional, default None
+    .. versionadded:: 0.19.0
+
+Notes
+-----
+There are essentially three calling conventions for the constructor. The
+primary form accepts four parameters. They can be passed by position or
+keyword.
+
+The other two forms mimic the parameters from ``datetime.datetime``. They
+can be passed by either position or keyword, but not both mixed together.
+
+Examples
+--------
+Using the primary calling convention:
+
+This converts a datetime-like string
+
+>>> pd.Timestamp('2017-01-01T12')
+Timestamp('2017-01-01 12:00:00')
+
+This converts a float representing a Unix epoch in units of seconds
+
+>>> pd.Timestamp(1513393355.5, unit='s')
+Timestamp('2017-12-16 03:02:35.500000')
+
+This converts an int representing a Unix-epoch in units of seconds
+and for a particular timezone
+
+>>> pd.Timestamp(1513393355, unit='s', tz='US/Pacific')
+Timestamp('2017-12-15 19:02:35-0800', tz='US/Pacific')
+
+Using the other two forms that mimic the API for ``datetime.datetime``:
+
+>>> pd.Timestamp(2017, 1, 1, 12)
+Timestamp('2017-01-01 12:00:00')
+
+>>> pd.Timestamp(year=2017, month=1, day=1, hour=12)
+Timestamp('2017-01-01 12:00:00')
+File:           c:\users\derbates\anaconda3\lib\site-packages\pandas\_libs\tslibs\timestamps.cp37-win_amd64.pyd
+Type:           type
+Subclasses:     
