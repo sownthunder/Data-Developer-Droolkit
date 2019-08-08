@@ -1,0 +1,250 @@
+2019-07-01-133352 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-7-7aa431e35e1e>
+LINE : 16
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000021BB8C13088>
+
+
+2019-07-01-133534 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-7-489cb2d49457>
+LINE : 16
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000020B5D971048>
+
+
+2019-07-01-133841 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-9-8796a4fd0c17>
+LINE : 16
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000020B5DE09FC8>
+
+
+2019-07-01-134453 - 
+TYPE : <class 'IndexError'>
+FILE : <ipython-input-10-b1250462a483>
+LINE : 22
+MESG : 
+<class 'IndexError'>
+		list index out of range
+		<traceback object at 0x0000020B5981AF88>
+
+
+2019-07-01-134721 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-11-3593d3b2cd2f>
+LINE : 16
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000020B5DDFACC8>
+
+
+2019-07-01-135936 - 
+TYPE : <class 'IndexError'>
+FILE : <ipython-input-12-82df8415dd1b>
+LINE : 22
+MESG : 
+<class 'IndexError'>
+		list index out of range
+		<traceback object at 0x0000020B5DF15988>
+
+
+2019-07-01-140146 - 
+TYPE : <class 'IndexError'>
+FILE : <ipython-input-14-d02bf18639c0>
+LINE : 21
+MESG : 
+<class 'IndexError'>
+		list index out of range
+		<traceback object at 0x0000020B5E020348>
+
+
+2019-07-01-140647 - 
+TYPE : <class 'IndexError'>
+FILE : <ipython-input-15-d02bf18639c0>
+LINE : 21
+MESG : 
+<class 'IndexError'>
+		list index out of range
+		<traceback object at 0x0000020B5E020608>
+
+
+2019-07-01-141209 - 
+TYPE : <class 'NameError'>
+FILE : <ipython-input-16-83b93ba1b06a>
+LINE : 24
+MESG : 
+<class 'NameError'>
+		name 'newest_revision' is not defined
+		<traceback object at 0x0000020B5E020EC8>
+
+
+2019-07-01-142243 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-17-3783cc4b76b2>
+LINE : 16
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000020B5E020648>
+
+
+2019-07-01-142436 - 
+TYPE : <class 'AttributeError'>
+FILE : <ipython-input-18-a9bb5df104f9>
+LINE : 26
+MESG : 
+<class 'AttributeError'>
+		'list' object has no attribute 'test'
+		<traceback object at 0x0000020B5DFE8A08>
+
+
+2019-07-01-142911 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-20-129106813684>
+LINE : 18
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000020B5E156B88>
+
+
+2019-07-01-144322 - 
+TYPE : <class 'TypeError'>
+FILE : <ipython-input-24-fb8b74b90225>
+LINE : 34
+MESG : 
+<class 'TypeError'>
+		all inputs must be Index
+		<traceback object at 0x0000020B5EE3E288>
+
+
+2019-07-01-144619 - 
+TYPE : <class 'TypeError'>
+FILE : <ipython-input-26-91b07a1005d8>
+LINE : 34
+MESG : 
+<class 'TypeError'>
+		all inputs must be Index
+		<traceback object at 0x0000020B5EE52D48>
+
+
+2019-07-01-145646 - 
+TYPE : <class 'TypeError'>
+FILE : <ipython-input-7-3cff510bd7fc>
+LINE : 33
+MESG : 
+<class 'TypeError'>
+		all inputs must be Index
+		<traceback object at 0x000002EC13157408>
+
+
+2019-07-01-163121 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-18-6356bec2e410>
+LINE : 23
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x000001ADAA4FD308>
+
+
+2019-07-01-163142 - 
+TYPE : <class 'AttributeError'>
+FILE : <ipython-input-19-996b872789b6>
+LINE : 17
+MESG : 
+<class 'AttributeError'>
+		'list' object has no attribute 'contains'
+		<traceback object at 0x000001ADAA51E508>
+
+
+2019-07-01-163149 - 
+TYPE : <class 'AttributeError'>
+FILE : <ipython-input-20-996b872789b6>
+LINE : 17
+MESG : 
+<class 'AttributeError'>
+		'list' object has no attribute 'contains'
+		<traceback object at 0x000001ADAA551488>
+
+
+2019-07-01-163402 - 
+TYPE : <class 'TypeError'>
+FILE : <ipython-input-21-825b62eb2dcb>
+LINE : 35
+MESG : 
+<class 'TypeError'>
+		all inputs must be Index
+		<traceback object at 0x000001ADAA547B08>
+
+
+2019-07-01-163605 - 
+TYPE : <class 'TypeError'>
+FILE : <ipython-input-25-0f57f5e57ede>
+LINE : 46
+MESG : 
+<class 'TypeError'>
+		append() takes exactly one argument (0 given)
+		<traceback object at 0x000001ADAB48FF88>
+
+
+2019-07-01-163633 - 
+TYPE : <class 'TypeError'>
+FILE : <ipython-input-27-0f57f5e57ede>
+LINE : 46
+MESG : 
+<class 'TypeError'>
+		append() takes exactly one argument (0 given)
+		<traceback object at 0x000001ADAAA5E488>
+
+
+2019-07-01-165128 - 
+TYPE : <class 'NameError'>
+FILE : <ipython-input-28-a6774bc732eb>
+LINE : 18
+MESG : 
+<class 'NameError'>
+		name 'idx_file' is not defined
+		<traceback object at 0x000001ADAB55CB48>
+
+
+2019-07-01-165214 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-12-a6774bc732eb>
+LINE : 36
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x000001A7F84B9448>
+
+
+2019-07-01-165514 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-12-a6774bc732eb>
+LINE : 36
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x0000021F7DA02A88>
+
+
+2019-07-01-165847 - 
+TYPE : <class 'KeyboardInterrupt'>
+FILE : <ipython-input-12-a6774bc732eb>
+LINE : 36
+MESG : 
+<class 'KeyboardInterrupt'>
+		
+		<traceback object at 0x000001D7CF31DD48>
+
+
