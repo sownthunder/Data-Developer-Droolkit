@@ -1,0 +1,14 @@
+Signature: tempfile.mkdtemp(suffix=None, prefix=None, dir=None)
+Docstring:
+User-callable function to create and return a unique temporary
+directory.  The return value is the pathname of the directory.
+
+Arguments are as for mkstemp, except that the 'text' argument is
+not accepted.
+
+The directory is readable, writable, and searchable only by the
+creating user.
+
+Caller is responsible for deleting the directory when done with it.
+File:      c:\users\derbates\anaconda3\lib\tempfile.py
+Type:      function

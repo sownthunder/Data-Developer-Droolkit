@@ -1,6 +1,6 @@
 """
 2019/08/6 - WAITING ON NITD from Mary-Anne, no need to finish script
-
+2019/08/16 - MOVING SCRIPT TO ARCHIVE BECAUSE THIS IDEA IS NOW OBSOLETE
 """
 
 import os, sys, time

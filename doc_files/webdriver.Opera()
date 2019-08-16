@@ -1,0 +1,31 @@
+Init signature:
+webdriver.Opera(
+    desired_capabilities=None,
+    executable_path=None,
+    port=0,
+    service_log_path=None,
+    service_args=None,
+    options=None,
+)
+Docstring:     
+Controls the new OperaDriver and allows you
+to drive the Opera browser based on Chromium.
+Init docstring:
+Creates a new instance of the operadriver.
+
+Starts the service and then creates new instance of operadriver.
+
+:Args:
+ - executable_path - path to the executable. If the default is used
+                     it assumes the executable is in the $PATH
+ - port - port you would like the service to run, if left as 0,
+          a free port will be found.
+ - options: this takes an instance of OperaOptions
+ - service_args - List of args to pass to the driver service
+ - desired_capabilities: Dictionary object with non-browser specific
+ - service_log_path - Where to log information from the driver.
+ - opera_options - Deprecated argument for options
+   capabilities only, such as "proxy" or "loggingPref".
+File:           c:\users\derbates\anaconda3\lib\site-packages\selenium\webdriver\opera\webdriver.py
+Type:           type
+Subclasses:     

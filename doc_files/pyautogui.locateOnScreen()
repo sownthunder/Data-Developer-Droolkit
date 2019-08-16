@@ -1,0 +1,7 @@
+Signature: pyautogui.locateOnScreen(image, minSearchTime=0, **kwargs)
+Docstring:
+minSearchTime - amount of time in seconds to repeat taking
+screenshots and trying to locate a match.  The default of 0 performs
+a single search.
+File:      c:\users\derbates\anaconda3\lib\site-packages\pyscreeze\__init__.py
+Type:      function

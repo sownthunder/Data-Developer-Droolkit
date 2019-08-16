@@ -1,0 +1,54 @@
+Init signature:
+smtplib.SMTP(
+    host='',
+    port=0,
+    local_hostname=None,
+    timeout=<object object at 0x000002A5A334E6A0>,
+    source_address=None,
+)
+Docstring:     
+This class manages a connection to an SMTP or ESMTP server.
+SMTP Objects:
+    SMTP objects have the following attributes:
+        helo_resp
+            This is the message given by the server in response to the
+            most recent HELO command.
+
+        ehlo_resp
+            This is the message given by the server in response to the
+            most recent EHLO command. This is usually multiline.
+
+        does_esmtp
+            This is a True value _after you do an EHLO command_, if the
+            server supports ESMTP.
+
+        esmtp_features
+            This is a dictionary, which, if the server supports ESMTP,
+            will _after you do an EHLO command_, contain the names of the
+            SMTP service extensions this server supports, and their
+            parameters (if any).
+
+            Note, all extension names are mapped to lower case in the
+            dictionary.
+
+    See each method's docstrings for details.  In general, there is a
+    method of the same name to perform each SMTP command.  There is also a
+    method called 'sendmail' that will do an entire mail transaction.
+    
+Init docstring:
+Initialize a new instance.
+
+If specified, `host' is the name of the remote host to which to
+connect.  If specified, `port' specifies the port to which to connect.
+By default, smtplib.SMTP_PORT is used.  If a host is specified the
+connect method is called, and if it returns anything other than a
+success code an SMTPConnectError is raised.  If specified,
+`local_hostname` is used as the FQDN of the local host in the HELO/EHLO
+command.  Otherwise, the local hostname is found using
+socket.getfqdn(). The `source_address` parameter takes a 2-tuple (host,
+port) for the socket to bind to as its source address before
+connecting. If the host is '' and port is 0, the OS default behavior
+will be used.
+File:           c:\users\derbates\anaconda3\lib\smtplib.py
+Type:           type
+Subclasses:     SMTP_SSL, LMTP

@@ -1,0 +1,6 @@
+Init signature: logging.FileHandler(filename, mode='a', encoding=None, delay=False)
+Docstring:      A handler class which writes formatted logging records to disk files.
+Init docstring: Open the specified file and use it as the stream for logging.
+File:           c:\users\derbates\anaconda3\lib\logging\__init__.py
+Type:           type
+Subclasses:     BaseRotatingHandler, WatchedFileHandler
