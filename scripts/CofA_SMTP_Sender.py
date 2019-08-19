@@ -72,13 +72,13 @@ if __name__ == "__main__": #{
         fo.write("\n" + str(new_name))
         fo.close()
         """
-        ###########################################################################################
+        ########################################
         # CREATE 'APPENDAGE' DATAFRAME
         df_appendage = pd.DataFrame(data=[str(new_name)], columns=['CofA'], dtype=np.str)
         # [codecs.encode(obj=str(new_name), encoding='cp1252')]
         # APPEND THE DATAFRAME TO OUR INDEX_FILE
         df_appendage.to_csv(idx_file, mode='a', index=False)
-        ###########################################################################################
+        ########################################
         """
 
     #}
