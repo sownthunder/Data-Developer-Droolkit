@@ -113,7 +113,10 @@ def main(): #{
         df_paths = pd.DataFrame()
         # ASSIGN LIST TO COLUMN IN DATAFRAME
         df_paths['CofA File'] = path_list
-        df_paths.to_csv("C:\CofA\log\lists\CofA_Email_Node_List_" + time_now + "_pull.csv", index=False)
+        df_paths.to_csv("C:\CofA\log\lists\CofA_Email_Node_List_"
+                        + time_now
+                        + "_pull.csv",
+                        index=False)
         print("\n COUNT == " + str(x))
         logging.info("COUNT == " + str(x))
     #}
