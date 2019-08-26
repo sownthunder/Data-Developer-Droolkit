@@ -217,7 +217,8 @@ def scan_directory(the_directory): #{
         df_paths = pd.DataFrame()
         # ASSIGN LIST TO COLUMN IN DATAFRAME
         df_paths['CofA File'] = path_list
-        df_paths.to_csv("C:\CofA\log\lists\CofA_Email_Node_List_"
+        #OLD# df_paths.to_csv("C:\CofA\log\lists\CofA_Email_Node_List_"
+        df_paths.to_csv("C:/data/outbound/CofA/CofA_Email_Node_List"
                         + time_now
                         + "_pull.csv",
                         index=False)
