@@ -35,11 +35,11 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE,
+from email.utils import COMMASPACE, formatdate
 
 
 #########################################################################################################
-# DEFINE FUNCITONS
+# DEFINE FUNCTIONS
 
 """
 TAKES IN:
@@ -71,6 +71,7 @@ def generate_naming_convention(the_pdf_path): #{
 #}
 
 #################################################
+
 
 """
 TAKES IN:
@@ -126,6 +127,7 @@ def create_watermark(input_pdf, output, watermark): # {
 
 #################################################
 
+
 def get_all_file_paths(directory):  # {
 
     # initializing empty file paths list
@@ -145,6 +147,7 @@ def get_all_file_paths(directory):  # {
 # }
 
 #################################################
+
 
 def send_mail(send_from, send_to, subject, message, files=[],
               server="cos.smtp.agilent.com", port=587, use_tls=True):  # {
@@ -175,3 +178,69 @@ def send_mail(send_from, send_to, subject, message, files=[],
     smtp.sendmail(send_from, send_to, msg.as_string())
     smtp.quit()
 # }
+
+#################################################
+
+
+def create_diff_dataframe(previous_df, current_df): #{
+    print("difference here")
+#}
+
+###################################################################################################
+# MAIN BOILERPLATE
+
+
+if __name__ == "__main__":  # {
+    # INSTANTIATE GLOBAL VARIABLES
+    in_file = ""
+
+    time_start = pd.Timestamp.now()
+    # CREATE TODAYS DATE
+    time_today = str(time_start)[:10]
+    in_directory = "C:/data/outbound/CofA/"
+    print("TODAY == " + str(time_today))
+    # SUBTRACTION DELTA
+    subtraction_delta = pd.Timedelta(value=1, unit='days')
+    print("\t\n SUTBRACTING... " + str(subtraction_delta))
+    # AND GET YESTERDAYS DATE
+    time_yesterday = time_start - subtraction_delta
+    # SETUP STRING
+    yesterstr = str(time_yesterday.date())
+    print("YESTERDAY == " + str(yesterstr))
+    print("\n\t\t GLOBBING DIR >>> " + str(os.listdir(in_directory)))
+    # GLOB & PRELIMINARY SETUPS:
+    df_previous = glob.glob("*" + yesterstr + "*")
+    print(df_previous)
+    df_current = glob.glob("*" + time_today + "*")
+    # IMPORT AS DATAFRAMES
+    # set as first element in returned list
+    df1 = pd.read_csv(df_previous[0])
+    # set as first element in returned list
+    df2 = pd.read_csv(df_current[0])
+    # SET DIFFERENCE OF TWO DATAFRAMES IN PANDAS PYTHON
+    set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
+    print("LENGTH OF DIFF_DF: " + str(len(set_diff_df)))
+    print(set_diff_df)
+    # ITERATE THRU TUPLES (using temp directory)
+    # << WHILE INSIDE OF TEMP DIRECTORY
+    with tempfile.TemporaryDirectory() as temporary_directory:  # {
+        # COUNTER
+        x = 0
+        the_dir = Path(temporary_directory)
+        print("TEMPORARY DIRECTORY >>> " + str(the_dir))
+        # ITERATE THRU DATAFRAME
+        for row in set_diff_df.itertuples(index=False, name='CofA'): #{
+            test = 0
+            """
+            NEED:
+            (1) old_path = (F:/APPS/CofA/ or (G:/C of A's/Agilent/)
+            (2) new_path = (G:/C of A's/#Email Node/) 
+            (3) temp_path =  (C:/Users/derbates/AppData/Temp/...)
+            (4) file_name_conv (part XXXXX CofA Lot # XXXXXXXXXX)
+            STEPS:
+            (A) check if a "create_watermark() version" exists for EVERY item
+            (B) IF IT DOES EXIST:   copy that file into the temp directory
+            (C) IF IT *DOES NOT* EXIST:     call "create_watermark()" into BOTH temp_dir and other
+            *** SO THAT BOTH VERSIONS NOW DO EXIST ***
+            """
+        #}

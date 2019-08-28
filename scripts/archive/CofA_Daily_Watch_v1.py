@@ -59,6 +59,37 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
             else: #{
                 print("NON-PDF CREATED AT " + str(ts))
             #}
+        #
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+        #}
+        else: #{
+            print("\t\t[Created-Event] FIN...")
+        #}
+        finally: #{
+            # CREATE END_TIME VAR
+            time_end = pd.Timestamp.now()
+            # DETERMINE OVERALL RUN-TIME
+            run_time = pd.Timedelta(time_end - time_start)
+            # PRINT TOTAL RUNTIME
+            print("\t\t[Created-Event] >>> time_alloted: " + str(run_time))
+        #}
+    #}
+
+
+
 
 
 ###################################################################################################

@@ -1,4 +1,24 @@
-#!/usr/bin/env import os, sys, time
+#!/usr/bin/env python
+# coding: utf-8
+
+# # `CofA` Daily_Launcher
+
+# ### 1) create `logger`
+# ### 2) create global variables
+# ### 3) using `watchdog` wait for file to come into:
+#     - F:/Apps/CofA/
+# 
+# ## save all created and modified files into the `df_save_list` datafeframe and then when `execute_staging()` is called:
+# 
+# ***_ conpare the two dorectories and only watermark the DIFF***
+# ***_ then FINALLY create that garbage temp dir and ZiP it***
+# ***_ last but not least email that shit once and for good***
+
+# In[1]:
+
+
+# IMPORT THE GOODIES
+import os, sys, time
 from time import sleep
 from pathlib import Path
 import fnmatch, glob, shutil
@@ -21,26 +41,6 @@ from threading import Timer
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-python
-# coding: utf-8
-
-# # `CofA` Daily_Launcher
-
-# ### 1) create `logger`
-# ### 2) create global variables
-# ### 3) using `watchdog` wait for file to come into:
-#     - F:/Apps/CofA/
-# 
-# ## save all created and modified files into the `df_save_list` datafeframe and then when `execute_staging()` is called:
-# 
-# ***_ conpare the two dorectories and only watermark the DIFF***
-# ***_ then FINALLY create that garbage temp dir and ZiP it***
-# ***_ last but not least email that shit once and for good***
-
-# In[1]:
-
-
-# IMPORT THE GOODIES
 
 
 # **CLASSES**
@@ -50,10 +50,12 @@ python
 
 class CofA_Event_Handler(FileSystemEventHandler): #{
     
-    def __init__(self, save_list, in_directory, out_directory): #{
-        self.save_list = save_list
+    def __init__(self, save_dataframe, in_directory, observer): #{
+        
+        self.save_dataframe = save_dataframe
         self.in_directory = in_directory
-        self.out_directory = out_directory
+        self.observer = observer
+        #self.out_directory = out_directory
     #}
     
     """
@@ -70,9 +72,54 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
     #}
     """
     
+    def on_any_event(self,event): #{
+        # RE-INSTANTIATE GLOBALS
+        global isEOD, t
+        # TRY THE FOLLOWING
+        print("\ne=" + str(event) + "\n")
+        
+        try: #{
+            print(str(t))
+            print("checking for isEOD...")
+            if isEOD is True: #{
+                # STOP OBSERVER
+                observer.stop()
+                print("TRUE! ENDING SCRIPT!")
+                # QUIT SCRIPT
+                sys.exit(69)
+            #}
+            else: #{
+                print("FALSE! \n STILL RUNNING AT " 
+                      + str(pd.Timestamp.now()) 
+                      + "\n")
+            #}
+        #}
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+        #}
+        else: #{
+            print("SUCCESS! VERY NICE!!")
+        #}
+        finally: #{
+            print("[isEOD-check]FIN...")
+        #}
+    #}
+    
     def on_created(self, event): #{
         # RE-INSTANTIATE GLOBALS
-        global save_list
+        global df_save_list
         # TRY THE FOLLOWING
         try: #{
             print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -84,7 +131,7 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
             file_name = os.path.basename(the_event_path)
             # CHECK AND SEE IF FILE IS OF TYPE .PDF
             if fnmatch.fnmatch(file_name, "*.pdf"): #{
-                """
+                """int
                 # CREATE str TO HOLD FINAL COLUMN FOR TUPLE
                 created_str = "Created"
                 """
@@ -92,6 +139,7 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
                 file_name_conv = generate_naming_convention(file_name)
                 # CREATE EVENT ITEM FOR LIST
                 event_list = [str(file_name_conv), str(ts)]  #WAS: (created_str)
+                """
                 # APPEND EVENT ITEM TO "save_list"
                 save_list.append(event_list)
                 print("SAVE LIST == \n" 
@@ -99,7 +147,7 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
                 """
                 df_save_list = append_to_dataframe(the_event_list=event_list,
                                     dataframe_to_append=df_save_list)
-                """
+                print(df_save_list)
             #}
             else: #{
                 print("NON-PDF CREATED AT " + str(ts))
@@ -116,7 +164,7 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
+            print("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -136,7 +184,7 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
     
     def on_modified(self, event): #{
         # RE-INSTANTIATE GLOBALS
-        global save_list
+        global df_save_list
         # TRY THE FOLLOWING
         try: #{
             print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -152,10 +200,14 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
                 file_name_conv = generate_naming_convention(file_name)
                 # CREATE EVENT ITEM FOR LIST
                 event_list = [str(file_name_conv), str(ts)]  # WAS: (modified_str)
+                """
                 # APPEND EVENT ITEM TO "Createed_list"
                 save_list.append(event_list)
                 print("SAVE LIST == \n" 
                       + str(save_list))
+                """
+                df_save_list = append_to_dataframe(the_event_list=event_list,
+                                    dataframe_to_append=df_save_list)
             #}
             else: #{
                 print("NON-PDF CREATED ON " + str(ts))
@@ -171,7 +223,7 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
+            print("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -230,7 +282,7 @@ def create_watermark(input_pdf, output, watermark): # {
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        logging.error("\n" + typeE +
+        print("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
@@ -329,13 +381,12 @@ def append_to_dataframe(the_event_list, dataframe_to_append): #{
             # SEPERATE COLUMNS
             col_1 = str(the_event_list[0])
             col_2 = str(the_event_list[1])
-            #col_3 = str(the_event_list[2])
             # CREATE APPENDAGE FRAME
             df_appendage = pd.DataFrame(data=[the_event_list], 
                                         columns=['CofA', 'Timestamp'])
             # CREATE INSTANCE OF DATAFRAME WE ARE RETURNING
             return_df = dataframe_to_append.append(df_appendage, ignore_index=True, sort=False)
-            print(return_df.tail(5))
+            #OLD# print(return_df.tail(5))
         #}
         else: #{
             print("\t\tLIST check == FAIL")
@@ -351,7 +402,7 @@ def append_to_dataframe(the_event_list, dataframe_to_append): #{
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        logging.error("\n" + typeE +
+        print("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
@@ -393,8 +444,32 @@ def extract_information(pdf_path): #{
 # In[7]:
 
 
-def extract_modified_time(the_path): #{
-    print("extracting...")
+"""
+TAKES IN:
+(1) file_path to file 
+RETURNS: 
+The create time or modified time, whichever is older
+"""
+def pull_creation_timetamp(a_file_path): #{
+    # FORCE PATH VARIABLE
+    the_path = Path(a_file_path)
+    # GET MODIFIED TIME
+    mtime = os.path.getmtime(the_path)
+    # GET CREATE TIME
+    ctime = os.path.getctime(the_path)
+    # CREATE DATE VAR
+    # IF CREATE TIME IS OLDER...
+    if ctime < mtime: #{
+        # FORMAT DATE VAR as str
+        date_str = str(datetime.fromtimestamp(ctime))
+    #}
+    # ELSE.... MODIFIED TIME IS OLDER...
+    else: #{
+        # FORMAT DATE VAR as str
+        date_str = str(datetime.fromtimestamp(mtime))
+    #}
+    # RETURN THE DATE WE PULLED AS STRING
+    return date_str
 #}
 
 
@@ -476,17 +551,18 @@ TAKES IN:
 """
 def execute_staging(): #{
     # RE-INSTANTIATE GLOBALS
-    global save_list
-    #OLD# global df_save_list
+    #OLD# global save_list
+    global df_save_list
     global observer
     global in_directory
     global out_directory
-    global today_date_str
+    #OLD# global today_date_str
     global isEOD
     #OLD# print("DATAFRAME IS OF TYPE ==\n\t\t" + str(type(df_save_list)))
     #OLD# print("AND IS EMPTY !?!?!? == \n" + str(df_save_list))
-    print("\n\n\n >>>>> BUT THAT SEXY save_list == \n" + str(save_list))
-    print("of type =====================" + str(type(save_list)))
+    print("\n\n\n >>>>> BUT THAT SEXY save_list == \n" + str(df_save_list))
+    print("of type =====================" + str(type(df_save_list)))
+    """
     #################### CREATE [save_list] DATAFRAME #####################
     try: #{
         # WE HAVE THE SAVE_LIST, NOW WE NEED TO FILL THAT DATA IN
@@ -519,29 +595,33 @@ def execute_staging(): #{
         run_time = ts - time_start
         print("[Create-DataFrame] RUN TIME == " + str(run_time))
     #}
+    """
     #################################################
     try: #{
         print("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print("TODAYS (FAKE) DATE == " + today_date_str)
+        #OLD# print("TODAYS (FAKE) DATE == " + today_date_str)
         ###########################################
         # CREATE TODAY AND YESTERDAY STR
         today_str = str(pd.Timestamp.now())[:10]
         print("TODAYS (REAL) DATE == " + today_str)
-        time_now = pd.Timestamp(year=2019, month=8, day=14)
+        ######################################################
+        #time_now = pd.Timestamp(year=2019, month=8, day=14) #
+        ######################################################
+        time_now = pd.Timestamp.now()
         # CREATE SUTBRACTION DELTA 
         subtraction_delta = pd.Timedelta(value=1, unit='days')
         print("SUBTRACTION DELTA == " + str(subtraction_delta))
         # CREATE "yesterdays date" BY SUTBRACTING
         yesterstr = str(time_now - subtraction_delta)[:10]
         print("YESTERSTR == " + str(yesterstr))
-        print("\nTEST GLOB-STRING == " + str("C:/CofA/log/lists/*_" 
+        print("\nTEST GLOB-STRING == " + str("C:/data/outbound/CofA/*_" 
                                              + yesterstr 
-                                             + "_*"))
+                                             + "_F_*"))
         ###########################################
         # BEGIN GLOBBING (WAS: C:/data/inbound/)
-        glob_previous = sorted(glob.glob("CC:/CofA/log/lists/*_" 
+        glob_previous = sorted(glob.glob("C:/data/outbound/CofA/*_" 
                                          + yesterstr 
-                                         + "_*"))
+                                         + "_F_*"))
         print("\n\t GLOB_PREVIOUS >>> \n")
         for name in glob_previous: #{
             print(name)
@@ -559,7 +639,7 @@ def execute_staging(): #{
         #
         ########################################################
         glob_current = sorted(glob.glob("C:/CofA/log/lists/*_" 
-                                        + today_date_str 
+                                        + today_str 
                                         + "_*"))
         print("\n\t GLOB_CURRENT >>> \n")
         for name in glob_current: #{
@@ -850,7 +930,7 @@ time_start = pd.Timestamp.now()
 df_save_list = pd.DataFrame(data=None, dtype=np.str)
 # FAKE VAR TO STAND FOR "todays date"
 today_date_str = "2019-08-14"
-# In[12]:
+# In[ ]:
 
 
 if __name__ == "__main__":
@@ -900,8 +980,8 @@ if __name__ == "__main__":
     # >>>>>>>> GLOBAL VARIABLES <<<<<<<< #
     ######################################
     in_file = "C:/CofA/imp/Agilent_CofA_Letterhead_03-21-19.pdf"
-    save_list = []
-    #df_save_list = pd.DataFrame(data=None, columns=['CofA', 'Timestamp'])
+    #OLD# save_list = []
+    df_save_list = pd.DataFrame(data=None, columns=['CofA', 'Timestamp'])
     # 'Created/Modified'
     isEOD = False
     in_directory = "F:/APPS/CofA/"  #"C:/Temp/F/APPS/CofA/"
@@ -911,25 +991,25 @@ if __name__ == "__main__":
     from_email = "derek.bates@non.agilemt.com"
     time_start = pd.Timestamp.now()
     # FAKE VAR TO STAND FOR "todays date"
-    today_date_str = "2019-08-24"  # WAS: 8/14
+    #OLD# today_date_str = "2019-08-24"  # WAS: 8/14
     ##########################################
     print("[=================================================]")
     print("| SCANNING DIRECTORY >>> " + str(in_directory))
-    print("| STORING IN DATAFRAME >>> " + str(save_list))  # WAS: str(df_save_list.head()))
+    print("| STORING IN DATAFRAME >>> " + str(df_save_list))  # WAS: str(df_save_list.head()))
     print("[=================================================]")
     print("| Initializing Timer >>> " + str(pd.Timestamp.now()))
     print("[=================================================]\n\n\n")
     # CREATE TIMER VAR  // 12 HOURS... now 10.5 HOURS !! 08/07/2019
     # 37800 / USE == 54000
-    t = Timer(7200, execute_staging) # WAS 2592000,3600,720,600,43200,300 & 120
+    t = Timer(3600, execute_staging) # WAS 2592000,3600,720,600,43200,300 & 120
     # START TIMER
     t.start()
-    # CREATE INSTANCE OF CUSTOM EVENT HANDLER
+    """
     print("\n\n<><><><><><><><><><>BEFORE HANDLER START<><><><><><><><><><><>\n")
     print("<><><><><> save_list == \n")
     # PRINT OUT EVERY ITEM & COUNT #
-    len_count = len(save_list)
-    for save in save_list: #{
+    len_count = len(df_save_list)
+    for save in df_save_list: #{
         print("SAVE NAME === " + str(save))
         print("COUNT === " + str(len_count))
         # subtract one
@@ -937,27 +1017,22 @@ if __name__ == "__main__":
     #}
     #print("<><><><><> df_save_list == " + str(df_save_list))
     print("\n<><><><><><><><><><><><><><><><><><><><><><><><><><><>\n\n")
-    event_handler = CofA_Event_Handler(save_list, in_directory, out_directory)
+    """
+    ###################
+    # ALSO GLOBAL VAR # 
+    ###################
     observer = Observer()
+    # CREATE INSTANCE OF CUSTOM EVENT HANDLER
+    event_handler = CofA_Event_Handler(df_save_list, in_directory, observer)
+    #OLD# observer = Observer()
     observer.schedule(event_handler=event_handler,
                       path=in_directory,
                       recursive=True)
     observer.start()
     # TRY THE FOLLOWING
     try: #{
-        #sleep_counter = 0
-        while isEOD is False: #{
-            # increase SLEEP COUNTEr & sleep...
-            #leep_counter += 1
-            #print("isEOD == " + str(isEOD))
+        while True: #{
             sleep(1)
-        #}
-        else: #{
-            print("[EOD] REACHED !!! <CLOSING SCRIPT>>")
-            ts = pd.Timestamp.now()
-            run_time = ts - time_start
-            print("RUN TIME == " + str(run_time))
-            sys.exit(0)
         #}
     #}
     except KeyboardInterrupt: #{
