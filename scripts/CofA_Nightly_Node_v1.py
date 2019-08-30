@@ -26,6 +26,7 @@ import fnmatch, glob, shutil
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
+import logging
 import tempfile, subprocess
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from zipfile import ZipFile
@@ -182,46 +183,110 @@ def send_mail(send_from, send_to, subject, message, files=[],
 #################################################
 
 
-def create_diff_dataframe(previous_df, current_df): #{
+"""
+TAKES IN:
+(1) DataFrame
+
+"""
+def iter_dataframe(the_dataframe): #{
     print("difference here")
 #}
+
+#################################################
+
+def main(): #{
+    test = 0
+#}
+
 
 ###################################################################################################
 # MAIN BOILERPLATE
 
 
 if __name__ == "__main__":  # {
-    # INSTANTIATE GLOBAL VARIABLES
-    in_file = ""
-
+    # START TIME
     time_start = pd.Timestamp.now()
-    # CREATE TODAYS DATE
+    # CREATE STR FOR TODAYS DATE
     time_today = str(time_start)[:10]
+    #############################################
+    # SETUP-LOGGER
+    try:  # {
+        logging.basicConfig(level=logging.INFO,
+                            filename="C:/data/outbound/CofA_Nightly_Node_"
+                                     + str(time_today)
+                                     + ".log",
+                            format='%(asctime)s-%(message)s',
+                            datefmt='%Y-%m-%d-%H%M%S',
+                            filemode='a')
+    # }
+    except:  # {
+        errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        typeE = str("TYPE : " + str(exc_type))
+        fileE = str("FILE : " + str(fname))
+        lineE = str("LINE : " + str(exc_tb.tb_lineno))
+        messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+        print("\n" + typeE +
+              "\n" + fileE +
+              "\n" + lineE +
+              "\n" + messageE)
+    # }
+    else:  # {
+        print("[setup-Logger] SUCCESS! VERY NICE!")
+    # }
+    finally: #{
+        print("[setup-Logger] FIN....")
+    # }
+    #############################################
+    # INSTANTIATE GLOBAL VARIABLES
+    in_file = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
     in_directory = "C:/data/outbound/CofA/"
+    out_directory = "G:/C of A's/#Email Node/"
+    new_save_list = []  # EMPTY LIST TO HOLD NEWLY CREATED FILES (name conv)
     print("TODAY == " + str(time_today))
     # SUBTRACTION DELTA
     subtraction_delta = pd.Timedelta(value=1, unit='days')
     print("\t\n SUTBRACTING... " + str(subtraction_delta))
-    # AND GET YESTERDAYS DATE
+    # AND GET YESTERDAYS DATE BY SUBTRACTING
     time_yesterday = time_start - subtraction_delta
     # SETUP STRING
     yesterstr = str(time_yesterday.date())
     print("YESTERDAY == " + str(yesterstr))
+    print("\nTEST GLOB-STRING == " + str("C:/data/outbound/CofA/*_" + yesterstr + "_F_*"))
     print("\n\t\t GLOBBING DIR >>> " + str(os.listdir(in_directory)))
     # GLOB & PRELIMINARY SETUPS:
-    df_previous = glob.glob("*" + yesterstr + "*")
-    print(df_previous)
-    df_current = glob.glob("*" + time_today + "*")
-    # IMPORT AS DATAFRAMES
+    glob_previous = sorted(glob.glob("C:/data/outbound/CofA/*_" + yesterstr + "_F_*"))
+    print("\n\t GLOB_PREVIOUS >>> \n")
+    for name in glob_previous: #{
+        print(name)
+    #}
+    glob_current = sorted(glob.glob("C:/data/outbound/CofA/*_" + time_today + "_F_*"))
+    print("\n\t GLOB_CURRENT >>> \n")
+    for name in glob_current: #{
+        print(name)
+    #}
+    #################
+    # SETUP IMPORTS #
+    #################
     # set as first element in returned list
-    df1 = pd.read_csv(df_previous[0])
+    df1 = pd.read_csv(glob_previous[0])
     # set as first element in returned list
-    df2 = pd.read_csv(df_current[0])
+    df2 = pd.read_csv(glob_current[0])
+    print("LEN_D1 == " + str(len(df1)))
+    print("LEN_D2 == " + str(len(df2)))
     # SET DIFFERENCE OF TWO DATAFRAMES IN PANDAS PYTHON
     set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
     print("LENGTH OF DIFF_DF: " + str(len(set_diff_df)))
     print(set_diff_df)
-    # ITERATE THRU TUPLES (using temp directory)
+    # COUNTER
+    #x = 0
+    ##############################################
+    # ITERATE THRU TUPLES (using temp directory) #
+    ##############################################
+    # ITERATE THRU FIRST FRAME (F_DRIVE)
     # << WHILE INSIDE OF TEMP DIRECTORY
     with tempfile.TemporaryDirectory() as temporary_directory:  # {
         # COUNTER
@@ -229,12 +294,113 @@ if __name__ == "__main__":  # {
         the_dir = Path(temporary_directory)
         print("TEMPORARY DIRECTORY >>> " + str(the_dir))
         # ITERATE THRU DATAFRAME
-        for row in set_diff_df.itertuples(index=False, name='CofA'): #{
-            test = 0
+        for row in set_diff_df.itertuples(index=False, name='CofA'):  # {
+            # GET/CREATE FILE/BASE_NAME
+            base_name = os.path.basename(str(row[0]))  # WAS: the_event_path
+            # GET/CREATE OLD_PATH
+            old_path = Path(str(row[0]))
+            logging.info("OLD-PATH: \t" + str(old_path))
+            file_name = os.path.basename(row[0])
+            logging.info("FILE-NAME: \t" + str(file_name))
+            # CREATE NEW FILE NAME CONV
+            file_name_conv = generate_naming_convention(old_path)
+            # CREATE NEW PATH VARIABLE TO CHECK IF FILE EXISTS....
+            new_path = os.path.join(out_directory, file_name_conv)
+            # CREATE 'temp_path'
+            temp_path = os.path.join(the_dir, file_name_conv)
+            # CREATE 'ds_path'
+            dst_path = os.path.join(out_directory, file_name_conv)
+            # WATERMARK A COPY TO G_DRIVE **WITH CORRECT NEW FILE NAME**
+            create_watermark(input_pdf=str(row[0]),
+                            output=dst_path, watermark=in_file)
+            # WATERMARK A COPY INTO TEMP FOLDER **WITH CORRECT NEW FILE NAME**
+            create_watermark(input_pdf=str(row[0]),
+                             output=temp_path, watermark=in_file)
+            # INCREASE COUNTER
+            x += 1
+            print("COUNT === " + str(x))
+        #}
+        # ZIP THE CURRENT TEMP FOLDER WE ARE INSIDE OF
+        try: #{
+            print("\n\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+            print("\nWORKING DIRECTORY ---BEFORE--- ZIP == " + str(os.getcwd()))
+            # path to folder
+            directory = "." # (the_dir)
+            # CHANGE WORKING DIRECTORY TO THE TEMPORARY DIR
+            # (IN ORDER TO PROPERLY ZIP FILES/FOLDER)
+            os.chdir(the_dir)   # WAS: "C:/"
+            print("\nWORKING DIRECTORY ---DURING--- ZIP == " + str(os.getcwd()))
+            # calling function to get all file paths in the directory
+            file_paths = get_all_file_paths(the_dir)
+            # printing the list of all files to be zipped 
+            print('\nFollowing files will be zipped:') 
+            for file_name in file_paths: #{
+                print(file_name) 
+            #}
+            # writing files to a zipfile 
+            with ZipFile('CofA-' + str(pd.Timestamp.now())[:10] + ".zip",'w') as zip: #{
+                # writing each file one by one 
+                for file in file_paths: #{
+                    zip.write(file) 
+                #}
+            #}
+            print('All files zipped successfully!\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' 
+                  + 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n')
+        #}
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                "\n" + fileE +
+                "\n" + lineE +
+                "\n" + messageE)
+        #}
+        else: #{
+            print("ALL FILES SUCCESSFULLY ZIPPED!")
+        #}
+        finally: #{
+            ts = pd.Timestamp.now()
+            run_time = ts - time_start
+            print("[Zip-Files] RUN TIME == " + str(run_time))
+        #}
+        # TRY AND FINISH THIS SHIT OFF (email this shit!)
+
+    #}
+#}
+            """
+            ##############################################
+            # CHECK IF NEW FILE ALREADY EXISTS......
+            if os.path.exists(new_path) is True: #{
+                print("FILE EXISTS! NO NEED TO CREATE WATERMARKED PDF !")
+                # BUT WE STILL NEED TO COPY THAT NEW PDF INTO TEMP FOLDER
+                # CREATE TEMP PATH TO DO THAT...
+                temp_path = os.path.join(the_dir, file_name_conv)
+                shutil.copy2(new_path, temp_path)
+            #}
+            # IF IT DOES NOT EXIST... CREATE WATERMARK PDF in G_DRIVE AND TEMP_DRIVE
+            # OFF OF METADATA (os.stats()) ACQUIRED FROM F_DRIVE
+            else: #{
+                print("FILE DOES NOT EXIST!!! CREATING WATERMARK")
+                # CREATE PATH VARIABLE FOR og file SO WE CAN GET METADATA
+                test_stat = os.stat(old_path)
+                print(str(test_stat[8]))
+                # WATERMARK A COPY TO G_DRIVE *WITH CORRECT FILE NAME*
+                create_watermark(input_pdf=str(row[0]),
+                                 output=new_path, watermark=in_file)
+            #}
+            """
+
             """
             NEED:
             (1) old_path = (F:/APPS/CofA/ or (G:/C of A's/Agilent/)
-            (2) new_path = (G:/C of A's/#Email Node/) 
+            (2) new_path/dst_path = (G:/C of A's/#Email Node/) 
             (3) temp_path =  (C:/Users/derbates/AppData/Temp/...)
             (4) file_name_conv (part XXXXX CofA Lot # XXXXXXXXXX)
             STEPS:
@@ -243,4 +409,3 @@ if __name__ == "__main__":  # {
             (C) IF IT *DOES NOT* EXIST:     call "create_watermark()" into BOTH temp_dir and other
             *** SO THAT BOTH VERSIONS NOW DO EXIST ***
             """
-        #}

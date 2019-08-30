@@ -36,8 +36,9 @@ from watchdog.events import FileSystemEventHandler
 
 class CofA_Event_Handler(FileSystemEventHandler):  # {
 
-    def __init__(self, save_dataframe, out_directory, observer):  # {
+    def __init__(self, index, save_dataframe, out_directory, observer):  # {
 
+        self.index = index
         self.save_dataframe = save_dataframe
         self.out_directory = out_directory
         self.observer = observer
@@ -46,9 +47,167 @@ class CofA_Event_Handler(FileSystemEventHandler):  # {
 
     def dispatch(self, event):  # {
         # RE-INSTANTIATE GLOBALS
-        global isEOD
+        global isEOD, idx_list, idx
+        event_str = str(event.event_type)
+        event_path = Path(event.src_path)
+        print("\t\te=" + str(event))
+        print("\t\ttype=" + str(event.event_type))
+        print("\t\tsrc_path=" + str(event.src_path))
+        # CHECK AND PERFORM ON EVENT_STR
+        ##################################################################
+        if event_str == "created":  # {
+            # TRY THE FOLlOWING:
+            try:  # {
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                ts = pd.Timestamp.now()  # CREATE TIME STAMP
+                print("| CREATED >>> " + str(ts))
+                # CREATE EVENT PATH VAR
+                the_event_path = Path(event.src_path)  # WAS: the_event_path
+                # APPEND TO INDEX LIST
+                idx_list.append(str(event.src_path))
+                # CREATE TEMPORARY INDEX IN ORDER TO APPEND
+                temp_idx = pd.Index(data=idx_list, dtype=np.str)
+                # APPEND TO "CREATION" INDEX
+                self.index.append(temp_idx)
+                # print INDEX
+                print("INDEX --> \n" + str(self.index))
+                print("\t\tEVENT_PATH=" + str(the_event_path))
+                # CREATE 'file_name' VAR
+                file_name = os.path.basename(the_event_path)
+                print("\t\tFILE_NAME=" + str(file_name))
+                # CHECK AND SEE IF FILE IS OF TYPE .PDF
+                if fnmatch.fnmatch(file_name, "*.pdf"):  # {
+                    # CREATE NEW FILE NAME CONV
+                    file_name_conv = generate_naming_convention(file_name)
+                    
+                    # CREATE PATH VARIABLES FOR FILE MOVING PROCEDURES
+                    new_path = os.path.join(self.out_directory, file_name_conv)
+                    ###############################################
+                    # CREATE/COPY WATERMARK TO DESTINATION FOLDER #
+                    ###############################################
+                    create_watermark(input_pdf=the_event_path,
+                                     output=new_path,
+                                     watermark=in_file)
+                    # CREATE EVENT ITEM FOR LIST
+                    event_list = [str(file_name_conv), str(ts)]  # WAS: (created_str)
+                    # APPEND TO DATAFRAME
+                    self.save_dataframe = append_to_dataframe(the_event_list=event_list,
+                                                              dataframe_to_append=self.save_dataframe)
+                    # print DATAFRAME
+                    print(self.save_dataframe.tail(8))
+                # }
+                else:  # {
+                    print("NON-PDF CREATED AT " + str(ts))
+                # }
+            # }
+            except:  # {
+                errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+                errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+                errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                typeE = str("TYPE : " + str(exc_type))
+                fileE = str("FILE : " + str(fname))
+                lineE = str("LINE : " + str(exc_tb.tb_lineno))
+                messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+                logging.error("\n" + typeE +
+                      "\n" + fileE +
+                      "\n" + lineE +
+                      "\n" + messageE)
+            # }
+            else:  # {
+                print("SUCCESS! VERY NICE!")
+            # }
+            finally:  # {
+                # CREATE END-TIME VAR
+                time_end = pd.Timestamp.now()
+                # DETERMINE OVERALL RUN-TIME
+                run_time = pd.Timedelta(time_end - time_start)
+                # print TOTAL RUNTIME
+                print("\t\t[Created-Event] >>> time_alloted: " + str(run_time))
+            # }
+        # }
+        elif event_str == "modified": #{
+            # TRY THE FOLLOWING
+            try:  # {
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                ts = pd.Timestamp.now()  # CREATE TIME STAMP
+                print("| MODIFIED >>> " + str(ts))
+                # print INDEX
+                print("INDEX --> \n" + str(self.index))
+                # CREATE EVENT PATH VAR
+                the_event_path = Path(event.src_path)  # WAS: the_event_path
+                print("\t\tEVENT_PATH=" + str(the_event_path))
+                # CREATE 'file_name' VAR
+                file_name = os.path.basename(the_event_path)
+                print("\t\tFILE_NAME=" + str(file_name))
+                # CHECK AND SEE IF FILE IS OF TYPE .PDF
+                if fnmatch.fnmatch(file_name, "*.pdf"):  # {
+                    # CREATE NEW FILE NAME CONV
+                    file_name_conv = generate_naming_convention(file_name)
+                    # CREATE EVENT ITEM FOR LIST
+                    event_list = [str(file_name_conv), str(ts)]  # WAS: (created_str)
+                    print("\n EVENT_LIST : \n" + str(event_list))
+                    # IF THE EVENT_PAT HIS ALREADY IN INDEX
+                    if str(the_event_path) in self.index:  # {
+                        print("ALREADY IN INDEX... THEN WE CAN **INDEED** APPEND\n\n\n")
+                        # APPEND TO DATAFRAME
+                        self.save_dataframe = append_to_dataframe(the_event_list=event_list,
+                                                                  dataframe_to_append=self.save_dataframe)
+                        # print DATAFRAME
+                        print(self.save_dataframe)
+                    # }
+                    else:  # {
+                        print("NOT IN INDEX... NOT CREATED TODAY... SO WE SKIP APPENDING...")
+                        # BUT WE STILL WATERMARK?
+                        """
+                        # CREATE PATH VARIABLES FOR FILE MOVING PROCEDURES
+                        new_path = os.path.join(self.out_directory, file_name_conv)
+                        # 08/28/2019 - REMOVED BECAUSE WE DONT NEED TO WATERMARK SO MANY TIMES
+                        # JUST KEEPING THE MODIFIED TIMESTAMP AND APPENDING TO DATAFRAME
+                        # CREATE/COPY WATERMARK TO DESTINATION FOLDER
+                        create_watermark(input_pdf=the_event_path,
+                                         output=new_path,
+                                         watermark=in_file)
+                        """
+                    # }
+                # }
+                else:  # {
+                    print("NON-PDF MODIFIED AT " + str(ts))
+                # }
+            # }
+            except:  # {
+                errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+                errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+                errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                typeE = str("TYPE : " + str(exc_type))
+                fileE = str("FILE : " + str(fname))
+                lineE = str("LINE : " + str(exc_tb.tb_lineno))
+                messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+                logging.error("\n" + typeE +
+                      "\n" + fileE +
+                      "\n" + lineE +
+                      "\n" + messageE)
+            # }
+            else:  # {
+                print("SUCCESS! VERY NICE!")
+            # }
+            finally:  # {
+                # CREATE END-TIME VAR
+                time_end = pd.Timestamp.now()
+                # DETERMINE OVERALL RUN-TIME
+                run_time = pd.Timedelta(time_end - time_start)
+                # print TOTAL RUNTIME
+                print("\t\t[MODIFIED-Event] >>> time_alloted: " + str(run_time))
+            # }
+        # }
+        ##########################################################
         # TRY THE FOLLOWING:
+        """
         try:  # {
+            print("checking to see if isEOD has arrived...")
             # CHECK IF END OF DAY HAS ARRIVED
             if isEOD is True:  # {
                 # STOP OBSERVER
@@ -64,14 +223,13 @@ class CofA_Event_Handler(FileSystemEventHandler):  # {
             #OLD# output_str = "EVENT >> " + str(event.event_type)  # + "\n"
             #OLD# output_str += str("IS_DIR >> " + str(event.is_directory))  # + "\n"
             #OLD# output_str += str("SRC_PATH >> " + str(event.src_path))  # + "\n"
-            """
             x_out = wrap(output_str, 30)
-            logging.info(x_out)
-            logging.info(textwrap.fill(output_str,
+            print(x_out)
+            print(textwrap.fill(output_str,
                 initial_indent="",
                 subsequent_indent="   " * 5,
                 width=60))  # was 65
-            """
+
             #OLD# event_str = str(event.event_type)
             #OLD# event_path = Path(event.src_path)
             #OLD# perform_on_event(the_event_type=event_str, the_event_path=event_path)
@@ -94,135 +252,8 @@ class CofA_Event_Handler(FileSystemEventHandler):  # {
         # }
         finally:  # {
             print("[Dispatch] FIN...")
+            """
     # }
-
-    def on_created(self, event):  # {
-        # RE-INSTANTIATE GLOBALS
-        global isEOD
-        # TRY THE FOLlOWING:
-        try:  # {
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            ts = pd.Timestamp.now()  # CREATE TIME STAMP
-            print("| CREATED >>> " + str(ts))
-            # CREATE EVENT PATH VAR
-            the_event_path = Path(event.src_path)  # WAS: the_event_path
-            # CREATE 'file_name' VAR
-            file_name = os.path.basename(the_event_path)
-            # CHECK AND SEE IF FILE IS OF TYPE .PDF
-            if fnmatch.fnmatch(file_name, "*.pdf"): #{
-                # CREATE NEW FILE NAME CONV
-                file_name_conv = generate_naming_convention(file_name)
-                # CREATE EVENT ITEM FOR LIST
-                event_list = [str(file_name_conv), str(ts)]  # WAS: (created_str)
-                # APPEND TO DATAFRAME
-                self.save_dataframe = append_to_dataframe(the_event_list=event_list,
-                                                          dataframe_to_append=self.save_dataframe)
-                # PRINT DATAFRAME
-                print(self.save_dataframe)
-                # CREATE PATH VARIABLES FOR FILE MOVING PROCEDURES
-                new_path = os.path.join(self.out_directory, file_name_conv)
-                # CREATE/COPY WATERMARK TO DESTINATION FOLDER
-                create_watermark(input_pdf=the_event_path,
-                                 output=new_path,
-                                 watermark=in_file)
-            # }
-            else:  # {
-                print("NON-PDF CREATED AT " + str(ts))
-            # }
-        # }
-        except:  # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            print("\n" + typeE +
-                  "\n" + fileE +
-                  "\n" + lineE +
-                  "\n" + messageE)
-        # }
-        else:  # {
-            print("SUCCESS! VERY NICE!")
-        # }
-        finally:  # {
-            # CREATE END-TIME VAR
-            time_end = pd.Timestamp.now()
-            # DETERMINE OVERALL RUN-TIME
-            run_time = pd.Timedelta(time_end - time_start)
-            # PRINT TOTAL RUNTIME
-            print("\t\t[Created-Event] >>> time_alloted: " + str(run_time))
-        # }
-    # }
-
-    def on_modified(self, event):  # {
-        # RE-INSTANTIATE GLOBALS
-        global isEOD
-        # TRY THE FOLLOWING
-        try:  # {
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            ts = pd.Timestamp.now()  # CREATE TIME STAMP
-            print("| MODIFIED >>> " + str(ts))
-            # CREATE EVENT PATH VAR
-            the_event_path = Path(event.src_path)  # WAS: the_event_path
-            # CREATE 'file_name' VAR
-            file_name = os.path.basename(the_event_path)
-            # CHECK AND SEE IF FILE IS OF TYPE .PDF
-            if fnmatch.fnmatch(file_name, "*.pdf"): #{
-                # CREATE NEW FILE NAME CONV
-                file_name_conv = generate_naming_convention(file_name)
-                # CREATE EVENT ITEM FOR LIST
-                event_list = [str(file_name_conv), str(ts)]  # WAS: (created_str)
-                # APPEND TO DATAFRAME
-                self.save_dataframe = append_to_dataframe(the_event_list=event_list,
-                                                          dataframe_to_append=self.save_dataframe)
-                # PRINT DATAFRAME
-                print(self.save_dataframe)
-                # CREATE PATH VARIABLES FOR FILE MOVING PROCEDURES
-                new_path = os.path.join(self.out_directory, file_name_conv)
-                # 08/28/2019 - REMOVED BECAUSE WE DONT NEED TO WATERMARK SO MANY TIMES
-                # JUST KEEPING THE MODIFIED TIMESTAMP AND APPENDING TO DATAFRAME
-                """
-                # CREATE/COPY WATERMARK TO DESTINATION FOLDER
-                create_watermark(input_pdf=the_event_path,
-                                 output=new_path,
-                                 watermark=in_file)
-                """
-            # }
-            else:  # {
-                print("NON-PDF CREATED AT " + str(ts))
-            # }
-        # }
-        except:  # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            print("\n" + typeE +
-                  "\n" + fileE +
-                  "\n" + lineE +
-                  "\n" + messageE)
-        # }
-        else:  # {
-            print("SUCCESS! VERY NICE!")
-        # }
-        finally:  # {
-            # CREATE END-TIME VAR
-            time_end = pd.Timestamp.now()
-            # DETERMINE OVERALL RUN-TIME
-            run_time = pd.Timedelta(time_end - time_start)
-            # PRINT TOTAL RUNTIME
-            print("\t\t[Created-Event] >>> time_alloted: " + str(run_time))
-        # }
-    #}
 
 # }
 
@@ -234,7 +265,7 @@ def create_watermark(input_pdf, output, watermark): # {
         watermark_obj = PdfFileReader(watermark)
         watermark_page = watermark_obj.getPage(0)
 
-        pdf_reader = PdfFileReader(input_pdf)
+        pdf_reader = PdfFileReader(str(input_pdf))
         pdf_writer = PdfFileWriter()
 
         # Watermark all the pages
@@ -258,7 +289,7 @@ def create_watermark(input_pdf, output, watermark): # {
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        print("\n" + typeE +
+        logging.error("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
@@ -313,7 +344,7 @@ def generate_naming_convention(the_pdf_path):  # {
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        print("\n" + typeE +
+        logging.error("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
@@ -345,7 +376,7 @@ def append_to_dataframe(the_event_list, dataframe_to_append): #{
     # RE-INSTANTIATE GLOBALS
     global df_save_list
     # TRY THE FOLLOWING
-    try: #{
+    try:  # {
         # CHECK IF LIST
         if type(the_event_list) is list : #{  # WAS: (the_event_list is list)
             print("\t\tLIST check == PASS")
@@ -356,7 +387,7 @@ def append_to_dataframe(the_event_list, dataframe_to_append): #{
             df_appendage = pd.DataFrame(data=[the_event_list],
                                         columns=['CofA', 'Timestamp'])
             # CREATE INSTANCE OF DATAFRAME WE ARE RETURNING
-            return_df = dataframe_to_append.append(df_appendage, ignore_index=True, sort=False)
+            df_save_list = dataframe_to_append.append(df_appendage, ignore_index=True, sort=False)
             #OLD# print(return_df.tail(5))
         #}
         else: #{
@@ -373,21 +404,21 @@ def append_to_dataframe(the_event_list, dataframe_to_append): #{
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        print("\n" + typeE +
+        logging.error("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
     #}
     else: #{
         print("\t\t[Append-2-DataFrame] FIN...")
-        return return_df
+        return df_save_list  # 08/29/2019 WAS: return_df
     #}
     finally: #{
         # CREATE END-TIME VAR
         time_end = pd.Timestamp.now()
         # DETERMINE OVERALL RUN-TIME
         run_time = pd.Timedelta(time_end - time_start)
-        # PRINT TOTAL RUNTIME
+        # print TOTAL RUNTIME
         print("\t\t[Append-2-DataFrame] >>> time_alloted: " + str(run_time))
     #}
 #}
@@ -431,7 +462,7 @@ def pull_creation_timestamp(a_file_path):  # {
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        print("\n" + typeE +
+        logging.error("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
@@ -517,7 +548,7 @@ def scan_directory(the_dir): #{
         # ASSIGN LIST TO COLUMN IN DATAFRAME
         df_filelist["CofA File"] = file_list
         # EXPORT TO NECCESSARY FOLDER
-        export_path = os.path.join(out_file_dir, out_file_str)
+        export_path = os.path.join(out_file_dir, out_file_str_2)
         df_filelist.to_csv(export_path, index=False)
     #}
     except: #{
@@ -530,7 +561,7 @@ def scan_directory(the_dir): #{
         fileE = str("FILE : " + str(fname))
         lineE = str("LINE : " + str(exc_tb.tb_lineno))
         messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-        print("\n" + typeE +
+        logging.error("\n" + typeE +
               "\n" + fileE +
               "\n" + lineE +
               "\n" + messageE)
@@ -624,7 +655,7 @@ def perform_on_event(the_event_type, the_event_path): #{
         time_end = pd.Timestamp.now()
         # DETERMINE OVERALL RUN-TIME
         run_time = pd.Timedelta(time_end - time_start)
-        # PRINT TOTAL RUNTIME
+        # print TOTAL RUNTIME
         print("\t\t[Event-Processed] >>> time_alloted: " + str(run_time))
     # }
 # }
@@ -639,21 +670,61 @@ throughout the day
 """
 def end_of_day():  # {
     # RE-INSTANTIATE GLOBALS
+    global isEOD
     global df_save_list, in_directory
-    # CALL MAIN SCAN FUNCTION
-    scan_directory(the_dir=in_directory)
+    global out_file_dir, out_file_str
+    # TRY THE FOLLOWING
+    try:  # {
+        print("\t\tDF_SAVE_LIST == \n" + str(df_save_list))
+        # CREATE EXPORT PATH
+        save_list_path = os.path.join(out_file_dir, out_file_str_1)
+        # SORT THE DATAFRAME BEFORE EXPORTING
+        df_save_list_sorted = df_save_list.sort_values(by='Timestamp')
+        # DROP DUPLICATES BEFORE EXPORTING
+        df_save_list_sorted.drop_duplicates(subset='CofA',
+                                            keep='last',
+                                            inplace=True)
+        print("\t\tDF_SAVE_LIST (sorted & dropped) == \n" + str(df_save_list_sorted))
+        # CREATE EXPORT FILE
+        df_save_list_sorted.to_csv(save_list_path, header=False, index=False)
+        # MAIN SCAN FUNCTION USE DOT BE HERE 08/29/2019
+        # SET END OF DAY TO TRUE TO EXIT SCRIPT?
+        isEOD = True
+    # }
+    except:  # {
+        errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        typeE = str("TYPE : " + str(exc_type))
+        fileE = str("FILE : " + str(fname))
+        lineE = str("LINE : " + str(exc_tb.tb_lineno))
+        messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+        logging.error("\n" + typeE +
+              "\n" + fileE +
+              "\n" + lineE +
+              "\n" + messageE)
+        sys.exit(69)
+    # }
+    else:  # {
+        print("SUCCESS! VERY NICE!")
+    # }
+    finally:  # {
+        print("[sort & drop_duplicates] FIN...")
+    # }
 # }
 
 #################################################
 
 def main():  # {
     test = 0
-#}
+# }
 
 ####################################################################################
 # MAIN BOILERPLATE / INSTANTIATE GLOBAL VARIABLES
 ####################################################################################
-if __name__ == "__main__": #{
+if __name__ == "__main__":  # {
     #############################################
     # START TIME
     time_start = pd.Timestamp.now()
@@ -661,7 +732,7 @@ if __name__ == "__main__": #{
     time_today = str(time_start)[:10]
     #############################################
     # SETUP-LOGGER
-    try: #{
+    try:  # {
         logging.basicConfig(level=logging.INFO,
                             filename="C:/data/outbound/CofA_F_Scanner_" 
                             + str(time_today)[:10] 
@@ -683,8 +754,8 @@ if __name__ == "__main__": #{
                             + '<NAME:%(name)s>',
                             datefmt='%Y-%m-%d-%H%M%S',
                             filemode='a')
-    #}
-    except: #{
+    # }
+    except:  # {
         errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
         errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
         errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
@@ -698,29 +769,36 @@ if __name__ == "__main__": #{
                       "\n" + fileE +
                       "\n" + lineE +
                       "\n" + messageE)
-    #}
-    else: #{
+    # }
+    else:  # {
         print("[Setup-Logger] FIN...")
-    #}
+    # }
     #############################################
     # INSTANTIATE GLOBAL VARIABLES
-    in_directory = "F:/APPS/CofA/"
-    out_directory = "G:/C of A's/#Email Node/"
+    in_directory = "C:/Temp/F/APPS/CofA/"  # "F:/APPS/CofA/"
+    out_directory = "C:/Temp/G/C of A's/#Email Node/"  #"G:/C of A's/#Email Node/"
     outbound_directory = "C:/data/outbound/CofA/"
     in_file = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
     # CREATE FILE_NAME STR USING TODAYS DATE CONVENTION
     out_file_dir = "C:/data/outbound/CofA/"  # WAS: "C:/data/inbound/"
-    out_file_str = str("CofA_Email_Node_list_" + time_today + "_F_pull.csv")
-    df_save_list = pd.DataFrame(data=None, columns=['CofA File'])
+    # FILENAME FOR DATAFRAME THAT WAS CREATED VIA "CofA_Event_Hanlder" CLASS
+    out_file_str_1 = str("CofA_Email_Node_list_" + time_today + "_F_watch.csv")
+    # FILENAME FOR DATAFRAME THAT WAS CREATED VIA "set_diff_df"
+    out_file_str_2 = str("CofA_Email_Node_list_" + time_today + "_F_pull.csv")
+    df_save_list = pd.DataFrame(data=None, columns=['CofA'])
     isEOD = False
+    # CREATE IDX_LIST TO BE INSERTED INSIDE INDEX
+    idx_list = os.listdir(out_directory)
+    # INDEX VARIABLE TO HOLD CREATION LIST 
+    idx = pd.Index(data=idx_list, dtype=np.str)
     # CREATE OBSERVER VARIABLE FOR WATCHDOG EVENT HANDLER
     observer = Observer()
-    # CREATE TIMER VARIABLE
-    t = Timer(10, end_of_day)
+    # CREATE TIMER VARIABLE // starts at 5 am and runs until 8:59 pm so == 57,600 seconds
+    t = Timer(34200, end_of_day)
     # START TIMER
     t.start()
     # CREATE INSTANCE OF CUSTOM EVENT HANDLER
-    event_handler = CofA_Event_Handler(df_save_list, out_directory, observer)
+    event_handler = CofA_Event_Handler(idx, df_save_list, out_directory, observer)
     observer.schedule(event_handler=event_handler,
                       path=in_directory,
                       recursive=True)
@@ -728,14 +806,24 @@ if __name__ == "__main__": #{
     # TRY THE FOLLOWING
     try:  # {
         while True:  # {
-            sleep(1)
+            if isEOD is False:  # {
+                sleep(1)
+            # }
+            else:  # {
+                print("END OF DAY REACHED! ENDING SCRIPT!")
+                break
+                #sys.exit(69)
+            # }
         # }
+        # BECAUSE WE HAVE NOW BROKEN OUT OF LOOP... stop observer
+        observer.stop()
     # }
     except KeyboardInterrupt:  # {
         observer.stop()
     # }
     observer.join()
     #############################################
-
-    
-#}
+    # CALL MAIN SCAN FUNCTION
+    scan_directory(the_dir=in_directory)
+    sys.exit(0)
+# }

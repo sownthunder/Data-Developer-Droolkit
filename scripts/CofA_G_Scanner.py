@@ -422,9 +422,9 @@ if __name__ == "__main__":  #{
                       "\n" + lineE +
                       "\n" + messageE)
     # }
-    else: #{
+    else:  # {
         print("SUCCESS! VERY NICE!")
-    #}
+    # }
     finally:  # {
         print("[Setup-Logger] FIN...")
     # }
@@ -441,4 +441,4 @@ if __name__ == "__main__":  #{
     #############################################
     # CALL MAIN SCAN FUNCTION
     scan_directory(the_directory=in_directory, ignore_dir_list=[""], file_type_list=[".pdf"])
-#}
+# }
