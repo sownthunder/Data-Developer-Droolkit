@@ -182,6 +182,59 @@ def send_mail(send_from, send_to, subject, message, files=[],
 
 #################################################
 
+"""
+TAKES IN:
+(1) file_path to file 
+RETURNS: 
+The create time or modified time, whichever is older
+"""
+def pull_creation_timestamp(a_file_path):  # {
+    # TRY THE FOLLOWING:
+    try: #{
+        # FORCE PATH VARIABLE
+        the_path = Path(a_file_path)
+        # GET MODIFIED TIME
+        mtime = os.path.getmtime(the_path)
+        # GET CREATE TIME
+        ctime = os.path.getctime(the_path)
+        # CREATE DATE VAR
+        # IF CREATE TIME IS OLDER...
+        if ctime < mtime:  # {
+            # FORMAT DATE VAR as str
+            date_str = str(datetime.fromtimestamp(ctime))
+        # }
+        # ELSE.... MODIFIED TIME IS OLDER...
+        else:  # {
+            # FORMAT DATE VAR as str
+            date_str = str(datetime.fromtimestamp(mtime))
+        # }
+    #}
+    except: #{
+        errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        typeE = str("TYPE : " + str(exc_type))
+        fileE = str("FILE : " + str(fname))
+        lineE = str("LINE : " + str(exc_tb.tb_lineno))
+        messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+        logging.error("\n" + typeE +
+              "\n" + fileE +
+              "\n" + lineE +
+              "\n" + messageE)
+    #}
+    else:  # {
+        print("SUCCESS! VERY NICE!")
+        # RETURN THE DATE WE PULLED AS STRING
+        return date_str
+    #}
+    finally:  # {
+        print("[pull_creation_timestamp] FIN...")
+    #}
+# }
+
+#################################################
 
 """
 TAKES IN:
@@ -256,34 +309,59 @@ if __name__ == "__main__":  # {
     # SETUP STRING
     yesterstr = str(time_yesterday.date())
     print("YESTERDAY == " + str(yesterstr))
-    print("\nTEST GLOB-STRING == " + str("C:/data/outbound/CofA/*_" + yesterstr + "_F_*"))
-    print("\n\t\t GLOBBING DIR >>> " + str(os.listdir(in_directory)))
+    print("\nTEST F_GLOB-STRING == " + str("C:/data/outbound/CofA/*_" + yesterstr + "_F_*"))
+    print("\nTEST G_GLOB_STRING == " + str("C:/data/outbound/CofA/*_" + yesterstr + "_G_"))
+    print("\n\t\t GLOBBING DIR F >>> " + str(os.listdir(in_directory)))
+    ###############################################################################################
     # GLOB & PRELIMINARY SETUPS:
-    glob_previous = sorted(glob.glob("C:/data/outbound/CofA/*_" + yesterstr + "_F_*"))
-    print("\n\t GLOB_PREVIOUS >>> \n")
+    glob_f_previous = sorted(glob.glob("C:/data/outbound/CofA/*_" + yesterstr + "_F_*"))
+    print("\n\t GLOB_F_PREVIOUS >>> \n")
     for name in glob_previous: #{
         print(name)
     #}
-    glob_current = sorted(glob.glob("C:/data/outbound/CofA/*_" + time_today + "_F_*"))
-    print("\n\t GLOB_CURRENT >>> \n")
+    glob_f_current = sorted(glob.glob("C:/data/outbound/CofA/*_" + time_today + "_F_*"))
+    print("\n\t GLOB_F_CURRENT >>> \n")
     for name in glob_current: #{
+        print(name)
+    #}
+    glob_g_previous = sorted(glob.glob("C:/data/outbound/CofA/*_" + yesterstr + "_G_*"))
+    print("\n\t GLOB_G_PREVIOUS >>> \n")
+    for name in glob_g_previous: #{
+        print(name)
+    #}
+    glob_g_current = sorted(glob.glob("C:/data/outbound/CofA/*_" + time_today + "_G_"))
+    print("\n\t GLOB_G_CURRENT >>> \n")
+    for name in glob_g_current: #{
         print(name)
     #}
     #################
     # SETUP IMPORTS #
     #################
     # set as first element in returned list
-    df1 = pd.read_csv(glob_previous[0])
+    df1 = pd.read_csv(glob_f_previous[0])
     # set as first element in returned list
-    df2 = pd.read_csv(glob_current[0])
+    df2 = pd.read_csv(glob_f_current[0])
+    # set as first element in returned list
+    df3 = pd.read_csv(glob_g_previous[0])
+    # set as first element in returned list
+    df4 = pd.read_csv(glob_g_current[0])
     print("LEN_D1 == " + str(len(df1)))
     print("LEN_D2 == " + str(len(df2)))
-    # SET DIFFERENCE OF TWO DATAFRAMES IN PANDAS PYTHON
-    set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
-    print("LENGTH OF DIFF_DF: " + str(len(set_diff_df)))
-    print(set_diff_df)
-    # COUNTER
-    #x = 0
+    print("LEN_D3 == " + str(len(df3)))
+    print("LEN_D4 == " + str(len(df4)))
+    # SET DIFFERENCE OF TWO DATAFRAMES FOR F_DRIVE IN PANDAS PYTHON
+    f_set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
+    print("LENGTH OF F_DIFF_DF: " + str(len(f_set_diff_df)))
+    print(f_set_diff_df)
+    # SET DIFFERENCE OF TWO DATAFRAME FOR G_DRIVE IN PANDAS PYTHON
+    g_set_diff_df = pd.concat([df4, df3, df3]).drop_duplicates(keep=False)
+    print("LENGTH OF G_DIFF_DF: " + str(len(g_set_diff_df)))
+    print(g_set_diff_df)
+    ###########################
+    # COMBINE BOTH DATAFRAMES #
+    ###########################
+    frames = [f_set_diff_df, g_set_diff_df]
+    set_diff_df = pd.concat(frames)
     ##############################################
     # ITERATE THRU TUPLES (using temp directory) #
     ##############################################
@@ -313,7 +391,9 @@ if __name__ == "__main__":  # {
             """
             APPEND TIME STAMP TO file_time_list FOR exporting
             """
-            file_time_list.append(str(row[1]))
+            # USE FUNCTION TO RETURN TIMESTAMP
+            the_timestamp = pull_creation_timestamp(old_path)
+            file_time_list.append(str(the_timestamp))  # WAS: str(row[1])
             ############################################################
             # CREATE NEW PATH VARIABLE TO CHECK IF FILE EXISTS....
             new_path = os.path.join(out_directory, file_name_conv)
@@ -393,8 +473,9 @@ if __name__ == "__main__":  # {
                 zip_path = Path(name)
                 print("ZIP_PATH == " + str(zip_path))
             #}
-            #################################################
-            # CREATE EMPTY DATAFRAME WITH FILE NAME CONV NAMES & TIMESTAMPS
+            #################################################################
+            # CREATE EMPTY DATAFRAME WITH FILE NAME CONV NAMES & TIMESTAMPS #
+            #################################################################
             file_conv_df = pd.DataFrame(data=None, columns=None)
             # SET ONE *NEW* COLUMN OF DATAFRAME TO LIST (file_name_conv)
             file_conv_df["CofA"] = file_conv_list
