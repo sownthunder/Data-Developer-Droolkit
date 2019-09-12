@@ -356,13 +356,33 @@ if __name__ == "__main__":  # {
     f_set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
     logging.info("LENGTH OF F_DIFF_DF: " + str(len(f_set_diff_df)))
     logging.info(str(f_set_diff_df))
+    """
+    #####################################################################################################
+    ###############################################
+    # [2019-09-11] ^^ SEND THE ABOVE TO MARY-ANNE # LOOK HERE // LOOK HERE // LOOK HERE // LOOK HERE // #
+    ###############################################
+    #####################################################################################################
+    """
     # SET DIFFERENCE OF TWO DATAFRAME FOR G_DRIVE IN PANDAS PYTHON
     g_set_diff_df = pd.concat([df4, df3, df3]).drop_duplicates(keep=False)
     logging.info("LENGTH OF G_DIFF_DF: " + str(len(g_set_diff_df)))
     logging.info(str(g_set_diff_df))
+    """
+    ###############################################################################################
+    #########################################
+    [2019-09-11] ^^ SEND THE ABOVE TO PENNY # LOOK HERE // LOOK HERE // LOOK HERE // LOOK HERE // #
+    #########################################
+    ###############################################################################################
+    """
+    # >?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>>?>?>?>?>?>?>
     logging.info("\n########################<>#########################\n")
+    # [2019-09-09] ADD IN FAIL-SAFE IF THERE WERE NO COFAS CREATED TODAY
+    if (len(f_set_diff_df) == 0) & (len(g_set_diff_df) == 0):  # {
+        logging.info("NO COFAS CREATED TODAY... EXITING...")
+        sys.exit(88)
+    # }
     #################################################################
-    # CREATE A COLUMN VARIABLE TO STORE DATA (file_names)
+    # CREATE A COLUMN VARIABLE TO STORE DATA (file_names) [F_DRIVE]
     fn_col = []
     # CREATE A COLUMN VARIABLE TO STORE DATA (timestamps)
     ts_col = []
@@ -396,6 +416,7 @@ if __name__ == "__main__":  # {
             ts_col.append(str(the_ts))
             y += 1
         # }
+
         # FOR EACH ROW IN THE COLUMN
         for row in g1:  # {
             # CREATE FILE_PATH VAR
@@ -443,12 +464,12 @@ if __name__ == "__main__":  # {
     ###########################
     # COMBINE BOTH DATAFRAMES #
     ###########################
-    # SET_DIFF_DF (not export df)
+    # SET_DIFF_DF (not the one being emailed & with file_paths)
     set_diff_df = pd.DataFrame(data=None, columns=None, dtype=np.str)
     set_diff_df['CofA File'] = path_col
     set_diff_df['Timestamp'] = ts_col
     #[2019-09-06]... set_diff_df.to_csv("set_diff_df.csv", index=False)
-    # EXPORT DATAFRAME (the one we will email)
+    # EXPORT DATAFRAME (the one we will email & with file names)
     export_df = pd.DataFrame(data=None, columns=None, dtype=np.str)
     export_df['CofA'] = fn_col
     export_df['Timestamp'] = ts_col
@@ -619,6 +640,32 @@ if __name__ == "__main__":  # {
             logging.info(">>> FILE LIST :  \n\t" + str(file_str) + "\n")
             #####################################################
             # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
+            try: #{
+                send_mail(send_from="derek.bates@non.agilent.com",
+                          send_to=["penny.woodward@agilent.com",
+                                   "derek.bates@non.agilent.com"],
+                          subject=str(time_today),
+                          message="See File(s) attached",
+                          files=file_list_f)
+            #}
+            except: #{
+                errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+                errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+                errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                typeE = str("TYPE : " + str(exc_type))
+                fileE = str("FILE : " + str(fname))
+                lineE = str("LINE : " + str(exc_tb.tb_lineno))
+                messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+                logging.error("\n" + typeE +
+                              "\n" + fileE +
+                              "\n" + lineE +
+                              "\n" + messageE)
+            #}
+            else: #{
+                print("[email F-drive] SUCCESS! VERY NICE!")
+            #}
             # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
             #####################################################
             try: #{
@@ -627,7 +674,7 @@ if __name__ == "__main__":  # {
                                      "derek.bates@non.agilent.com"],
                             subject=str(time_today),  # pd.Timestamp.now())[:10],
                             message="See File(s) attached",
-                            files=file_list)
+                            files=file_list_g)
             #}
             except: #{
                 errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -645,10 +692,7 @@ if __name__ == "__main__":  # {
                                 "\n" + messageE)
             #}
             else: #{
-                logging.info("[Email-Files] SUCCESS! VERY NICE!")
-            #}
-            finally: #{
-                logging.info("[Email-Files] FIN...")
+                logging.info("[email G-drive] SUCCESS! VERY NICE!")
             #}
         #}
         except: #{
