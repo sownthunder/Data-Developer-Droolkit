@@ -434,10 +434,13 @@ if __name__ == "__main__":  # {
     logging.info("\n########################<>#########################\n")
     ###################################################################
     # [2019-09-09] ADD IN FAIL-SAFE IF THERE WERE NO COFAS CREATED TODAY
+    # [2019-09-18] REMOVED CHECK FROM THIS SECITON
+    """
     if (len(f_set_diff_df) == 0) & (len(g_set_diff_df) == 0):  # {
         logging.info("NO COFAS CREATED TODAY... EXCITING AND EXIT!")
         sys.exit(88)
     # }
+    """
     # CREATE A COLUMN VARIABLE TO STORE DATA (file_names) [F_DRIVE]
     f_fn_col = []
     # CREATE A COLUMN VARIABLE TO STORE DATA (timestamps) [F_DRIVE]
@@ -572,190 +575,218 @@ if __name__ == "__main__":  # {
         export_df['Timestamp'] = ts_col
         """
         # [2019-09-11]... converted from one dataframe traversal to TWO
+        # [2019-09-18]... ADDED check to make sure only FULL zips are created/sent
         #####################################################################
         # F_DRIVE #
         #####################################################################
-        with tempfile.TemporaryDirectory() as temporary_directory:  # {
-            # COUNTER
-            x1 = 0
-            the_dir = Path(temporary_directory)
-            logging.info("TEMPORARY DIRECTORY >>> " + str(the_dir))
-            # ITERATE THRU DATAFRAME
-            for row in f_paths_df.itertuples(index=False, name='F_DRIVE'):  # {
-                logging.info("\n++++\t" + str(row[0]) + "\t++++\n")
-                logging.info("\n\tDIR_NAME ==" + str(os.path.dirname(str(row[0]))) + "\n")
-                # GET/CREATE OLD_PATH
-                old_path = Path(str(row[0]))
-                logging.info("OLD-PATH: \t" + str(old_path))
-                # GET/CREATE FILE/BASE_NAME
-                file_name = os.path.basename(row[0])
-                logging.info("FILE-NAME: \t" + str(file_name))
-                # CREATE NEW FILE NAME CONV
-                file_name_conv = generate_naming_convention(old_path)
-                ############################################################
-                """
-                APPEND FILE NAME TO f_file_conv_list FOR exporting
-                """
-                f_file_conv_list.append(str(file_name_conv))
-                """
-                APPEND TIME STAMP TO f_file_time_list FOR exporting
-                """
-                # USE FUNCTION TO RETURN TIMESTAMP
-                the_timestamp = pull_creation_timestamp(old_path)
-                f_file_time_list.append(str(the_timestamp))  # WAS: str(row[1])
-                ############################################################
-                # CREATE 'temp_path'
-                temp_path = os.path.join(the_dir, file_name_conv)
-                # CREATE 'dst_path'
-                dst_path = os.path.join(out_directory, file_name_conv)
-                logging.info("\n\t~~~~~~ <WATERMARK "
-                             + str(os.path.basename(row[0]))
-                             + "> ~~~~~~~~~~~~")
-                logging.info("\t Create at==\n" + str(temp_path))
-                logging.info("\t Copy to==" + str(dst_path))
-                # WATERMARK A COPY INTO TEMP FOLDER **WITH CORRECT NEW FILE NAME**
-                create_watermark(input_pdf=str(row[0]),
-                                 output=temp_path, watermark=in_file)
-                # COPY FILE THAT IS IN TEMP FOLDER TO F_DRIVE
-                shutil.copy2(src=temp_path, dst=dst_path)
-                # INCREASE COUNTER
-                x1 += 1
-                logging.info("COUNT === " + str(x1))
-            # }
-            # ZIP THE DIRECTORY
-            zip_the_directory(directory_to_zip=the_dir)
-            # TRY AND FINISH THIS SHIT OFF (email this shit!)
-            logging.info("\n\t\t\t GLOBBING FOR ZIP FILE !!!")
-            logging.info(str(os.path.join(the_dir, "*.zip")))
-            for name in sorted(glob.glob(str(the_dir) + "/*.zip")):  # {
-                logging.info("NAME OF FILE == "
-                             + str(name))
-                logging.info(len(sorted(glob.glob(str(the_dir)))))
-                # GET & SET PATH_NAME
-                zip_path = Path(name)
-                logging.info("ZIP_PATH == " + str(zip_path))
-            # }
-            #################################################################
-            # CREATE EMPTY DATAFRAME WITH FILE NAME CONV NAMES & TIMESTAMPS #
-            #################################################################
-            f_file_conv_df = pd.DataFrame(data=None, columns=None)
-            # SET ONE *NEW* COLUMN OF DATAFRAME TO LIST (f_file_name_conv)
-            f_file_conv_df["CofA"] = f_file_conv_list
-            # SET ANOTHER *NEW* COLUMN OF DATAFRAME TO LIST (f_timestamps)
-            f_file_conv_df["Timestamp"] = f_file_time_list
-            # CREATE STR FOR PATH OF F_SAVE_DIFF_DATAFRAME
-            f_df_save_str = str("CofA-" + str(pd.Timestamp.now())[:10] + ".csv")
-            f_df_save_path = os.path.join(the_dir, f_df_save_str)
-            logging.info("\n\n\tSAVE-PATH FOR DATAFRAME == \n" + str(f_df_save_path))
-            # CREATE THAT DATAFRAME IN THE PATH JUST CREATED
-            f_export_df.to_csv(f_df_save_path, index=False)
-            # CREATE FILE LIST VAR
-            f_file_list = [str(zip_path), str(f_df_save_path)]
-            f_file_str = ""
-            for f_file_yo in f_file_list:  # {
-                f_file_str += str(f_file_yo + "\n")
-            # }
-            logging.info(">>> F-FILE LIST :  \n\t" + str(f_file_str) + "\n")
-            #####################################################
-            # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
-            send_mail(send_from="derek.bates@non.agilent.com",
-                      send_to=["agilent_cofa@agilent.com",
-                               "derek.bates@non.agilent.com"],
-                      subject=str(time_today),
-                      message="See File(s) attached",
-                      files=f_file_list)
-            # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
-            #####################################################
+        # ONLY IF THE LEN IS GREATER THAN ZERO
+        if len(f_set_diff_df) > 0:  # {
+            # ZIP AND SEND EMAIL
+            with tempfile.TemporaryDirectory() as temporary_directory:  # {
+                # COUNTER
+                x1 = 0
+                the_dir = Path(temporary_directory)
+                logging.info("TEMPORARY DIRECTORY >>> " + str(the_dir))
+                # ITERATE THRU DATAFRAME
+                for row in f_paths_df.itertuples(index=False, name='F_DRIVE'):  # {
+                    logging.info("\n++++\t" + str(row[0]) + "\t++++\n")
+                    logging.info("\n\tDIR_NAME ==" + str(os.path.dirname(str(row[0]))) + "\n")
+                    # GET/CREATE OLD_PATH
+                    old_path = Path(str(row[0]))
+                    logging.info("OLD-PATH: \t" + str(old_path))
+                    # GET/CREATE FILE/BASE_NAME
+                    file_name = os.path.basename(row[0])
+                    logging.info("FILE-NAME: \t" + str(file_name))
+                    # CREATE NEW FILE NAME CONV
+                    file_name_conv = generate_naming_convention(old_path)
+                    ############################################################
+                    """
+                    APPEND FILE NAME TO f_file_conv_list FOR exporting
+                    """
+                    f_file_conv_list.append(str(file_name_conv))
+                    """
+                    APPEND TIME STAMP TO f_file_time_list FOR exporting
+                    """
+                    # USE FUNCTION TO RETURN TIMESTAMP
+                    the_timestamp = pull_creation_timestamp(old_path)
+                    f_file_time_list.append(str(the_timestamp))  # WAS: str(row[1])
+                    ############################################################
+                    # CREATE 'temp_path'
+                    temp_path = os.path.join(the_dir, file_name_conv)
+                    # CREATE 'dst_path'
+                    dst_path = os.path.join(out_directory, file_name_conv)
+                    logging.info("\n\t~~~~~~ <WATERMARK "
+                                 + str(os.path.basename(row[0]))
+                                 + "> ~~~~~~~~~~~~")
+                    logging.info("\t Create at==\n" + str(temp_path))
+                    logging.info("\t Copy to==" + str(dst_path))
+                    # WATERMARK A COPY INTO TEMP FOLDER **WITH CORRECT NEW FILE NAME**
+                    create_watermark(input_pdf=str(row[0]),
+                                     output=temp_path, watermark=in_file)
+                    # COPY FILE THAT IS IN TEMP FOLDER TO F_DRIVE
+                    shutil.copy2(src=temp_path, dst=dst_path)
+                    # GET METADATA OF OLD ORIGINAL FILE
+                    old_stinfo = os.stat(old_path)
+                    logging.info("OLD FILE STATS: \n" + str(old_stinfo))
+                    old_atime = old_stinfo.st_atime
+                    logging.info("OLD FILE A-TIME: \n" + str(old_atime))
+                    old_mtime = old_stinfo.st_mtime
+                    logging.info("OLD FILE M-TIME: \n" + str(old_mtime))
+                    # CHANGE METADATA OF COPIED FILE TO ORIGINAL
+                    os.utime(dst_path, (old_atime, old_mtime))
+                    # INCREASE COUNTER
+                    x1 += 1
+                    logging.info("COUNT === " + str(x1))
+                # }
+                # ZIP THE DIRECTORY
+                zip_the_directory(directory_to_zip=the_dir)
+                # TRY AND FINISH THIS SHIT OFF (email this shit!)
+                logging.info("\n\t\t\t GLOBBING FOR ZIP FILE !!!")
+                logging.info(str(os.path.join(the_dir, "*.zip")))
+                for name in sorted(glob.glob(str(the_dir) + "/*.zip")):  # {
+                    logging.info("NAME OF FILE == "
+                                 + str(name))
+                    logging.info(len(sorted(glob.glob(str(the_dir)))))
+                    # GET & SET PATH_NAME
+                    zip_path = Path(name)
+                    logging.info("ZIP_PATH == " + str(zip_path))
+                # }
+                #################################################################
+                # CREATE EMPTY DATAFRAME WITH FILE NAME CONV NAMES & TIMESTAMPS #
+                #################################################################
+                f_file_conv_df = pd.DataFrame(data=None, columns=None)
+                # SET ONE *NEW* COLUMN OF DATAFRAME TO LIST (f_file_name_conv)
+                f_file_conv_df["CofA"] = f_file_conv_list
+                # SET ANOTHER *NEW* COLUMN OF DATAFRAME TO LIST (f_timestamps)
+                f_file_conv_df["Timestamp"] = f_file_time_list
+                # CREATE STR FOR PATH OF F_SAVE_DIFF_DATAFRAME
+                f_df_save_str = str("CofA-" + str(pd.Timestamp.now())[:10] + ".csv")
+                f_df_save_path = os.path.join(the_dir, f_df_save_str)
+                logging.info("\n\n\tSAVE-PATH FOR DATAFRAME == \n" + str(f_df_save_path))
+                # CREATE THAT DATAFRAME IN THE PATH JUST CREATED
+                f_export_df.to_csv(f_df_save_path, index=False)
+                # CREATE FILE LIST VAR
+                f_file_list = [str(zip_path), str(f_df_save_path)]
+                f_file_str = ""
+                for f_file_yo in f_file_list:  # {
+                    f_file_str += str(f_file_yo + "\n")
+                # }
+                logging.info(">>> F-FILE LIST :  \n\t" + str(f_file_str) + "\n")
+                #####################################################
+                # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
+                # [2019-09-12]... agilent_cofa@agilent.com
+                send_mail(send_from="derek.bates@non.agilent.com",
+                          send_to=["penny.woodard@agilent.com",
+                                   "diluka.wijesinghe@agilent.com",
+                                   "derek.bates@non.agilent.com"],
+                          subject=str(time_today) + "-F-APPS-CofAs-List",
+                          message="See File(s) attached. \n Taken from: \n" + str(Path("F:/APPS/CofAs/")),
+                          files=f_file_list)
+                # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
+                #####################################################
 
+            # }
+        # }
+        else:  # {
+            logging.warning("NO COFAS FOR F:/APPS/COFA/")
         # }
         ####################################################################
         # G_DRIVE #
         ####################################################################
-        with tempfile.TemporaryDirectory() as temporary_directory:  # {
-            # COUNTER
-            x2 = 0
-            the_dir = Path(temporary_directory)
-            logging.info("TEMPORARY DIRECTORY >>> " + str(the_dir))
-            # ITERATE THRU DATAFRAME
-            for row in g_paths_df.itertuples(index=False, name='G_DRIVE'):  # {
-                logging.info("\n++++\t" + str(row[0]) + "\t++++\n")
-                logging.info("\n\tDIR_NAME == " + str(row[0]) + "\t++++\n")
-                # GET/CREATE OLD_PATH
-                old_path = Path(str(row[0]))
-                logging.info("OLD_PATH: \t" + str(old_path))
-                # GET/CREATE FILE/BASE_NAME
-                file_name = os.path.basename(row[0])
-                logging.info("FILE-NAME: \t" + str(file_name))
-                # NO NEED TO CREATE FILE NAME CONVENTION, so we set as og
-                file_name_conv = file_name
-                ######################################################
-                """
-                APPEND FILE NAME TO g_file_conv_list FOR exporting
-                """
-                g_file_conv_list.append(str(file_name_conv))
-                """
-                APPEND TIME STAMP TO file_time_list FOR exporting
-                """
-                # USE FUNCTION TO RETURN TIMESTAMP
-                the_timestamp = pull_creation_timestamp(old_path)
-                g_file_time_list.append(str(the_timestamp))  # WAS: str(row[1])
-                ############################################################
-                # CREATE 'temp_path'
-                temp_path = os.path.join(the_dir, file_name_conv)
-                # CREATE 'dst_path'
-                dst_path = os.path.join(out_directory, file_name_conv)
-                # COPY A COPY INTO TEMP FOLDER **WITH CORRECT NEW FILE NAME**
-                shutil.copy2(src=str(row[0]), dst=temp_path)
-                # COPY FILE THAT IS IN TEMP FOLDER TO G_DRIVE
-                shutil.copy2(src=temp_path, dst=dst_path)
-                # INCREASE COUNTER
-                x2 += 1
-                logging.info("COUNT === " + str(x2))
+        # ONLY IF LENGTH IS GREATER THAN ZERO
+        if len(g_set_diff_df) > 0:  # {
+            # ZIP AND SEND EMAIL
+            with tempfile.TemporaryDirectory() as temporary_directory:  # {
+                # COUNTER
+                x2 = 0
+                the_dir = Path(temporary_directory)
+                logging.info("TEMPORARY DIRECTORY >>> " + str(the_dir))
+                # ITERATE THRU DATAFRAME
+                for row in g_paths_df.itertuples(index=False, name='G_DRIVE'):  # {
+                    logging.info("\n++++\t" + str(row[0]) + "\t++++\n")
+                    logging.info("\n\tDIR_NAME == " + str(row[0]) + "\t++++\n")
+                    # GET/CREATE OLD_PATH
+                    old_path = Path(str(row[0]))
+                    logging.info("OLD_PATH: \t" + str(old_path))
+                    # GET/CREATE FILE/BASE_NAME
+                    file_name = os.path.basename(row[0])
+                    logging.info("FILE-NAME: \t" + str(file_name))
+                    # NO NEED TO CREATE FILE NAME CONVENTION, so we set as og
+                    file_name_conv = file_name
+                    ######################################################
+                    """
+                    APPEND FILE NAME TO g_file_conv_list FOR exporting
+                    """
+                    g_file_conv_list.append(str(file_name_conv))
+                    """
+                    APPEND TIME STAMP TO file_time_list FOR exporting
+                    """
+                    # USE FUNCTION TO RETURN TIMESTAMP
+                    the_timestamp = pull_creation_timestamp(old_path)
+                    g_file_time_list.append(str(the_timestamp))  # WAS: str(row[1])
+                    ############################################################
+                    # CREATE 'temp_path'
+                    temp_path = os.path.join(the_dir, file_name_conv)
+                    # CREATE 'dst_path'
+                    dst_path = os.path.join(out_directory, file_name_conv)
+                    # COPY A COPY INTO TEMP FOLDER **WITH CORRECT NEW FILE NAME**
+                    shutil.copy2(src=str(row[0]), dst=temp_path)
+                    # COPY FILE THAT IS IN TEMP FOLDER TO G_DRIVE
+                    shutil.copy2(src=temp_path, dst=dst_path)
+                    # INCREASE COUNTER
+                    x2 += 1
+                    logging.info("COUNT === " + str(x2))
+                # }
+                # ZIP THE DIRECTORY
+                zip_the_directory(directory_to_zip=the_dir)
+                # TRY AND FINISH THIS SHIT OFF (email this shit!)
+                logging.info("\n\t\t\t GLOBBING FOR ZIP FILE !!!")
+                logging.info(str(os.path.join(the_dir, "*.zip")))
+                for name in sorted(glob.glob(str(the_dir) + "/*.zip")):  # {
+                    logging.info("NAME OF FILE == "
+                                 + str(name))
+                    logging.info(len(sorted(glob.glob(str(the_dir)))))
+                    # GET & SET PATH_NAME
+                    zip_path = Path(name)
+                    logging.info("ZIP_PATH == " + str(zip_path))
+                # }
+                #################################################################
+                # CREATE EMPTY DATAFRAME WITH FILE NAME CONV NAMES & TIMESTAMPS #
+                #################################################################
+                g_file_conv_df = pd.DataFrame(data=None, columns=None)
+                # SET ONE *NEW* COLUMN OF DATAFRAME TO LIST (g_file_name_conv)
+                g_file_conv_df["CofA"] = g_file_conv_list
+                # SET ANOTHER *NEW* COLUMN OF DATAFRAME TO LIST (g_timestamps)
+                g_file_conv_df["Timestamps"] = g_file_time_list
+                # CREATE STR FOR PATH OF G_SAVE_DIFF_DATAFRAME
+                g_df_save_str = str("CofA-" + str(pd.Timestamp.now())[:10] + ".csv")
+                g_df_save_path = os.path.join(the_dir, g_df_save_str)
+                logging.info("\n\n\tSAVE-PATH FOR DATAFRAME == \n" + str(g_df_save_path))
+                # CREATE THAT DATAFRAME IN THE PATH JUST CREATED
+                g_export_df.to_csv(g_df_save_path, index=False)
+                # CREATE FILE LIST VAR
+                g_file_list = [str(zip_path), str(g_df_save_path)]
+                g_file_str = ""
+                for g_file_yo in g_file_list:  # {
+                    g_file_str += str(g_file_yo + "\n")
+                # }
+                logging.info(">>> G-FILE- LIST :  \n\t" + str(g_file_str) + "\n")
+                #####################################################
+                # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
+                # [2019-09-12]... agilent_cofa@agilent.com
+                send_mail(send_from="derek.bates@non.agilent.com",
+                          send_to=["penny.woodard@agilent.com",
+                                   "diluka.wijesinghe@agilent.com",
+                                   "derek.bates@non.agilent.com"],
+                          subject=str(time_today) + "-G-CofA's-Agilent-List",
+                          message="See File(s) attached. \n Taken from: \n" + str(Path("G:/C of A's/Agilent/")),
+                          files=g_file_list)
+                # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
+                #####################################################
             # }
-            # ZIP THE DIRECTORY
-            zip_the_directory(directory_to_zip=the_dir)
-            # TRY AND FINISH THIS SHIT OFF (email this shit!)
-            logging.info("\n\t\t\t GLOBBING FOR ZIP FILE !!!")
-            logging.info(str(os.path.join(the_dir, "*.zip")))
-            for name in sorted(glob.glob(str(the_dir) + "/*.zip")):  # {
-                logging.info("NAME OF FILE == "
-                             + str(name))
-                logging.info(len(sorted(glob.glob(str(the_dir)))))
-                # GET & SET PATH_NAME
-                zip_path = Path(name)
-                logging.info("ZIP_PATH == " + str(zip_path))
-            # }
-            #################################################################
-            # CREATE EMPTY DATAFRAME WITH FILE NAME CONV NAMES & TIMESTAMPS #
-            #################################################################
-            g_file_conv_df = pd.DataFrame(data=None, columns=None)
-            # SET ONE *NEW* COLUMN OF DATAFRAME TO LIST (g_file_name_conv)
-            g_file_conv_df["CofA"] = g_file_conv_list
-            # SET ANOTHER *NEW* COLUMN OF DATAFRAME TO LIST (g_timestamps)
-            g_file_conv_df["Timestamps"] = g_file_time_list
-            # CREATE STR FOR PATH OF G_SAVE_DIFF_DATAFRAME
-            g_df_save_str = str("CofA-" + str(pd.Timestamp.now())[:10] + ".csv")
-            g_df_save_path = os.path.join(the_dir, g_df_save_str)
-            logging.info("\n\n\tSAVE-PATH FOR DATAFRAME == \n" + str(g_df_save_path))
-            # CREATE THAT DATAFRAME IN THE PATH JUST CREATED
-            g_export_df.to_csv(g_df_save_path, index=False)
-            # CREATE FILE LIST VAR
-            g_file_list = [str(zip_path), str(g_df_save_path)]
-            g_file_str = ""
-            for g_file_yo in g_file_list:  # {
-                g_file_str += str(g_file_yo + "\n")
-            # }
-            logging.info(">>> G-FILE- LIST :  \n\t" + str(g_file_str) + "\n")
-            #####################################################
-            # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
-            send_mail(send_from="derek.bates@non.agilent.com",
-                      send_to=["penny.woodward@agilent.com",
-                               "derek.bates@non.agilent.com"],
-                      subject=str(time_today),
-                      message="See File(s) attached",
-                      files=g_file_list)
-            # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
-            #####################################################
+        # }
+        else:  # {
+            logging.warning("NO COFAS FOR G:/C OF A'S/AGILENT/")
         # }
         # [2019-09-06]... export_df.to_csv("export_df.csv", index=False)
         ##############################################
@@ -767,7 +798,7 @@ if __name__ == "__main__":  # {
         pass
     # }
     else:  # {
-        print("done")
+        print("[CofA_Nightly_Node_v2] done...")
     # }
 # }
 
