@@ -45,6 +45,12 @@ from watchdog.events import FileSystemEventHandler
 
 # **CLASSES**
 
+# In[ ]:
+
+
+
+
+
 # In[2]:
 
 
@@ -79,11 +85,11 @@ class CofA_Event_Handler(FileSystemEventHandler): #{
         print("\ne=" + str(event) + "\n")
         
         try: #{
-            print(str(t))
+            #OLD# print(str(t))
             print("checking for isEOD...")
             if isEOD is True: #{
                 # STOP OBSERVER
-                observer.stop()
+                self.observer.stop()
                 print("TRUE! ENDING SCRIPT!")
                 # QUIT SCRIPT
                 sys.exit(69)
@@ -549,11 +555,11 @@ EXPORTS DATAFRAME
 TAKES IN:
 (1) DATAFRAME OBJECT THAT HAS BEEN CREATED VIA WATCHODG
 """
-def execute_staging(): #{
+def execute_staging(the_observer): #{
     # RE-INSTANTIATE GLOBALS
     #OLD# global save_list
     global df_save_list
-    global observer
+    obsserver = the_observer
     global in_directory
     global out_directory
     #OLD# global today_date_str
@@ -638,9 +644,9 @@ def execute_staging(): #{
         #OLD#glob_current = scan_directory("F:/APPS/CofA/")
         #
         ########################################################
-        glob_current = sorted(glob.glob("C:/CofA/log/lists/*_" 
+        glob_current = sorted(glob.glob("C:/data/outbound/CofA/*_" 
                                         + today_str 
-                                        + "_*"))
+                                        + "_F_*"))
         print("\n\t GLOB_CURRENT >>> \n")
         for name in glob_current: #{
             print(name)
@@ -784,7 +790,7 @@ def execute_staging(): #{
                 df_save_path = os.path.join(the_dir, df_save_str)
                 print("\n\n\tSAVE-PATH FOR DATAFRAME == " + str(df_save_path))
                 # SORT THE DATAFRAME BEFORE EXPORTING
-                df_save_frame_sorted = df_saveframe.sort_values(by='Timestamp')
+                df_save_frame_sorted = df_save_list.sort_values(by='Timestamp')
                 # DROP DUPLICATES BEFORE EXPORTING
                 df_save_frame_sorted.drop_duplicates(subset='CofA', 
                                                      keep='last', 
@@ -809,14 +815,13 @@ def execute_staging(): #{
                 print(">>> FILE LIST : \n\t" 
                       + str(file_list) 
                       + "\n")
-                """
                 break_input = input("Continue? Y\n")
                 if str(break_input).lower() == "n": #{
                     sys.exit(69)
                 #}
                 elif str(break_input).lower() == "y": #{
-                """
-                print("CONT....")
+                    print("CONT....")
+                #}
                 #####################################################
                 # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
                 # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
@@ -869,7 +874,7 @@ def execute_staging(): #{
                 ts = pd.Timestamp.now()
                 run_time = ts - time_start
                 print("[Email-Files] FIN...")
-                sys.exit(69)
+                observer.stop() #  WAS: sys.exit(69)
             #}
         #}
         """
@@ -906,6 +911,7 @@ def execute_staging(): #{
         run_time = ts - time_start
         print("RUN TIME == " + str(run_time))
         print("LINE 352 EXECUTE STAGING()")
+        print(str(observer))
     #}
     
 #}
@@ -1001,7 +1007,7 @@ if __name__ == "__main__":
     print("[=================================================]\n\n\n")
     # CREATE TIMER VAR  // 12 HOURS... now 10.5 HOURS !! 08/07/2019
     # 37800 / USE == 54000
-    t = Timer(3600, execute_staging) # WAS 2592000,3600,720,600,43200,300 & 120
+    t = Timer(10, execute_staging, ['observer']) # WAS 2592000,3600,720,600,43200,300 & 120
     # START TIMER
     t.start()
     """
