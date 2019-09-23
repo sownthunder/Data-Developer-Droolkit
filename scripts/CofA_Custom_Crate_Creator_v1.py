@@ -161,7 +161,7 @@ def display_batch_list(file_path):  # {
 
 def select_zip_folder():  # {
     # RE-INSTANTIATE GLOBALS
-    global out_directory, zip_folder, e2_var, b3
+    global out_directory, zip_folder, e2_var, R1, R2, b3
     global selected_batch_list, selected_zip_folder  # WAS: selected_batch_list, zip_folder_selected
     # TRY THE FOLLOWING:
     try:  # {
@@ -209,6 +209,11 @@ def select_zip_folder():  # {
     finally:  # {
         # SET BOOL TO TRUE
         selected_zip_folder = True
+        # [2019-09-23]... ENABLE "Most Recent" & "Return All" CofA option(s)
+        R1.configure(state=tk.ACTIVE)
+        R2.configure(state=tk.ACTIVE)
+        # [2019-09-23]... SELECT "Return All" option specifically!
+        R2.select()
         # [2019-09-20].... was: zip_folder_selected = True
         # ENABLE ZIP DIR SELECTION BUTTON...WAS: CONFIRM BUTTON
         b3.configure(state=tk.ACTIVE)
@@ -269,9 +274,132 @@ def pull_recent_cofas():   # {
     logging.info("<<PULLING RECENT COFAS>>")
 # }
 
+def zip_the_directory(directory_to_zip): #{
+    # RE-INSTANTIATE GLOBALS
+    global og_wd
+    # TRY THE FOLLOWING
+    try: #{
+        logging.info("\n\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        logging.info("\nWORKING DIRECTORY ---BEFORE--- ZIP==\n" + str(os.getcwd()))
+        # CHANGE THE WORKING DIRECTORY TO DIRECTORY WE WISH TO ZIP
+        os.chdir(directory_to_zip)
+        # path to folder (NOW currently folder we want to zip)
+        directory = "."
+        logging.info("\nWORKING DIRECTORY ---DURING--- ZIP==\n" + str(os.getcwd()))
+        # calling function to get all file paths we want to zip
+        file_paths = get_all_file_paths(directory)
+        # printing the list of all files to be zipped
+        logging.info("\nFollowing files will be zipped:")
+        for file_name in file_paths: #{
+            logging.info(file_name)
+        #}
+        # writing files to a zipfile
+        with ZipFile('CofA-'
+                     + str(pd.Timestamp.now())[:10]
+                     + ".zip", 'w') as zip: #{
+            # writing each file one by one
+            for file in file_paths: #{
+                zip.write(file)
+            #}
+        #}
+        logging.info("All files zipped successfully!\n\nXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    #}
+    except: #{
+        errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        typeE = str("TYPE : " + str(exc_type))
+        fileE = str("FILE : " + str(fname))
+        lineE = str("LINE : " + str(exc_tb.tb_lineno))
+        messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+        logging.error("\n" + typeE +
+                      "\n" + fileE +
+                      "\n" + lineE +
+                      "\n" + messageE)
+    #}
+    else: #{
+        logging.info("[Zip-Files-" + str(directory_to_zip) + "] SUCCESS! VERY NICE!")
+    #}
+    finally: #{
+        # CHANGE WORKING DIRECTORY BACK TO ORIGINAL
+        os.chdir(og_wd)
+    #}
+#}
 
+def cofa_crate(): #{
+    # RE-INSTANTIATE GLOBALS
+    global root, in_directory, out_directory, zip_folder, batch_df
+    # setup infile variable
+    in_file = root.filename
+    print("BATCH_LIST: \n" + str(in_file))
+    # CREATE DATAFRAME FROM BATCH LIST
+    batch_df = pd.read_csv(in_file, header=None, names=["Lot_No"], enginge='python')
+
+"""
+Copy/move all files matching creteria into TEMP folder
+Then we zip the contents inside the TEMP folder in out_directory
+"""
+def create_custom_crate(): #{
+    # RE-INSTANTIATE GLOBALS
+    global root, in_directory, out_directory, zip_folder, batch_df
+    # setup infile variable
+    in_file = root.filename
+    print("BATCH_LIST: \n" + str(in_file))
+    # CREATE DATAFRAME FROM BATCH LIST
+    batch_df = pd.read_csv(in_file, header=None, names=['Lot_No'], engine='python')
+    print(batch_df.head(5))
+    # create REGEX variable
+    regex_glob = str(in_directory + "*")
+    print(regex_glob)
+    # TOTAL counter
+    x = 0
+    for lot_no in batch_df.itertuples(): #{
+        logging.info("=======" + str(lot_no[1]) + "========")
+        # CHECK AND CREATE NEW DIR PATH
+        new_dir_path = os.path.join(out_directory, str(lot_no[1]))
+        # IF 'lot_no' DIRECTORY DOES NOT EXIST:
+        if not os.path.exists(new_dir_path): #{
+            # MAKE IT EXIST!
+            os.makedirs(new_dir_path)
+        #}
+        # CREATE TEMP DIR/FOLDER TO WORK INSIDE OF:
+        with tempfile.TemporaryDirectory() as directory_name: #{
+            # create TEMP DIR var
+            the_dir = Path(directory_name)
+            logging.info("TEMP_DIRECTORY == " + str(the_dir))
+            # GLOB AND ITERATE THRU EACH FILE NAME MATCHING
+            for name in sorted(glob.glob(in_directory + "*" + str(lot_no[1]) + "*")): #{
+                # CREATE PATH VARIABLE
+                pdf_path = Path(str(name))
+                print(os.path.exists(pdf_path))
+                # GET BASE NAME (file name)
+                file_name = os.path.basename(pdf_path)
+                # CREATE TEMP PATH
+                temp_path = os.path.join(the_dir, file_name)
+                # CREATE NEW PATH
+                new_path = os.path.join(new_dir_path, file_name)
+                # COPY FILE TO NEW LOCATION
+                shutil.copy2(pdf_path, temp_path)
+                # CREATE WATERMARK ON NEW FILE
+                create_watermark(input_pdf=temp_path,
+                                 output=new_path,
+                                 watermark=watermark_pdf)
+                # increase count
+                x += 1
+        #}
+    #}
+    logging.info("count == " + str(x))
+    logging.info("Directory exits after?", str(the_dir.exists()))
+    logging.info("Contents After:", str(list(the_dir.glob("*"))))
+    logging.info("told you so")
+#}
+
+# [2019-09-23]... commented out below for fixes
+"""
 def custom_cofa_crate():  # {
-    global out_directory, batch_df
+    global out_directory, batch_df, root
     logging.info("<<BEGIN CUSTOM_CRATE>>")
     # CREATE INDEX
     idx = pd.Index(batch_df[0])
@@ -405,6 +533,7 @@ def custom_cofa_crate():  # {
         logging.info("[CRATE-CREATION] FIN...")
     # }
 # }
+"""
 
 def test_messagebox():  # {
     global out_directory
@@ -451,6 +580,9 @@ if __name__ == "__main__": #{
     e1_var = tk.StringVar()
     e2_var = tk.StringVar()
     check_var = tk.IntVar()
+    # GET/SET ORIGINAL WORKING DIRECTORY PATH
+    og_wd = Path(os.getcwd())
+    print("WD: \t" + str(og_wd))
     in_directory = "F:/APPS/CofA/"
     check_directory = "G:/C of A's/#Email Node/"
     watermark_pdf = "C:/data/inbound/02OTHER_Rohde Island_Agilent Quality_Digital Letterhead.pdf"
@@ -477,14 +609,14 @@ if __name__ == "__main__": #{
 
     # E1
     e1 = tk.Entry(master=topframe,
-                  width=20,
+                  width=35,
                   textvariable=e1_var,
                   relief=tk.GROOVE,
                   cursor="rightbutton")
     e1.place(x=50, y=5, height=25, width=200)  # WAS: (height=30, width=200, x=50, y=20)
 
     # B1
-    b1 = tk.Button(master=topframe, width=20,
+    b1 = tk.Button(master=topframe, width=30,
                    text="Browse for BATCH_LIST",
                    font=("Sourcecode Semibold", 10),
                    command=select_batch_list,
@@ -508,7 +640,7 @@ if __name__ == "__main__": #{
     b2 = tk.Button(master=bottomframe, width=30,
                    text="Browse for ZIP Dir",
                    state=tk.DISABLED,
-                   font=("Sourcecode Semibold", 14),
+                   font=("Sourcecode Semibold", 10),
                    command=select_zip_folder,
                    relief=tk.GROOVE, cursor="spider")
     b2.place(x=300, y=5, height=25, width=150)  # WAS: (x=250, y=30, height=30, width=100)
@@ -518,14 +650,14 @@ if __name__ == "__main__": #{
                    text="Confirm",
                    width=10,
                    state=tk.DISABLED,  # if b1_var.get() == False else tk.ENABLED,
-                   font=("Sourcecode Light", 14),
-                   command=custom_cofa_crate,
+                   font=("Sourcecode Semibold", 12),
+                   command=create_custom_crate,  # WAS: custom_cofa_crate
                    relief=tk.RAISED, cursor="sb_down_arrow")
     b3.place(x=50, y=50, height=25, width=100)
 
     # CANCEL BUTTON /b4
     b4 = tk.Button(master=bottomframe, text="Cancel", width=10,
-                   font=("Courier New", 14), command=root.destroy,
+                   font=("Sourcecode Semibold", 12), command=root.destroy,
                    relief=tk.RAISED, cursor="circle")
 
     b4.place(x=150, y=50, height=25, width=100)

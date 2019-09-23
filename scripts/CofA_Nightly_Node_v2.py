@@ -357,13 +357,13 @@ if __name__ == "__main__":  # {
     # AND GET YESTERDAYS DATE BY SUBTRACTING
     time_yesterday = time_start - subtraction_delta
     # SETUP STRING
-    #[2019-09-04]... yesterstr = str(time_yesterday.date())
-    #[2019-09-05]... yesterstr = "2019-08-28"
-    #[2019-09-05]... yesterstr = "2019-09-03"
-    #[2019-09-05]... yesterstr = str(time_yesterday.date())
-    #[2019-09-11]... yesterstr = "2019-09-04"
-    #[2019-09-11]... yesterstr = "2019-09-09"
-    #[2019-09-12]... yesterstr = "2019-09-10"
+    # [2019-09-04]... yesterstr = str(time_yesterday.date())
+    # [2019-09-05]... yesterstr = "2019-08-28"
+    # [2019-09-05]... yesterstr = "2019-09-03"
+    # [2019-09-05]... yesterstr = str(time_yesterday.date())
+    # [2019-09-11]... yesterstr = "2019-09-04"
+    # [2019-09-11]... yesterstr = "2019-09-09"
+    # [2019-09-12]... yesterstr = "2019-09-10"
     yesterstr = str(time_yesterday.date())
     logging.info("YESTERDAY == " 
           + str(yesterstr))
@@ -675,9 +675,9 @@ if __name__ == "__main__":  # {
                 #####################################################
                 # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
                 # [2019-09-12]... agilent_cofa@agilent.com
+                # [2019-09-23]... removed penny & diluka from email
                 send_mail(send_from="derek.bates@non.agilent.com",
-                          send_to=["penny.woodard@agilent.com",
-                                   "diluka.wijesinghe@agilent.com",
+                          send_to=["agilent_cofa@agilent.com",
                                    "derek.bates@non.agilent.com"],
                           subject=str(time_today) + "-F-APPS-CofAs-List",
                           message="See File(s) attached. \n Taken from: \n" + str(Path("F:/APPS/CofAs/")),
@@ -774,9 +774,9 @@ if __name__ == "__main__":  # {
                 #####################################################
                 # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
                 # [2019-09-12]... agilent_cofa@agilent.com
+                # [2019-09-23]... removed penny & diluka from email
                 send_mail(send_from="derek.bates@non.agilent.com",
-                          send_to=["penny.woodard@agilent.com",
-                                   "diluka.wijesinghe@agilent.com",
+                          send_to=["agilent_cofa@agilent.com",
                                    "derek.bates@non.agilent.com"],
                           subject=str(time_today) + "-G-CofA's-Agilent-List",
                           message="See File(s) attached. \n Taken from: \n" + str(Path("G:/C of A's/Agilent/")),
