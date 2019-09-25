@@ -108,15 +108,15 @@ def display_batch_list(file_path):  # {
         ## CHECK FILE TYPE
         file_str = str(file_path)
         # IF EXCEL FILE
-        global batch_df
+        global df_batch
         if fnmatch.fnmatch(file_str, "*.xlsx"):  # {
             logging.info(str(file_str) + " == .EXCEL FILE!")
             # GLOBAL VAR
-            # global batch_df
+            # global df_batch
             # READ IN AS .XLSX
-            batch_df = pd.read_excel(file_path, sheetname=0)
+            df_batch = pd.read_excel(file_path, sheetname=0)
             # FOR EACH PART_NO LISTED IN THE BATCH_FILE:
-            for row in batch_df.itertuples(index=True, name="PART_NO"):  # {
+            for row in df_batch.itertuples(index=True, name="PART_NO"):  # {
                 # INSERT PART_NO
                 Lb1.insert(int(row[0] + 1), str(row[1]))
             # }
@@ -125,11 +125,11 @@ def display_batch_list(file_path):  # {
         elif fnmatch.fnmatch(file_str, "*.csv"):  # {
             logging.info(str(file_str) + " == .CSV FILE!")
             # GLOBAL VAR
-            # global batch_df
+            # global df_batch
             # READ IN AS .CSV
-            batch_df = pd.read_csv(file_path)
+            df_batch = pd.read_csv(file_path)
             # FOR EACH PART_NO LISTED IN BATCH_FILE:
-            for row in batch_df.itertuples(index=True, name="PART_NO"):  # {
+            for row in df_batch.itertuples(index=True, name="PART_NO"):  # {
                 # INSERT PART_NO
                 Lb1.insert(int(row[0] + 1), str(row[1]))
             # }
@@ -185,6 +185,7 @@ def select_zip_folder():  # {
             os.makedirs(new_dir_path)
         # }
         zip_folder = new_dir_path
+        print(str(zip_folder))
         #return
     # }
     except:  # {
@@ -330,12 +331,63 @@ def zip_the_directory(directory_to_zip): #{
 
 def cofa_crate(): #{
     # RE-INSTANTIATE GLOBALS
-    global root, in_directory, out_directory, zip_folder, batch_df
+    global root, in_directory, out_directory, zip_folder, df_batch
     # setup infile variable
     in_file = root.filename
     print("BATCH_LIST: \n" + str(in_file))
     # CREATE DATAFRAME FROM BATCH LIST
-    batch_df = pd.read_csv(in_file, header=None, names=["Lot_No"], enginge='python')
+    df_batch = pd.read_csv(in_file, header=None, names=["Lot_No"], enginge='python')
+    # counter
+    x = 0
+    for lot_no in df_batch.itertuples(): #{
+        print("============= \n" + str(lot_no[1]) + "\n=============")
+        # CHECK AND CREATE NEW DIR PATH
+        new_dir_path = os.path.join(zip_folder, str(lot_no[1]))  # WAS: root.directory
+        # IF 'lot_no' DIRECTORY DOES NOT EXIST:
+        if not os.path.exists(new_dir_path): #{
+            # MAKE IT EXIST!
+            os.makedirs(new_dir_path)
+        #}
+        # CREATE TEMP DIR/FOLDER TO WORK INSIDE OF:
+        with tempfile.TemporaryDirectory() as directory_name: #{
+            the_dir = Path(directory_name)
+            print("TEMP_DIRECTORY == " + str(the_dir))
+            # GLOB AND ITERATE THRU EACH FILE MATCHING NAME... etc
+            for name in sorted(glob.glob(in_directory)
+                               + "*"
+                               + str(lot_no[1])
+                               + "*"): #{
+                # CREATE PATH VARIABLE
+                pdf_path = Path(str(name))
+                # GET BASE NAME (FILE NAME)
+                file_name = os.path.basename(pdf_path)
+                # CREATE TEMP PATH
+                temp_path = os.path.join(the_dir, file_name)
+                # COPY FILE TO NEW LOCATION
+                shutil.copy2(pdf_path, temp_path)
+                # CREATE WATERMARK ON NEW FILE
+                create_watermark(input_pdf=temp_path,
+                                 output=os.path.join(zip_folder, file_name),
+                                 watermark=watermark_pdf)
+                # GET METADATA OF OLD ORIGINAL FILE
+                old_stinfo = os.stat(pdf_path)
+                # INCREASE COUNT
+                x += 1
+            #}
+        #}
+        print("count == " + str(x))
+        print("Directory exists after?", str(the_dir.exists()))
+        print("Contents after: ", str(list(the_dir.glob("*"))))
+        print("told you so")
+    #}
+    """
+    # TRY AND ZIP FOLDER
+    try: #{
+        # path to folder which needs to be zipped
+        directory = zip_dir_path
+        """
+#}
+
 
 """
 Copy/move all files matching creteria into TEMP folder
@@ -343,19 +395,19 @@ Then we zip the contents inside the TEMP folder in out_directory
 """
 def create_custom_crate(): #{
     # RE-INSTANTIATE GLOBALS
-    global root, in_directory, out_directory, zip_folder, batch_df
+    global root, in_directory, out_directory, zip_folder, df_batch
     # setup infile variable
     in_file = root.filename
     print("BATCH_LIST: \n" + str(in_file))
     # CREATE DATAFRAME FROM BATCH LIST
-    batch_df = pd.read_csv(in_file, header=None, names=['Lot_No'], engine='python')
-    print(batch_df.head(5))
+    df_batch = pd.read_csv(in_file, header=None, names=['Lot_No'], engine='python')
+    print(df_batch.head(5))
     # create REGEX variable
     regex_glob = str(in_directory + "*")
     print(regex_glob)
     # TOTAL counter
     x = 0
-    for lot_no in batch_df.itertuples(): #{
+    for lot_no in df_batch.itertuples(): #{
         logging.info("=======" + str(lot_no[1]) + "========")
         # CHECK AND CREATE NEW DIR PATH
         new_dir_path = os.path.join(out_directory, str(lot_no[1]))
@@ -399,14 +451,14 @@ def create_custom_crate(): #{
 # [2019-09-23]... commented out below for fixes
 """
 def custom_cofa_crate():  # {
-    global out_directory, batch_df, root
+    global out_directory, df_batch, root
     logging.info("<<BEGIN CUSTOM_CRATE>>")
     # CREATE INDEX
-    idx = pd.Index(batch_df[0])
+    idx = pd.Index(df_batch[0])
     logging.info(idx)
     index_list = []
     # CREATE INDEX
-    for row in batch_df.itertuples(name='CofA'):  #{
+    for row in df_batch.itertuples(name='CofA'):  #{
         # PDF NAME = PART_NO + LOT_NO
         logging.info(row[0])
         pdf_name = str(row[1] + "@" + row[2] + ".pdf")
@@ -589,7 +641,7 @@ if __name__ == "__main__": #{
     zip_folder = "."
     out_directory = "."
     # create empty dataframe as placeholder
-    batch_df = pd.DataFrame(data=None, columns=None)
+    df_batch = pd.DataFrame(data=None, columns=None)
     ##################################################
     # MAIN APP PROPERTIES
     # root = tk.Tk()
