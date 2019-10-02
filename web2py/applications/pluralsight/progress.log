@@ -5,3 +5,14 @@
 [2019-10-01 10:46:54] CREATE basics/helloworld.html: 0
 [2019-10-01 10:51:20] EDIT pluralsight/views/basics/helloworld.html: 2
 [2019-10-01 10:52:26] EDIT pluralsight/views/basics/helloworld.html: 3
+[2019-10-02 11:29:54] EDIT pluralsight/controllers/basics.py: 7
+[2019-10-02 11:30:48] CREATE basics/request_args.html: 0
+[2019-10-02 11:31:46] CREATE basics/request_object.html: 0
+[2019-10-02 12:59:55] EDIT pluralsight/views/basics/request_args.html: 2
+[2019-10-02 13:30:48] EDIT pluralsight/controllers/basics.py: 9
+[2019-10-02 13:31:50] CREATE basics/request_vars.html: 0
+[2019-10-02 13:47:40] EDIT pluralsight/views/basics/request_vars.html: 7
+[2019-10-02 13:51:31] EDIT pluralsight/controllers/basics.py: 8
+[2019-10-02 15:52:42] EDIT pluralsight/views/basics/request_object.html: 9
+[2019-10-02 15:53:15] EDIT pluralsight/views/basics/request_object.html: 0
+[2019-10-02 16:04:02] EDIT pluralsight/controllers/basics.py: 0
