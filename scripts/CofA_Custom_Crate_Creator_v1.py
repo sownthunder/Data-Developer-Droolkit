@@ -625,8 +625,6 @@ if __name__ == "__main__": #{
     #}
     ##################################################
     # INSTANTIATE GLOBAL VARIABLES
-    root = tk.Tk()
-    b1 = tk.Button(master=root)
     selected_batch_list = False
     selected_zip_folder = False
     e1_var = tk.StringVar()
@@ -644,13 +642,13 @@ if __name__ == "__main__": #{
     df_batch = pd.DataFrame(data=None, columns=None)
     ##################################################
     # MAIN APP PROPERTIES
-    # root = tk.Tk()
+    root = tk.Tk()
     root.title('CofA_Custom_Crate')
     root.geometry('552x282+250+250')
     root.minsize(width=474, height=282)  # WAS: (width=375, height=275)
     root.maxsize(width=552, height=450)  # WAS: (width=False, height=False)
     root.resizable(width=True, height=True)
-
+    b1 = tk.Button(master=root)
     ###########################################################################################
     # TOP FRAME
     topframe = tk.Frame(master=root)
