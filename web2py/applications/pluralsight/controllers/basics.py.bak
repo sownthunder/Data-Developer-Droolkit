@@ -17,7 +17,7 @@ def request_args():
     return locals()
 
 def request_object():
-    args = request.application
+    app = request.application
     cntr = request.controller
     fx = request.function
     ext = request.extension
