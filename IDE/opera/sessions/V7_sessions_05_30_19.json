@@ -1,0 +1,740 @@
+[
+    {
+        "expDataType": "V7 Sessions2"
+    },
+    {
+        "date": "5/25/2019, 9:24:18 PM",
+        "id": "1558833858714",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "My Drive - Google Drive",
+                    "url": "https://drive.google.com/drive/my-drive"
+                }
+            ],
+            [
+                {
+                    "title": "Python Example",
+                    "url": "https://www.programcreek.com/python/"
+                }
+            ]
+        ]
+    },
+    {
+        "date": "5/25/2019, 9:25:16 PM",
+        "id": "1558833916244",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "My Drive - Google Drive",
+                    "url": "https://drive.google.com/drive/my-drive"
+                }
+            ],
+            [
+                {
+                    "title": "Non blocking wait in selenium using Python - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/non-blocking-wait-in-selenium-using-python/"
+                },
+                {
+                    "title": "Simple Keyboard Racing with Python - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/simple-keyboard-racing-with-python/"
+                },
+                {
+                    "title": "Python Programming Language - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-language/"
+                },
+                {
+                    "title": "Desktop Notifier in Python - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/desktop-notifier-python/"
+                },
+                {
+                    "title": "Design a Keylogger in Python - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/design-a-keylogger-in-python/"
+                },
+                {
+                    "title": "Flask - (Creating first simple application) - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/flask-creating-first-simple-application/"
+                },
+                {
+                    "title": "Conway's Game Of Life (Python Implementation) - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/conways-game-life-python-implementation/"
+                },
+                {
+                    "title": "Python | Get a google map image of specified location using Google Static Maps API - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-get-google-map-image-specified-location-using-google-static-maps-api/"
+                },
+                {
+                    "title": "Python Example",
+                    "url": "https://www.programcreek.com/python/"
+                },
+                {
+                    "title": "Python | after method in Tkinter - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-after-method-in-tkinter/"
+                },
+                {
+                    "title": "V7 Sessions Settings",
+                    "url": "chrome-extension://khmbgihnlknbjgjhmekjeoidpfimabpp/options.html"
+                }
+            ]
+        ]
+    },
+    {
+        "date": "5/27/2019, 1:51:14 PM",
+        "id": "1558979236655",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "Python 3 Sending Email using SMTP",
+                    "url": "https://www.tutorialspoint.com/python3/python_sending_email.htm"
+                },
+                {
+                    "title": "Python 3 Multithreaded Programming",
+                    "url": "https://www.tutorialspoint.com/python3/python_multithreading.htm"
+                },
+                {
+                    "title": "Design a Keylogger in Python - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/design-a-keylogger-in-python/"
+                },
+                {
+                    "title": "How to make a simple and powerfull python keylogger",
+                    "url": "https://geekviews.tech/how-to-make-a-simple-and-powerfull-python-keylogger/"
+                },
+                {
+                    "title": "Microsoft SQL Server — SQLAlchemy 1.3 Documentation",
+                    "url": "https://docs.sqlalchemy.org/en/13/dialects/mssql.html#pass-through-exact-pyodbc-string"
+                },
+                {
+                    "title": "Engine Configuration — SQLAlchemy 1.3 Documentation",
+                    "url": "https://docs.sqlalchemy.org/en/13/core/engines.html#microsoft-sql-server"
+                },
+                {
+                    "title": "Working with Engines and Connections — SQLAlchemy 1.3 Documentation",
+                    "url": "https://docs.sqlalchemy.org/en/13/core/connections.html#"
+                },
+                {
+                    "title": "SQLite — SQLAlchemy 1.3 Documentation",
+                    "url": "https://docs.sqlalchemy.org/en/13/dialects/sqlite.html"
+                },
+                {
+                    "title": "Golang Programming Examples",
+                    "url": "https://www.tutorialspoint.com/golang_programming_examples/"
+                },
+                {
+                    "title": "Design a Keylogger in Python",
+                    "url": "https://www.tutorialspoint.com/design-a-keylogger-in-python"
+                },
+                {
+                    "title": "Settings - dbates117@gmail.com - Gmail",
+                    "url": "https://mail.google.com/mail/u/0/#settings/fwdandpop"
+                },
+                {
+                    "title": "Use IMAP to check Gmail on other email clients - Gmail Help",
+                    "url": "https://support.google.com/mail/answer/7126229?visit_id=636945474743730996-2049148017&hl=en&rd=1"
+                }
+            ],
+            [
+                {
+                    "title": "Conway's Game Of Life (Python Implementation) - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/conways-game-life-python-implementation/"
+                },
+                {
+                    "title": "Search results · PyPI",
+                    "url": "https://pypi.org/search/?q=&o=&c=Topic+%3A%3A+Games%2FEntertainment"
+                },
+                {
+                    "title": "Dashboard :: Anaconda Cloud",
+                    "url": "https://anaconda.org/babypoopsoup/dashboard"
+                },
+                {
+                    "title": "Working with notebooks — Anaconda 2.0 documentation",
+                    "url": "http://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-notebooks/"
+                },
+                {
+                    "title": "Getting started — Anaconda 2.0 documentation",
+                    "url": "http://docs.anaconda.com/anaconda-cloud/user-guide/getting-started/#finding-downloading-and-installing-packages"
+                },
+                {
+                    "title": "Package repository for babypoopsoup :: Anaconda Cloud",
+                    "url": "https://anaconda.org/babypoopsoup/repo"
+                },
+                {
+                    "title": "V7 Sessions Settings",
+                    "url": "chrome-extension://khmbgihnlknbjgjhmekjeoidpfimabpp/options.html"
+                },
+                {
+                    "title": "V7 Extension Manager",
+                    "url": "chrome-extension://mhckaeojpndkpchffabjhnkeiildpjhg/options.html"
+                },
+                {
+                    "title": "V7 Stash Settings",
+                    "url": "chrome-extension://gjcfmfokccpieoonenflmcacfbdhbdck/options.html"
+                }
+            ],
+            [
+                {
+                    "title": "Fresh tutorial on tkinter and ttk for Python 3 - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/6865792/fresh-tutorial-on-tkinter-and-ttk-for-python-3"
+                },
+                {
+                    "title": "How to Work With PDF Documents Using Python",
+                    "url": "https://code.tutsplus.com/tutorials/how-to-work-with-pdf-documents-using-python--cms-25726"
+                },
+                {
+                    "title": "Python | Introduction to Web development using Flask - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-introduction-to-web-development-using-flask/"
+                },
+                {
+                    "title": "Tutorial — Pillow (PIL Fork) 6.0.0 documentation",
+                    "url": "https://pillow.readthedocs.io/en/stable/handbook/tutorial.html"
+                },
+                {
+                    "title": "anaconda - Python Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.dll - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/54453060/python-intel-mkl-fatal-error-cannot-load-mkl-intel-thread-dll"
+                },
+                {
+                    "title": "Troubleshooting — conda 4.7.0.post7+18c4e5dc documentation",
+                    "url": "https://conda.io/projects/conda/en/latest/user-guide/troubleshooting.html#numpy-mkl-library-load-failed"
+                },
+                {
+                    "title": "Step 1: Configure pyodbc Python development environment - SQL Server | Microsoft Docs",
+                    "url": "https://docs.microsoft.com/en-us/sql/connect/python/pyodbc/step-1-configure-development-environment-for-pyodbc-python-development?view=sql-server-2017"
+                },
+                {
+                    "title": "How to Work With a PDF in Python – Real Python",
+                    "url": "https://realpython.com/pdf-python/"
+                }
+            ],
+            [
+                {
+                    "title": "Python Programming Language - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-language/"
+                },
+                {
+                    "title": "Python program to convert time from 12 hour to 24 hour format - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-program-convert-time-12-hour-24-hour-format/"
+                },
+                {
+                    "title": "Python | Program to crawl a web page and get most frequent words - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-program-crawl-web-page-get-frequent-words/"
+                },
+                {
+                    "title": "Creating a Proxy Webserver in Python | Set 1 - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/creating-a-proxy-webserver-in-python-set-1/"
+                },
+                {
+                    "title": "sqlite3 — DB-API 2.0 interface for SQLite databases — Python 3.7.3 documentation",
+                    "url": "https://docs.python.org/3/library/sqlite3.html"
+                },
+                {
+                    "title": "Python 3 Tkinter tkMessageBox",
+                    "url": "https://www.tutorialspoint.com/python3/tk_messagebox.htm"
+                },
+                {
+                    "title": "Python ascii() Function",
+                    "url": "https://www.w3schools.com/python/ref_func_ascii.asp"
+                }
+            ]
+        ]
+    },
+    {
+        "date": "5/28/2019, 4:48:16 PM",
+        "id": "1559076496400",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "_AGILENT - Google Drive",
+                    "url": "https://drive.google.com/drive/folders/1vOlu9wBtNcERfQyoZ3M6VJpVqsodbn8M"
+                },
+                {
+                    "title": "052019 - Google Sheets",
+                    "url": "https://docs.google.com/spreadsheets/d/1QQp4vHGxzkBRkX3fn4vJrR2EpJSTFGDEhviAgo4e_OU/edit#gid=356057581"
+                },
+                {
+                    "title": "Python Database Programming: SQLite (tutorial) - Python Tutorial",
+                    "url": "https://pythonspot.com/python-database-programming-sqlite-tutorial/"
+                },
+                {
+                    "title": "Python Tutorials - Data to Fish",
+                    "url": "https://datatofish.com/python-tutorials/"
+                },
+                {
+                    "title": "How to convert pandas DataFrame into a List - Data to Fish",
+                    "url": "https://datatofish.com/convert-pandas-dataframe-to-list/"
+                },
+                {
+                    "title": "Add New Column to Pandas DataFrame using Assign - Data to Fish",
+                    "url": "https://datatofish.com/add-column-dataframe/"
+                },
+                {
+                    "title": "How to Compare Values in two Pandas DataFrames - Data to Fish",
+                    "url": "https://datatofish.com/compare-values-dataframes/"
+                },
+                {
+                    "title": "How to Join Pandas DataFrames using Merge - Data to Fish",
+                    "url": "https://datatofish.com/join-pandas-dataframes-merge/"
+                }
+            ],
+            [
+                {
+                    "title": "Python | Data Comparison and Selection in Pandas - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-data-comparison-and-selection-in-pandas/"
+                },
+                {
+                    "title": "Python | Print all the common elements of two lists - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-print-common-elements-two-lists/"
+                },
+                {
+                    "title": "Python | Delete rows/columns from DataFrame using Pandas.drop() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-delete-rows-columns-from-dataframe-using-pandas-drop/"
+                },
+                {
+                    "title": "Python | Pandas DataFrame - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe/#Basics4"
+                },
+                {
+                    "title": "Python | Pandas DataFrame.isin() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe-isin/"
+                },
+                {
+                    "title": "Python | Pandas Dataframe.pop() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe-pop/"
+                },
+                {
+                    "title": "Python | Merge, Join and Concatenate DataFrames using Panda - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-merge-join-and-concatenate-dataframes-using-panda/"
+                },
+                {
+                    "title": "Iterating over rows and columns in Pandas DataFrame - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/iterating-over-rows-and-columns-in-pandas-dataframe/"
+                }
+            ]
+        ]
+    },
+    {
+        "date": "5/29/2019, 10:47:53 AM",
+        "id": "1559141273201",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "_AGILENT - Google Drive",
+                    "url": "https://drive.google.com/drive/folders/1vOlu9wBtNcERfQyoZ3M6VJpVqsodbn8M"
+                },
+                {
+                    "title": "Python Tutorials - Python Tutorial",
+                    "url": "https://pythonspot.com/"
+                },
+                {
+                    "title": "Add New Column to Pandas DataFrame using Assign - Data to Fish",
+                    "url": "https://datatofish.com/add-column-dataframe/"
+                },
+                {
+                    "title": "How to Compare Values in two Pandas DataFrames - Data to Fish",
+                    "url": "https://datatofish.com/compare-values-dataframes/"
+                },
+                {
+                    "title": "How to Join Pandas DataFrames using Merge - Data to Fish",
+                    "url": "https://datatofish.com/join-pandas-dataframes-merge/"
+                },
+                {
+                    "title": "Python | Pandas Index.contains() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-index-contains/"
+                },
+                {
+                    "title": "Python | Pandas DataFrame - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe/"
+                },
+                {
+                    "title": "Python | Pandas Merging, Joining, and Concatenating - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-merging-joining-and-concatenating/"
+                },
+                {
+                    "title": "Python | Pandas dataframe.add() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe-add/"
+                },
+                {
+                    "title": "Python | Pandas DataFrame.where() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe-where/"
+                },
+                {
+                    "title": "Python Programs Archives - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/category/python-programs/"
+                },
+                {
+                    "title": "Python 3 Date and Time",
+                    "url": "https://www.tutorialspoint.com/python3/python_date_time.htm"
+                },
+                {
+                    "title": "Python Pandas Tutorial 2a - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/python-pandas-tutorial-2a/"
+                },
+                {
+                    "title": "Difference between two Timestamps in Seconds, Minutes, hours in Pandas python - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/difference-two-timestamps-seconds-minutes-hours-pandas-python-2/"
+                },
+                {
+                    "title": "Difference between two dates in days , weeks, Months and years in Pandas python - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/difference-two-dates-days-weeks-months-years-pandas-python-2/"
+                },
+                {
+                    "title": "Python Pandas Tutorial 2 - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/python-pandas-tutorial-2/"
+                },
+                {
+                    "title": "pandas.Timestamp — pandas 0.24.2 documentation",
+                    "url": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html"
+                },
+                {
+                    "title": "How to Work With a PDF in Python – Real Python",
+                    "url": "https://realpython.com/pdf-python/"
+                },
+                {
+                    "title": "python - How to compare two dates? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/8142364/how-to-compare-two-dates"
+                }
+            ],
+            [
+                {
+                    "title": "SDS_list_corrections",
+                    "url": "http://localhost:8888/notebooks/jupyter/SDS_list_corrections.ipynb#"
+                }
+            ],
+            [
+                {
+                    "title": "_PDOC/",
+                    "url": "http://localhost:8888/tree/_PDOC"
+                },
+                {
+                    "title": "CofA_03_23_2019",
+                    "url": "http://localhost:8888/notebooks/jupyter/CofA_03_23_2019.ipynb#"
+                }
+            ],
+            [
+                {
+                    "title": "pandas-cheat-sheet",
+                    "url": "http://localhost:8888/notebooks/_PDOC/pandas-cheat-sheet.ipynb"
+                },
+                {
+                    "title": "Iterating over rows and columns in Pandas DataFrame - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/iterating-over-rows-and-columns-in-pandas-dataframe/"
+                },
+                {
+                    "title": "Python | Merge, Join and Concatenate DataFrames using Panda - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-merge-join-and-concatenate-dataframes-using-panda/"
+                },
+                {
+                    "title": "Python | Pandas Dataframe.pop() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe-pop/"
+                },
+                {
+                    "title": "Python | Pandas DataFrame.isin() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe-isin/"
+                },
+                {
+                    "title": "Python | Pandas DataFrame - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-dataframe/#Basics4"
+                },
+                {
+                    "title": "Python | Delete rows/columns from DataFrame using Pandas.drop() - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-delete-rows-columns-from-dataframe-using-pandas-drop/"
+                },
+                {
+                    "title": "How To Convert Timestamp To Date and Time in Python - Code Example",
+                    "url": "https://timestamp.online/article/how-to-convert-timestamp-to-datetime-in-python"
+                },
+                {
+                    "title": "time — Time access and conversions — Python 3.7.3 documentation",
+                    "url": "https://docs.python.org/3/library/time.html#time.ctime"
+                },
+                {
+                    "title": "Python Pandas Tutorial - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/python-pandas-tutorial/"
+                },
+                {
+                    "title": "Python Programming Language - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-language/"
+                },
+                {
+                    "title": "Python Programming Examples - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-examples/"
+                },
+                {
+                    "title": "How To Convert Timestamp To Date and Time in Python - Code Example",
+                    "url": "http://timestamp.online/article/how-to-convert-timestamp-to-datetime-in-python"
+                },
+                {
+                    "title": "How To Get Current Timestamp In Python - Code Example",
+                    "url": "http://timestamp.online/article/how-to-get-current-timestamp-in-python"
+                },
+                {
+                    "title": "python - pandas filtering and comparing dates - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/36104500/pandas-filtering-and-comparing-dates"
+                },
+                {
+                    "title": "Python | Working with date and time using Pandas - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-working-with-date-and-time-using-pandas/"
+                },
+                {
+                    "title": "Python | Pandas Timestamp.time - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timestamp-time/"
+                },
+                {
+                    "title": "Python | Pandas Timestamp.date - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timestamp-date/"
+                },
+                {
+                    "title": "Time Functions in Python | Set-2 (Date Manipulations) - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/time-functions-python-set-2-date-manipulations/"
+                }
+            ]
+        ]
+    },
+    {
+        "date": "5/29/2019, 3:52:09 PM",
+        "id": "1559159529741",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "How to get file creation & modification date/times in Python? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/237079/how-to-get-file-creation-modification-date-times-in-python"
+                },
+                {
+                    "title": "Python Programming Language - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-language/"
+                },
+                {
+                    "title": "Python Programming Examples - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-examples/"
+                },
+                {
+                    "title": "How To Get Current Timestamp In Python - Code Example",
+                    "url": "https://timestamp.online/article/how-to-get-current-timestamp-in-python"
+                },
+                {
+                    "title": "How To Convert Timestamp To Date and Time in Python - Code Example",
+                    "url": "http://timestamp.online/article/how-to-convert-timestamp-to-datetime-in-python"
+                },
+                {
+                    "title": "pandas.Timestamp — pandas 0.24.2 documentation",
+                    "url": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html"
+                },
+                {
+                    "title": "Python | Pandas Timedelta.delta - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timedelta-delta/"
+                },
+                {
+                    "title": "How To Get Current Timestamp In Python - Code Example",
+                    "url": "http://timestamp.online/article/how-to-get-current-timestamp-in-python"
+                },
+                {
+                    "title": "Python | Pandas PeriodIndex.day - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-periodindex-day/"
+                },
+                {
+                    "title": "Python | Working with date and time using Pandas - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-working-with-date-and-time-using-pandas/"
+                },
+                {
+                    "title": "Send Outlook Email Via Python? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/6332577/send-outlook-email-via-python"
+                },
+                {
+                    "title": "How to get file creation & modification date/times in Python? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/237079/how-to-get-file-creation-modification-date-times-in-python"
+                },
+                {
+                    "title": "Working with date and time python - IdiotInside.com",
+                    "url": "https://www.idiotinside.com/2015/03/14/working-with-date-and-time-python-892/"
+                }
+            ]
+        ]
+    },
+    {
+        "date": "5/30/2019, 3:35:54 PM",
+        "id": "1559244954432",
+        "title": "",
+        "windows": [
+            [
+                {
+                    "title": "EXE - Google Drive",
+                    "url": "https://drive.google.com/drive/folders/1smwDhJOe9foA4V6EFR7AlDjstSODucO7"
+                },
+                {
+                    "title": "Python Tutorials - Python Tutorial",
+                    "url": "https://pythonspot.com/"
+                },
+                {
+                    "title": "Time Functions in Python | Set-2 (Date Manipulations) - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/time-functions-python-set-2-date-manipulations/"
+                },
+                {
+                    "title": "Python | Pandas Timestamp.time - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timestamp-time/"
+                },
+                {
+                    "title": "Python | Pandas Timestamp.date - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timestamp-date/"
+                },
+                {
+                    "title": "Difference between two Timestamps in Seconds, Minutes, hours in Pandas python - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/difference-two-timestamps-seconds-minutes-hours-pandas-python-2/"
+                },
+                {
+                    "title": "Difference between two dates in days , weeks, Months and years in Pandas python - DataScience Made Simple",
+                    "url": "http://www.datasciencemadesimple.com/difference-two-dates-days-weeks-months-years-pandas-python-2/"
+                },
+                {
+                    "title": "python - How to compare two dates? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/8142364/how-to-compare-two-dates"
+                },
+                {
+                    "title": "How to Work With a PDF in Python – Real Python",
+                    "url": "https://realpython.com/pdf-python/"
+                },
+                {
+                    "title": "watchdog · PyPI",
+                    "url": "https://pypi.org/project/watchdog/"
+                },
+                {
+                    "title": "Envelopes · PyPI",
+                    "url": "https://pypi.org/project/Envelopes/"
+                },
+                {
+                    "title": "tomekwojcik/envelopes: Mailing for human beings",
+                    "url": "https://github.com/tomekwojcik/envelopes"
+                },
+                {
+                    "title": "Flask Web App with Python (beginners tutorial) - Python Tutorial",
+                    "url": "https://pythonspot.com/flask-web-app-with-python/"
+                },
+                {
+                    "title": "(71) How to Send Emails Using Python - Plain Text, Adding Attachments, HTML Emails, and More - YouTube",
+                    "url": "https://www.youtube.com/watch?v=JRCJ6RtE3xU"
+                }
+            ],
+            [
+                {
+                    "title": "jupyter/",
+                    "url": "http://localhost:8888/tree/jupyter"
+                },
+                {
+                    "title": "How To Get Current Timestamp In Python - Code Example",
+                    "url": "https://timestamp.online/article/how-to-get-current-timestamp-in-python"
+                },
+                {
+                    "title": "How To Convert Timestamp To Date and Time in Python - Code Example",
+                    "url": "http://timestamp.online/article/how-to-convert-timestamp-to-datetime-in-python"
+                },
+                {
+                    "title": "How To Get Current Timestamp In Python - Code Example",
+                    "url": "http://timestamp.online/article/how-to-get-current-timestamp-in-python"
+                },
+                {
+                    "title": "Send Outlook Email Via Python? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/6332577/send-outlook-email-via-python"
+                },
+                {
+                    "title": "How to get file creation & modification date/times in Python? - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/237079/how-to-get-file-creation-modification-date-times-in-python"
+                },
+                {
+                    "title": "Working with date and time python - IdiotInside.com",
+                    "url": "https://www.idiotinside.com/2015/03/14/working-with-date-and-time-python-892/"
+                },
+                {
+                    "title": "Flask Web App with Python (beginners tutorial) - Python Tutorial",
+                    "url": "https://pythonspot.com/flask-web-app-with-python/"
+                },
+                {
+                    "title": "Sending Emails With Python – Real Python",
+                    "url": "https://realpython.com/python-send-email/"
+                },
+                {
+                    "title": "Envelopes — Envelopes 0.4 documentation",
+                    "url": "https://tomekwojcik.github.io/envelopes/"
+                },
+                {
+                    "title": "Envelopes — Envelopes 0.4 documentation",
+                    "url": "https://tomekwojcik.github.io/envelopes/index.html"
+                },
+                {
+                    "title": "Send Emails Using Python",
+                    "url": "https://www.freecodecamp.org/news/send-emails-using-code-4fcea9df63f/"
+                }
+            ],
+            [
+                {
+                    "title": "SDS_list_corrections",
+                    "url": "http://localhost:8888/notebooks/jupyter/SDS_list_corrections.ipynb"
+                }
+            ],
+            [
+                {
+                    "title": "WebDriver: Advanced Usage — Selenium Documentation",
+                    "url": "https://www.seleniumhq.org/docs/04_webdriver_advanced.jsp"
+                },
+                {
+                    "title": "Selenium Client Driver — Selenium 3.14 documentation",
+                    "url": "https://seleniumhq.github.io/selenium/docs/api/py/index.html"
+                },
+                {
+                    "title": "POP and IMAP account settings - Outlook",
+                    "url": "https://support.office.com/en-us/article/pop-and-imap-account-settings-cb41d2b8-98cb-4ab2-ad60-218349f37e2e?redirectSourcePath=%252fen-us%252farticle%252fPOP-and-IMAP-settings-for-Outlook-Office-365-for-business-7fc677eb-2491-4cbc-8153-8e7113525f6c&ui=en-US&rs=en-US&ad=US"
+                },
+                {
+                    "title": "POP and IMAP email settings for Outlook - Office Support",
+                    "url": "https://support.office.com/en-us/article/pop-and-imap-email-settings-for-outlook-8361e398-8af4-4e97-b147-6c6c4ac95353"
+                },
+                {
+                    "title": "Using Python to Send Email",
+                    "url": "https://www.pythonforbeginners.com/code-snippets-source-code/using-python-to-send-email"
+                },
+                {
+                    "title": "How to send email with smtplib in Python with outlook account - Stack Overflow",
+                    "url": "https://stackoverflow.com/questions/53312557/how-to-send-email-with-smtplib-in-python-with-outlook-account"
+                },
+                {
+                    "title": "Selenium with Python — Selenium Python Bindings 2 documentation",
+                    "url": "https://selenium-python.readthedocs.io/"
+                },
+                {
+                    "title": "smtplib — SMTP protocol client — Python 3.7.3 documentation",
+                    "url": "https://docs.python.org/3/library/smtplib.html"
+                },
+                {
+                    "title": "Screenshot Functions — PyAutoGUI 1.0.0 documentation",
+                    "url": "https://pyautogui.readthedocs.io/en/latest/screenshot.html"
+                },
+                {
+                    "title": "Python Programming Language - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-language/"
+                },
+                {
+                    "title": "Python Programming Examples - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-programming-examples/"
+                },
+                {
+                    "title": "Python | Pandas Timedelta.delta - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timedelta-delta/"
+                },
+                {
+                    "title": "Python | Pandas PeriodIndex.day - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-periodindex-day/"
+                },
+                {
+                    "title": "Python | Working with date and time using Pandas - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-working-with-date-and-time-using-pandas/"
+                },
+                {
+                    "title": "Python | Pandas Timestamp.today - GeeksforGeeks",
+                    "url": "https://www.geeksforgeeks.org/python-pandas-timestamp-today/"
+                }
+            ]
+        ]
+    }
+]

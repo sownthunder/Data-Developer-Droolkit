@@ -1,0 +1,286 @@
+{
+    "expDataType": "V7_Stash",
+    "version": "1.0",
+    "data": [
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "list Python Example",
+            "u": "https://www.programcreek.com/python/index/module/list",
+            "v": 1558551961835
+        },
+        {
+            "i": "https://assets.readthedocs.org/sustainability/powerfulpython/powerfulpython1.jpg",
+            "p": 0,
+            "t": "Cheat Sheet — PyAutoGUI 1.0.0 documentation",
+            "u": "https://pyautogui.readthedocs.io/en/latest/cheatsheet.html",
+            "v": 1558555787444
+        },
+        {
+            "i": "https://spoprod-a.akamaihd.net/files/odsp-next-prod_2019-05-03_20190517.001/odsp-media/images/guidedtour/rocket_3_steps_completed.svg",
+            "p": 1,
+            "t": "Issues and Fixes - OneDrive",
+            "u": "https://agilent-my.sharepoint.com/personal/michael_labreche_agilent_com/_layouts/15/onedrive.aspx?id=%2fpersonal%2fmichael_labreche_agilent_com%2fDocuments%2fIssues+and+Fixes&FolderCTID=0x01200039F7AA444A68894A99F970200B44A27E",
+            "v": 1558556811386
+        },
+        {
+            "i": "https://www.bing.com/sa/simg/bing_p_rr_teal_min.ico",
+            "p": 0,
+            "t": "python3 db api - Bing",
+            "u": "https://www.bing.com/search?q=python3+db+api&form=OPRTSD&pc=OPER",
+            "v": 1558556817951
+        },
+        {
+            "i": "https://avatars3.githubusercontent.com/u/27421?s=400&v=4",
+            "p": 1,
+            "t": "Cursor · mkleehammer/pyodbc Wiki",
+            "u": "https://github.com/mkleehammer/pyodbc/wiki/Cursor",
+            "v": 1558556830624
+        },
+        {
+            "i": "https://avatars3.githubusercontent.com/u/27421?s=400&v=4",
+            "p": 1,
+            "t": "Features beyond the DB API · mkleehammer/pyodbc Wiki",
+            "u": "https://github.com/mkleehammer/pyodbc/wiki/Features-beyond-the-DB-API#fetchval",
+            "v": 1558556834270
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "Python Example",
+            "u": "https://www.programcreek.com/python/",
+            "v": 1558556948872
+        },
+        {
+            "i": "https://rakutenmarketing.com/wp-content/themes/marketing-rakuten/assets/images/rakuten-marketing-stacked.png",
+            "p": 0,
+            "t": "Tkinter tkFileDialog module - Python Tutorial",
+            "u": "https://pythonspot.com/tk-file-dialogs/",
+            "v": 1558557607028
+        },
+        {
+            "i": "https://www.tutorialspoint.com/sql/images/sql-architecture.jpg",
+            "p": 0,
+            "t": "SQL Quick Guide",
+            "u": "https://www.tutorialspoint.com/sql/sql-quick-guide.htm",
+            "v": 1558558658656
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 0,
+            "t": "pandas: powerful Python data analysis toolkit — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/index.html",
+            "v": 1558616539239
+        },
+        {
+            "i": "https://docs.sqlalchemy.org/en/13/_images/sqla_engine_arch.png",
+            "p": 0,
+            "t": "Engine Configuration — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/core/engines.html",
+            "v": 1558621793437
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 1,
+            "t": "pandas.read_sql — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql.html",
+            "v": 1558621849556
+        },
+        {
+            "i": "https://www.sqlalchemy.org/favicon.ico",
+            "p": 1,
+            "t": "Microsoft SQL Server — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/dialects/mssql.html",
+            "v": 1558621948443
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "sqlalchemy.create_engine Python Example",
+            "u": "https://www.programcreek.com/python/example/4713/sqlalchemy.create_engine",
+            "v": 1558628808958
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 0,
+            "t": "DataFrame — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/frame.html",
+            "v": 1558632800920
+        },
+        {
+            "i": "https://agilent-my.sharepoint.com/_layouts/15/images/odbfavicon.ico?rev=47",
+            "p": 0,
+            "t": "_staging - OneDrive",
+            "u": "https://agilent-my.sharepoint.com/personal/derek_bates_non_agilent_com/_layouts/15/onedrive.aspx?id=%2fpersonal%2fderek_bates_non_agilent_com%2fDocuments%2fDocuments%2f_staging&FolderCTID=0x012000AA20341D361FC448B13302E6B5B9BDD9",
+            "v": 1558632885565
+        },
+        {
+            "i": "https://www.sqlalchemy.org/img/podcast_2015.png",
+            "p": 0,
+            "t": "Library - SQLAlchemy",
+            "u": "https://www.sqlalchemy.org/library.html",
+            "v": 1558635865620
+        },
+        {
+            "i": "https://www.python.org/static/opengraph-icon-200x200.png",
+            "p": 0,
+            "t": "PEP 249 -- Python Database API Specification v2.0 | Python.org",
+            "u": "https://www.python.org/dev/peps/pep-0249/",
+            "v": 1558636522834
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "sqlite3.Row Python Example",
+            "u": "https://www.programcreek.com/python/example/3926/sqlite3.Row",
+            "v": 1558640425087
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "sqlite3.Cursor Python Example",
+            "u": "https://www.programcreek.com/python/example/51789/sqlite3.Cursor",
+            "v": 1558640427784
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "sqlite3.connect Python Example",
+            "u": "https://www.programcreek.com/python/example/418/sqlite3.connect",
+            "v": 1558640431326
+        },
+        {
+            "i": "https://docs.python.org/3/_static/py.png",
+            "p": 0,
+            "t": "sqlite3 — DB-API 2.0 interface for SQLite databases — Python 3.7.3 documentation",
+            "u": "https://docs.python.org/3/library/sqlite3.html",
+            "v": 1558640434969
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 0,
+            "t": "pandas.read_sql_table — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table",
+            "v": 1558640443324
+        },
+        {
+            "t": "Python 3 while Loop Statements",
+            "u": "https://www.tutorialspoint.com/python3/python_while_loop.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python_while_loop.jpg",
+            "v": 1558642419796,
+            "p": 1
+        },
+        {
+            "t": "Python 3 Multithreaded Programming",
+            "u": "https://www.tutorialspoint.com/python3/python_multithreading.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642508624,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Sending Email using SMTP",
+            "u": "https://www.tutorialspoint.com/python3/python_sending_email.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642512292,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Networking Programming",
+            "u": "https://www.tutorialspoint.com/python3/python_networking.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642515587,
+            "p": 0
+        },
+        {
+            "t": "Python 3 GUI Programming (Tkinter)",
+            "u": "https://www.tutorialspoint.com/python3/python_gui_programming.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/tkwindow.jpg",
+            "v": 1558642519657,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Quick Guide",
+            "u": "https://www.tutorialspoint.com/python3/python_quick_guide.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/tkwindow.jpg",
+            "v": 1558642523377,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Tools/Utilities",
+            "u": "https://www.tutorialspoint.com/python3/python_tools_utilities.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642526204,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Dictionary",
+            "u": "https://www.tutorialspoint.com/python3/python_dictionary.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642529273,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Date and Time",
+            "u": "https://www.tutorialspoint.com/python3/python_date_time.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642532378,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Files I/O",
+            "u": "https://www.tutorialspoint.com/python3/python_files_io.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642535315,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Basic Syntax",
+            "u": "https://www.tutorialspoint.com/python3/python_basic_syntax.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642538498,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Environment Setup",
+            "u": "https://www.tutorialspoint.com/python3/python_environment.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642542000,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Loops",
+            "u": "https://www.tutorialspoint.com/python3/python_loops.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/loop_architecture.jpg",
+            "v": 1558642607071,
+            "p": 1
+        },
+        {
+            "t": "Python 3 nested loops",
+            "u": "https://www.tutorialspoint.com/python3/python_nested_loops.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "v": 1558642623804,
+            "p": 0
+        },
+        {
+            "t": "Python 3 for Loop Statements",
+            "u": "https://www.tutorialspoint.com/python3/python_for_loop.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/python_for_loop.jpg",
+            "v": 1558642643712,
+            "p": 1
+        },
+        {
+            "t": "Downloads - ChromeDriver - WebDriver for Chrome",
+            "u": "https://sites.google.com/a/chromium.org/chromedriver/downloads",
+            "i": "https://www.google.com/images/icons/product/sites-16.ico",
+            "v": 1558643557604,
+            "p": 0
+        },
+        {
+            "t": "https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/",
+            "u": "https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/",
+            "i": "../img/def.png",
+            "v": 1558643561803,
+            "p": 0
+        }
+    ]
+}

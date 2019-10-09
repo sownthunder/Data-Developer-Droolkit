@@ -1,0 +1,1217 @@
+{
+    "expDataType": "V7_Stash",
+    "version": "1.0",
+    "data": [
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "list Python Example",
+            "u": "https://www.programcreek.com/python/index/module/list",
+            "v": 1558551961835
+        },
+        {
+            "i": "https://assets.readthedocs.org/sustainability/powerfulpython/powerfulpython1.jpg",
+            "p": 1,
+            "t": "Cheat Sheet — PyAutoGUI 1.0.0 documentation",
+            "u": "https://pyautogui.readthedocs.io/en/latest/cheatsheet.html",
+            "v": 1558555787444
+        },
+        {
+            "i": "https://spoprod-a.akamaihd.net/files/odsp-next-prod_2019-05-03_20190517.001/odsp-media/images/guidedtour/rocket_3_steps_completed.svg",
+            "p": 1,
+            "t": "Issues and Fixes - OneDrive",
+            "u": "https://agilent-my.sharepoint.com/personal/michael_labreche_agilent_com/_layouts/15/onedrive.aspx?id=%2fpersonal%2fmichael_labreche_agilent_com%2fDocuments%2fIssues+and+Fixes&FolderCTID=0x01200039F7AA444A68894A99F970200B44A27E",
+            "v": 1558556811386
+        },
+        {
+            "i": "https://www.bing.com/sa/simg/bing_p_rr_teal_min.ico",
+            "p": 0,
+            "t": "python3 db api - Bing",
+            "u": "https://www.bing.com/search?q=python3+db+api&form=OPRTSD&pc=OPER",
+            "v": 1558556817951
+        },
+        {
+            "i": "https://avatars3.githubusercontent.com/u/27421?s=400&v=4",
+            "p": 1,
+            "t": "Cursor · mkleehammer/pyodbc Wiki",
+            "u": "https://github.com/mkleehammer/pyodbc/wiki/Cursor",
+            "v": 1558556830624
+        },
+        {
+            "i": "https://avatars3.githubusercontent.com/u/27421?s=400&v=4",
+            "p": 1,
+            "t": "Features beyond the DB API · mkleehammer/pyodbc Wiki",
+            "u": "https://github.com/mkleehammer/pyodbc/wiki/Features-beyond-the-DB-API#fetchval",
+            "v": 1558556834270
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "Python Example",
+            "u": "https://www.programcreek.com/python/",
+            "v": 1558556948872
+        },
+        {
+            "i": "https://rakutenmarketing.com/wp-content/themes/marketing-rakuten/assets/images/rakuten-marketing-stacked.png",
+            "p": 1,
+            "t": "Tkinter tkFileDialog module - Python Tutorial",
+            "u": "https://pythonspot.com/tk-file-dialogs/",
+            "v": 1558557607028
+        },
+        {
+            "i": "https://www.tutorialspoint.com/sql/images/sql-architecture.jpg",
+            "p": 0,
+            "t": "SQL Quick Guide",
+            "u": "https://www.tutorialspoint.com/sql/sql-quick-guide.htm",
+            "v": 1558558658656
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 0,
+            "t": "pandas: powerful Python data analysis toolkit — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/index.html",
+            "v": 1558616539239
+        },
+        {
+            "i": "https://docs.sqlalchemy.org/en/13/_images/sqla_engine_arch.png",
+            "p": 1,
+            "t": "Engine Configuration — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/core/engines.html",
+            "v": 1558621793437
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 1,
+            "t": "pandas.read_sql — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql.html",
+            "v": 1558621849556
+        },
+        {
+            "i": "https://www.sqlalchemy.org/favicon.ico",
+            "p": 1,
+            "t": "Microsoft SQL Server — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/dialects/mssql.html",
+            "v": 1558621948443
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "sqlalchemy.create_engine Python Example",
+            "u": "https://www.programcreek.com/python/example/4713/sqlalchemy.create_engine",
+            "v": 1558628808958
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 0,
+            "t": "DataFrame — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/frame.html",
+            "v": 1558632800920
+        },
+        {
+            "i": "https://agilent-my.sharepoint.com/_layouts/15/images/odbfavicon.ico?rev=47",
+            "p": 0,
+            "t": "_staging - OneDrive",
+            "u": "https://agilent-my.sharepoint.com/personal/derek_bates_non_agilent_com/_layouts/15/onedrive.aspx?id=%2fpersonal%2fderek_bates_non_agilent_com%2fDocuments%2fDocuments%2f_staging&FolderCTID=0x012000AA20341D361FC448B13302E6B5B9BDD9",
+            "v": 1558632885565
+        },
+        {
+            "i": "https://www.sqlalchemy.org/img/podcast_2015.png",
+            "p": 0,
+            "t": "Library - SQLAlchemy",
+            "u": "https://www.sqlalchemy.org/library.html",
+            "v": 1558635865620
+        },
+        {
+            "i": "https://www.python.org/static/opengraph-icon-200x200.png",
+            "p": 0,
+            "t": "PEP 249 -- Python Database API Specification v2.0 | Python.org",
+            "u": "https://www.python.org/dev/peps/pep-0249/",
+            "v": 1558636522834
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "sqlite3.Row Python Example",
+            "u": "https://www.programcreek.com/python/example/3926/sqlite3.Row",
+            "v": 1558640425087
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "sqlite3.Cursor Python Example",
+            "u": "https://www.programcreek.com/python/example/51789/sqlite3.Cursor",
+            "v": 1558640427784
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "sqlite3.connect Python Example",
+            "u": "https://www.programcreek.com/python/example/418/sqlite3.connect",
+            "v": 1558640431326
+        },
+        {
+            "i": "https://docs.python.org/3/_static/py.png",
+            "p": 1,
+            "t": "sqlite3 — DB-API 2.0 interface for SQLite databases — Python 3.7.3 documentation",
+            "u": "https://docs.python.org/3/library/sqlite3.html",
+            "v": 1558640434969
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 0,
+            "t": "pandas.read_sql_table — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table",
+            "v": 1558640443324
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python_while_loop.jpg",
+            "p": 1,
+            "t": "Python 3 while Loop Statements",
+            "u": "https://www.tutorialspoint.com/python3/python_while_loop.htm",
+            "v": 1558642419796
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 1,
+            "t": "Python 3 Multithreaded Programming",
+            "u": "https://www.tutorialspoint.com/python3/python_multithreading.htm",
+            "v": 1558642508624
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 1,
+            "t": "Python 3 Sending Email using SMTP",
+            "u": "https://www.tutorialspoint.com/python3/python_sending_email.htm",
+            "v": 1558642512292
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Networking Programming",
+            "u": "https://www.tutorialspoint.com/python3/python_networking.htm",
+            "v": 1558642515587
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/tkwindow.jpg",
+            "p": 1,
+            "t": "Python 3 GUI Programming (Tkinter)",
+            "u": "https://www.tutorialspoint.com/python3/python_gui_programming.htm",
+            "v": 1558642519657
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/tkwindow.jpg",
+            "p": 0,
+            "t": "Python 3 Quick Guide",
+            "u": "https://www.tutorialspoint.com/python3/python_quick_guide.htm",
+            "v": 1558642523377
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Tools/Utilities",
+            "u": "https://www.tutorialspoint.com/python3/python_tools_utilities.htm",
+            "v": 1558642526204
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Dictionary",
+            "u": "https://www.tutorialspoint.com/python3/python_dictionary.htm",
+            "v": 1558642529273
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Date and Time",
+            "u": "https://www.tutorialspoint.com/python3/python_date_time.htm",
+            "v": 1558642532378
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Files I/O",
+            "u": "https://www.tutorialspoint.com/python3/python_files_io.htm",
+            "v": 1558642535315
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Basic Syntax",
+            "u": "https://www.tutorialspoint.com/python3/python_basic_syntax.htm",
+            "v": 1558642538498
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 Environment Setup",
+            "u": "https://www.tutorialspoint.com/python3/python_environment.htm",
+            "v": 1558642542000
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/loop_architecture.jpg",
+            "p": 1,
+            "t": "Python 3 Loops",
+            "u": "https://www.tutorialspoint.com/python3/python_loops.htm",
+            "v": 1558642607071
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python-mini-logo.jpg",
+            "p": 0,
+            "t": "Python 3 nested loops",
+            "u": "https://www.tutorialspoint.com/python3/python_nested_loops.htm",
+            "v": 1558642623804
+        },
+        {
+            "i": "https://www.tutorialspoint.com/python3/images/python_for_loop.jpg",
+            "p": 1,
+            "t": "Python 3 for Loop Statements",
+            "u": "https://www.tutorialspoint.com/python3/python_for_loop.htm",
+            "v": 1558642643712
+        },
+        {
+            "i": "https://www.google.com/images/icons/product/sites-16.ico",
+            "p": 0,
+            "t": "Downloads - ChromeDriver - WebDriver for Chrome",
+            "u": "https://sites.google.com/a/chromium.org/chromedriver/downloads",
+            "v": 1558643557604
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/",
+            "u": "https://chromedriver.storage.googleapis.com/index.html?path=74.0.3729.6/",
+            "v": 1558643561803
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python | randint() function - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-randint-function/",
+            "v": 1558667886421
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "MySQLdb User's Guide",
+            "u": "http://mysql-python.sourceforge.net/MySQLdb.html",
+            "v": 1558706830293
+        },
+        {
+            "i": "https://jupyterlab.readthedocs.io/en/stable/_images/jupyterlab.png",
+            "p": 1,
+            "t": "JupyterLab Documentation — JupyterLab 0.35.6 documentation",
+            "u": "https://jupyterlab.readthedocs.io/en/stable/#",
+            "v": 1558706837560
+        },
+        {
+            "i": "https://assets.readthedocs.org/sustainability/document360/document360-04.png",
+            "p": 1,
+            "t": "CSS Patterns — JupyterLab 0.35.6 documentation",
+            "u": "https://jupyterlab.readthedocs.io/en/stable/developer/css.html#css-variables",
+            "v": 1558706840475
+        },
+        {
+            "i": "https://labs.mysql.com/common/themes/sakila/favicon.ico",
+            "p": 1,
+            "t": "MySQL :: MySQL Documentation",
+            "u": "https://dev.mysql.com/doc/",
+            "v": 1558706851210
+        },
+        {
+            "i": "https://www.dataquest.io/wp-content/uploads/2019/03/learn-at-dataquest.png",
+            "p": 0,
+            "t": "Learn Data Science – Dataquest",
+            "u": "https://www.dataquest.io/",
+            "v": 1558707316333
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Iterating over rows and columns in Pandas DataFrame - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/iterating-over-rows-and-columns-in-pandas-dataframe/",
+            "v": 1558707409523
+        },
+        {
+            "i": "https://pypi.org/static/images/twitter.c0030826.jpg",
+            "p": 0,
+            "t": "pymssql · PyPI",
+            "u": "https://pypi.org/project/pymssql/",
+            "v": 1558710987797
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "GeeksforGeeks | A computer science portal for geeks",
+            "u": "https://www.geeksforgeeks.org/",
+            "v": 1558711095769
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Indexing and Selecting Data with Pandas - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/indexing-and-selecting-data-with-pandas/",
+            "v": 1558711126457
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python | Image Classification using keras - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-image-classification-using-keras/",
+            "v": 1558711151852
+        },
+        {
+            "i": "https://pandas.pydata.org/pandas-docs/stable/_static/favicon.ico",
+            "p": 1,
+            "t": "pandas.DataFrame.to_sql — pandas 0.24.2 documentation",
+            "u": "https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html",
+            "v": 1558712082921
+        },
+        {
+            "i": "https://mode.com/resources/images/og-images/sql-facebook.png",
+            "p": 0,
+            "t": "SQL Tutorial - Mode Analytics",
+            "u": "https://mode.com/sql-tutorial/",
+            "v": 1558712812000
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "sqlalchemy.Column Python Example",
+            "u": "https://www.programcreek.com/python/example/9436/sqlalchemy.Column",
+            "v": 1558713674683
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "pymssql.connect Python Example",
+            "u": "https://www.programcreek.com/python/example/95792/pymssql.connect",
+            "v": 1558713696093
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "sqlite3.Connection Python Example",
+            "u": "https://www.programcreek.com/python/example/8602/sqlite3.Connection",
+            "v": 1558713743533
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Browser Automation Using Selenium - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/browser-automation-using-selenium/",
+            "v": 1558713810939
+        },
+        {
+            "i": "https://www.pluralsight.com/etc/clientlibs/pluralsight/main/images/resource-center/resource-center-default.jpg",
+            "p": 0,
+            "t": "Unlimited Online Developer, IT and Cyber Security Training | Pluralsight",
+            "u": "https://www.pluralsight.com/",
+            "v": 1558718322287
+        },
+        {
+            "i": "http://pymssql.org/favicon.ico",
+            "p": 0,
+            "t": "pymssql examples — pymssql 2.1.4 documentation",
+            "u": "http://pymssql.org/en/stable/pymssql_examples.html",
+            "v": 1558719832758
+        },
+        {
+            "i": "http://pymssql.org/favicon.ico",
+            "p": 0,
+            "t": "pymssql — pymssql 2.1.4 documentation",
+            "u": "http://pymssql.org/en/stable/",
+            "v": 1558719839382
+        },
+        {
+            "i": "https://cdn.sstatic.net/Sites/stackoverflow/img/apple-touch-icon@2.png?v=73d79a89bded",
+            "p": 0,
+            "t": "python - Writing a Pandas Dataframe to MySQL - Stack Overflow",
+            "u": "https://stackoverflow.com/questions/39939716/writing-a-pandas-dataframe-to-mysql",
+            "v": 1558719849614
+        },
+        {
+            "i": "https://www.sqlalchemy.org/favicon.ico",
+            "p": 1,
+            "t": "Working with Engines and Connections — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/core/connections.html#",
+            "v": 1558719880536
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Flask - (Creating first simple application) - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/flask-creating-first-simple-application/",
+            "v": 1558719977065
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Whatsapp using Python!",
+            "u": "https://www.geeksforgeeks.org/whatsapp-using-python/",
+            "v": 1558719981219
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Send SMS updates to mobile phone using python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/send-sms-updates-mobile-phone-using-python/",
+            "v": 1558719986485
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python Programming Language - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-programming-language/",
+            "v": 1558720049424
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python | Send SMS using Twilio - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-send-sms-using-twilio/",
+            "v": 1558720056477
+        },
+        {
+            "i": "https://mode.com/images/og-images/python-facebook.png",
+            "p": 0,
+            "t": "Creating Pandas DataFrames & Selecting Data | Python Tutorial - Mode Analytics",
+            "u": "https://mode.com/python-tutorial/pandas-dataframe/",
+            "v": 1558720277086
+        },
+        {
+            "i": "https://mode.com/images/og-images/python-facebook.png",
+            "p": 0,
+            "t": "Filtering Data in Python with Boolean Indexes | Python Tutorial - Mode Analytics",
+            "u": "https://mode.com/resources/python-tutorial/python-filtering-with-boolean-indexes/",
+            "v": 1558720302794
+        },
+        {
+            "i": "https://mode.com/images/og-images/python-facebook.png",
+            "p": 0,
+            "t": "Python Histograms, Box Plots, & Distributions | Python Tutorial - Mode Analytics",
+            "u": "https://mode.com/resources/python-tutorial/python-histograms-boxplots-and-distributions/",
+            "v": 1558720313049
+        },
+        {
+            "i": "https://mode.com/images/og-images/python-facebook.png",
+            "p": 0,
+            "t": "Resources for Further Learning | Python Tutorial - Mode Analytics",
+            "u": "https://mode.com/resources/python-tutorial/python-tutorial-conclusion/",
+            "v": 1558720316325
+        },
+        {
+            "i": "https://www.dataquest.io/wp-content/uploads/2019/01/data-science-cheat-sheet-python-numpy.jpg",
+            "p": 0,
+            "t": "NumPy Cheat Sheet — Python for Data Science – Dataquest",
+            "u": "https://www.dataquest.io/blog/numpy-cheat-sheet/",
+            "v": 1558720623868
+        },
+        {
+            "i": "https://www.dataquest.io/wp-content/uploads/2018/04/regex-cheat-sheet-data-science-pdf.jpg",
+            "p": 0,
+            "t": "Regex Cheat Sheet: A Quick Guide to Regular Expressions in Python",
+            "u": "https://www.dataquest.io/blog/regex-cheatsheet/",
+            "v": 1558720657752
+        },
+        {
+            "i": "https://www.dataquest.io/wp-content/uploads/2019/01/data-science-cheat-sheet-python-pandas.jpg",
+            "p": 0,
+            "t": "Pandas Cheat Sheet — Python for Data Science – Dataquest",
+            "u": "https://www.dataquest.io/blog/pandas-cheat-sheet/",
+            "v": 1558720903215
+        },
+        {
+            "i": "http://zetcode.com/favicon.ico",
+            "p": 1,
+            "t": "MySQL Python tutorial - programming MySQL in Python",
+            "u": "http://zetcode.com/db/mysqlpython/",
+            "v": 1558721953298
+        },
+        {
+            "i": "https://www.w3schools.com/favicon.ico",
+            "p": 1,
+            "t": "Python MySQL",
+            "u": "https://www.w3schools.com/python/python_mysql_getstarted.asp",
+            "v": 1558721956697
+        },
+        {
+            "i": "https://labs.mysql.com/common/themes/sakila/banners/b440-mysql-document-store.en.jpg",
+            "p": 0,
+            "t": "MySQL :: MySQL Downloads",
+            "u": "https://www.mysql.com/downloads/",
+            "v": 1558721990945
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Mouse and keyboard automation using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/mouse-keyboard-automation-using-python/",
+            "v": 1558722157107
+        },
+        {
+            "i": "https://avatars3.githubusercontent.com/u/10974906?s=400&v=4",
+            "p": 1,
+            "t": "PacktPublishing/Python-GUI-Programming-Cookbook-Second-Edition: Python GUI Programming Cookbook, Second Edition, published by Packt",
+            "u": "https://github.com/PacktPublishing/Python-GUI-Programming-Cookbook-Second-Edition",
+            "v": 1558725360269
+        },
+        {
+            "i": "https://cdn.sstatic.net/Sites/stackoverflow/img/apple-touch-icon@2.png?v=73d79a89bded",
+            "p": 0,
+            "t": "python - pyodbc.connect() works, but not sqlalchemy.create_engine().connect() - Stack Overflow",
+            "u": "https://stackoverflow.com/questions/44760221/pyodbc-connect-works-but-not-sqlalchemy-create-engine-connect",
+            "v": 1558725717834
+        },
+        {
+            "i": "https://avatars0.githubusercontent.com/u/10974906?s=280&v=4",
+            "p": 0,
+            "t": "Packt",
+            "u": "https://github.com/PacktPublishing",
+            "v": 1558726157644
+        },
+        {
+            "i": "https://avatars3.githubusercontent.com/u/10974906?s=400&v=4",
+            "p": 0,
+            "t": "PacktPublishing/Deep-Reinforcement-Learning-Hands-On: Hands-on Deep Reinforcement Learning, published by Packt",
+            "u": "https://github.com/PacktPublishing/Deep-Reinforcement-Learning-Hands-On",
+            "v": 1558726161872
+        },
+        {
+            "i": "https://avatars0.githubusercontent.com/u/25445833?s=400&v=4",
+            "p": 0,
+            "t": "sownthunder/Effective-Python-Penetration-Testing: Effective Python Penetration Testing by Packt Publishing",
+            "u": "https://github.com/sownthunder/Effective-Python-Penetration-Testing",
+            "v": 1558726165329
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python | Generate QR Code using pyqrcode module - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-generate-qr-code-using-pyqrcode-module/",
+            "v": 1558727179761
+        },
+        {
+            "i": "../img/def.png",
+            "p": 1,
+            "t": "pyodbc.connect Python Example",
+            "u": "https://www.programcreek.com/python/example/63587/pyodbc.connect",
+            "v": 1558729347383
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python for Data Science - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-for-data-science/",
+            "v": 1558729397768
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Python IDEs For Data Science - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-ides-for-data-science/",
+            "v": 1558729430630
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python | Data visualization using Bokeh - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-data-visualization-using-bokeh/",
+            "v": 1558729441321
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "10 Essential Python Tips And Tricks For Programmers - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/10-essential-python-tips-tricks-programmers/",
+            "v": 1558729457517
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Convert Text to Speech in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/convert-text-speech-python/",
+            "v": 1558729475144
+        },
+        {
+            "i": "../img/def.png",
+            "p": 0,
+            "t": "Tkinter.Tk Python Example",
+            "u": "https://www.programcreek.com/python/example/1381/Tkinter.Tk",
+            "v": 1558729507308
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Creating a simple machine learning model - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/creating-a-simple-machine-learning-model/",
+            "v": 1558729528604
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Linear Regression (Python Implementation) - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/linear-regression-python-implementation/",
+            "v": 1558729549884
+        },
+        {
+            "i": "https://mode.com/images/og-images/python-facebook.png",
+            "p": 0,
+            "t": "Pandas .groupby(), Lambda Functions, & Pivot Tables | Python Tutorial - Mode Analytics",
+            "u": "https://mode.com/resources/python-tutorial/pandas-groupby-and-python-lambda-functions/",
+            "v": 1558729593004
+        },
+        {
+            "i": "https://mode.com/images/og-images/python-facebook.png",
+            "p": 0,
+            "t": "Deriving New Columns & Defining Python Functions | Python Tutorial - Mode Analytics",
+            "u": "https://mode.com/resources/python-tutorial/defining-python-functions/",
+            "v": 1558729634871
+        },
+        {
+            "i": "https://www.sqlalchemy.org/favicon.ico",
+            "p": 1,
+            "t": "Microsoft SQL Server — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/dialects/mssql.html#pass-through-exact-pyodbc-string",
+            "v": 1558729751152
+        },
+        {
+            "i": "https://docs.sqlalchemy.org/en/13/_images/sqla_engine_arch.png",
+            "p": 1,
+            "t": "Engine Configuration — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/core/engines.html#microsoft-sql-server",
+            "v": 1558729978890
+        },
+        {
+            "i": "https://www.sqlalchemy.org/favicon.ico",
+            "p": 1,
+            "t": "SQLite — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/dialects/sqlite.html",
+            "v": 1558730968182
+        },
+        {
+            "i": "https://www.sqlalchemy.org/favicon.ico",
+            "p": 0,
+            "t": "MySQL — SQLAlchemy 1.3 Documentation",
+            "u": "https://docs.sqlalchemy.org/en/13/dialects/mysql.html",
+            "v": 1558730971277
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Adding new column to existing DataFrame in Pandas - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/adding-new-column-to-existing-dataframe-in-pandas/",
+            "v": 1558754761341
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "When to use yield instead of return in Python? - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/use-yield-keyword-instead-return-keyword-python/",
+            "v": 1558754767229
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Namespaces and Scope in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/namespaces-and-scope-in-python/",
+            "v": 1558754774571
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Important differences between Python 2.x and Python 3.x with examples - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/important-differences-between-python-2-x-and-python-3-x-with-examples/",
+            "v": 1558754779616
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Car driving using hand detection in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/car-driving-using-hand-detection-in-python/",
+            "v": 1558754787462
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Tweet using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/tweet-using-python/",
+            "v": 1558754789319
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python GUI - tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-gui-tkinter/",
+            "v": 1558759637060
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Best Python libraries for Machine Learning - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/best-python-libraries-for-machine-learning/",
+            "v": 1558759685289
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Send mail from your Gmail account using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/send-mail-gmail-account-using-python/",
+            "v": 1558759690773
+        },
+        {
+            "i": "https://www.programcreek.com/wp-content/themes/light/images/icon.ico",
+            "p": 0,
+            "t": "ProgramCreek.com",
+            "u": "https://www.programcreek.com/",
+            "v": 1558761966008
+        },
+        {
+            "i": "https://www.programcreek.com/wp-content/themes/light/images/icon.ico",
+            "p": 1,
+            "t": "Machine Learning and Deep Learning",
+            "u": "https://www.programcreek.com/machine-learning-and-deep-learning/",
+            "v": 1558761968245
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Identifying handwritten digits using Logistic Regression in PyTorch - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/identifying-handwritten-digits-using-logistic-regression-pytorch/",
+            "v": 1558762181938
+        },
+        {
+            "i": "https://avatars0.githubusercontent.com/u/25445833?s=400&v=4",
+            "p": 0,
+            "t": "sownthunder/autoinjection",
+            "u": "https://github.com/sownthunder/autoinjection",
+            "v": 1558763965294
+        },
+        {
+            "i": "https://www.programcreek.com/wp-content/uploads/2017/07/tensorflow-keras-400x230.jpg",
+            "p": 0,
+            "t": "How to select the right tool for deep learning?",
+            "u": "https://www.programcreek.com/2017/01/how-to-select-the-right-tool-for-deep-learning/",
+            "v": 1558763984005
+        },
+        {
+            "i": "https://pypi.org/static/images/twitter.c0030826.jpg",
+            "p": 0,
+            "t": "python-docx · PyPI",
+            "u": "https://pypi.org/project/python-docx/",
+            "v": 1558763995124
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Working With JSON Data in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/working-with-json-data-in-python/",
+            "v": 1558764125627
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Python | Pandas Merging, Joining, and Concatenating - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-pandas-merging-joining-and-concatenating/",
+            "v": 1558765167871
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Python | Pandas Series - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-pandas-series/",
+            "v": 1558765200909
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Python | Find current weather of any city using openweathermap API - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-find-current-weather-of-any-city-using-openweathermap-api/",
+            "v": 1558765341817
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Create a stopwatch using python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/create-stopwatch-using-python/",
+            "v": 1558765818102
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Python | Message Encode-Decode using Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-message-encode-decode-using-tkinter/",
+            "v": 1558766109998
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 1,
+            "t": "Make Notepad using Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/make-notepad-using-tkinter/",
+            "v": 1558766167513
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Understanding Logistic Regression - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/understanding-logistic-regression/",
+            "v": 1558766184823
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Linear Regression Using Tensorflow - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/linear-regression-using-tensorflow/",
+            "v": 1558766190999
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "ML | Unsupervised Face Clustering Pipeline - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/ml-unsupervised-face-clustering-pipeline/",
+            "v": 1558766199168
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Python | Delete rows/columns from DataFrame using Pandas.drop() - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-delete-rows-columns-from-dataframe-using-pandas-drop/",
+            "v": 1558766205326
+        },
+        {
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "p": 0,
+            "t": "Data analysis and Visualization with Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/data-analysis-visualization-python/",
+            "v": 1558766279763
+        },
+        {
+            "t": "Amazon product price tracker using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/amazon-product-price-tracker-using-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558828317581,
+            "p": 0
+        },
+        {
+            "t": "Different messages in Tkinter | Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/different-messages-in-tkinter-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558828490463,
+            "p": 0
+        },
+        {
+            "t": "Collapsible Pane in Tkinter | Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/collapsible-pane-in-tkinter-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558828733773,
+            "p": 0
+        },
+        {
+            "t": "Progressbar widget in Tkinter | Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/progressbar-widget-in-tkinter-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558829774849,
+            "p": 0
+        },
+        {
+            "t": "Python-tkinter Archives - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/tag/python-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558829980163,
+            "p": 1
+        },
+        {
+            "t": "Python-kivy Archives - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/tag/python-kivy/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558829983915,
+            "p": 0
+        },
+        {
+            "t": "Python | askopenfile() function in Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-askopenfile-function-in-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558829997580,
+            "p": 0
+        },
+        {
+            "t": "Python-tkinter Archives - Page 2 of 2 - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/tag/python-tkinter/page/2/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558830046173,
+            "p": 0
+        },
+        {
+            "t": "Python | Create a digital clock using Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-create-a-digital-clock-using-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558830053095,
+            "p": 0
+        },
+        {
+            "t": "Python | Add image on a Tkinter button - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-add-image-on-a-tkinter-button/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558830499314,
+            "p": 0
+        },
+        {
+            "t": "Python | Loan calculator using Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-loan-calculator-using-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558831447253,
+            "p": 0
+        },
+        {
+            "t": "iconphoto() method in Tkinter | Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/iconphoto-method-in-tkinter-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558831451387,
+            "p": 0
+        },
+        {
+            "t": "Python | Program to crawl a web page and get most frequent words - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-program-crawl-web-page-get-frequent-words/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558831636452,
+            "p": 1
+        },
+        {
+            "t": "Facebook Login using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/facebook-login-using-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558831673344,
+            "p": 0
+        },
+        {
+            "t": "Send message to FB friend using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/send-message-to-fb-friend-using-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832092295,
+            "p": 0
+        },
+        {
+            "t": "Python | Get a google map image of specified location using Google Static Maps API - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-get-google-map-image-specified-location-using-google-static-maps-api/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832307542,
+            "p": 1
+        },
+        {
+            "t": "Fetching top news using News API - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/fetching-top-news-using-news-api/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832326525,
+            "p": 0
+        },
+        {
+            "t": "Python | after method in Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-after-method-in-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832532235,
+            "p": 1
+        },
+        {
+            "t": "Python | Binding function in Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-binding-function-in-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832626562,
+            "p": 1
+        },
+        {
+            "t": "Website Blocker Using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/website-blocker-using-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832737303,
+            "p": 0
+        },
+        {
+            "t": "Python | Create simple animation for console-based application - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-create-simple-animation-for-console-based-application/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832829129,
+            "p": 0
+        },
+        {
+            "t": "Desktop Notifier in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/desktop-notifier-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832844113,
+            "p": 1
+        },
+        {
+            "t": "Simple Keyboard Racing with Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/simple-keyboard-racing-with-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832972727,
+            "p": 1
+        },
+        {
+            "t": "Simple Chat Room using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/simple-chat-room-using-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558832992800,
+            "p": 0
+        },
+        {
+            "t": "Python | Menu widget in Tkinter - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-menu-widget-in-tkinter/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833032474,
+            "p": 0
+        },
+        {
+            "t": "Python program to convert time from 12 hour to 24 hour format - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-program-convert-time-12-hour-24-hour-format/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833139632,
+            "p": 1
+        },
+        {
+            "t": "Non blocking wait in selenium using Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/non-blocking-wait-in-selenium-using-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833167215,
+            "p": 1
+        },
+        {
+            "t": "Python | Automating Happy Birthday post on Facebook using Selenium - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-automating-happy-birthday-post-on-facebook-using-selenium/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833269618,
+            "p": 0
+        },
+        {
+            "t": "Design a Keylogger in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/design-a-keylogger-in-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833277583,
+            "p": 1
+        },
+        {
+            "t": "Hangman Game in Python - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/hangman-game-in-python/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833350019,
+            "p": 0
+        },
+        {
+            "t": "Python | Implementation of Movie Recommender System - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/python-implementation-of-movie-recommender-system/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833480203,
+            "p": 0
+        },
+        {
+            "t": "Conway's Game Of Life (Python Implementation) - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/conways-game-life-python-implementation/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558833708114,
+            "p": 1
+        },
+        {
+            "t": "Working with notebooks — Anaconda 2.0 documentation",
+            "u": "http://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-notebooks/",
+            "i": "http://docs.anaconda.com/_static/img/favicon.ico",
+            "v": 1558849375598,
+            "p": 1
+        },
+        {
+            "t": "Getting started — Anaconda 2.0 documentation",
+            "u": "http://docs.anaconda.com/anaconda-cloud/user-guide/getting-started/#finding-downloading-and-installing-packages",
+            "i": "http://docs.anaconda.com/_images/cloud-search.png",
+            "v": 1558849379697,
+            "p": 0
+        },
+        {
+            "t": "Dashboard :: Anaconda Cloud",
+            "u": "https://anaconda.org/babypoopsoup/dashboard",
+            "i": "https://binstar-static-prod.s3.amazonaws.com/latest/img/apple-touch-icon.png",
+            "v": 1558849381328,
+            "p": 0
+        },
+        {
+            "t": "PyPI – the Python Package Index · PyPI",
+            "u": "https://pypi.org/",
+            "i": "https://pypi.org/static/images/twitter.c0030826.jpg",
+            "v": 1558849383963,
+            "p": 0
+        },
+        {
+            "t": "Fresh tutorial on tkinter and ttk for Python 3 - Stack Overflow",
+            "u": "https://stackoverflow.com/questions/6865792/fresh-tutorial-on-tkinter-and-ttk-for-python-3",
+            "i": "https://cdn.sstatic.net/Sites/stackoverflow/img/apple-touch-icon@2.png?v=73d79a89bded",
+            "v": 1558851746733,
+            "p": 0
+        },
+        {
+            "t": "Search results · PyPI",
+            "u": "https://pypi.org/search/?q=&o=&c=Topic+%3A%3A+Games%2FEntertainment",
+            "i": "https://pypi.org/static/images/twitter.c0030826.jpg",
+            "v": 1558851771618,
+            "p": 0
+        },
+        {
+            "t": "Creating a Proxy Webserver in Python | Set 1 - GeeksforGeeks",
+            "u": "https://www.geeksforgeeks.org/creating-a-proxy-webserver-in-python-set-1/",
+            "i": "https://www.geeksforgeeks.org/wp-content/uploads/gfg_200X200.png",
+            "v": 1558908566072,
+            "p": 0
+        },
+        {
+            "t": "Tutorial — Pillow (PIL Fork) 6.0.0 documentation",
+            "u": "https://pillow.readthedocs.io/en/stable/handbook/tutorial.html",
+            "i": "../img/def.png",
+            "v": 1558909494137,
+            "p": 0
+        },
+        {
+            "t": "Python 3 Tkinter tkMessageBox",
+            "u": "https://www.tutorialspoint.com/python3/tk_messagebox.htm",
+            "i": "https://www.tutorialspoint.com/python3/images/tkmessagebox.jpg",
+            "v": 1558911732656,
+            "p": 0
+        },
+        {
+            "t": "Golang Programming Examples",
+            "u": "https://www.tutorialspoint.com/golang_programming_examples/",
+            "i": "https://www.tutorialspoint.com/images/logo.png",
+            "v": 1558945835586,
+            "p": 0
+        },
+        {
+            "t": "W3Schools Python Certificate",
+            "u": "https://www.w3schools.com/python/python_exam.asp",
+            "i": "https://www.w3schools.com/favicon.ico",
+            "v": 1558947837194,
+            "p": 0
+        },
+        {
+            "t": "Python Dictionaries",
+            "u": "https://www.w3schools.com/python/python_dictionaries.asp",
+            "i": "https://www.w3schools.com/favicon.ico",
+            "v": 1558947888373,
+            "p": 0
+        },
+        {
+            "t": "Design a Keylogger in Python",
+            "u": "https://www.tutorialspoint.com/design-a-keylogger-in-python",
+            "i": "https://www.tutorialspoint.com/scripts/img/logo-footer.png",
+            "v": 1558948316724,
+            "p": 0
+        },
+        {
+            "t": "Python JSON",
+            "u": "https://www.w3schools.com/python/python_json.asp",
+            "i": "https://www.w3schools.com/favicon.ico",
+            "v": 1558950869087,
+            "p": 0
+        },
+        {
+            "t": "Python ascii() Function",
+            "u": "https://www.w3schools.com/python/ref_func_ascii.asp",
+            "i": "https://www.w3schools.com/favicon.ico",
+            "v": 1558950872372,
+            "p": 0
+        }
+    ]
+}

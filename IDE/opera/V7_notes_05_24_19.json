@@ -1,0 +1,201 @@
+[
+    {
+        "expDataType": "V7 notes"
+    },
+    {
+        "id": "mapa_1426361493636_c",
+        "list": [
+            {
+                "id": "note_1426365907915_c",
+                "text": "new note/folder\n\nselect folder and \nclick on \"new note\" icon\n(in header)\n\nnew note will be created \nin folder on top of its list\nand folder will automatically \nopen\n\nsame applies for\n\"new folder\" creation\n_________________\n\nif you select note\nand click on new note/folder\nnew note/folder will be \ncreated UNDER selected note\n\nif multiple notes/folders \nare selected, new note/folder\ngoes on bottom of root list, \nsame if nothing is selected\n\nthere is a visual clue for \nnew notes/folder\n\ntry it...."
+            },
+            {
+                "id": "note_1426366541495_c",
+                "text": "selecting\n\nsingle click to select \nnotes and folders\n(folders will also open/close)\n\nhold CTRL (CMD) to select\nmultiple notes/folders\n\nselect note/folder\nand then click another \nholding SHIFT to select range\n\nrange can be only on same level\nadd other with CTRL (CMD)\n\nparents and children \ncannot share same selection\nthey will kick each other out \nfrom selection\n\ntry to select folder and then \nholding CTRL, select something \nin it, or other way around\n\nthis is intended behavior to \nprevent messed data"
+            },
+            {
+                "id": "note_1426365908418_c",
+                "text": "drag and drop\n\nselect single or multiple \nnotes and folders\nand drag-drop them to \ndesired destination\n\nif you drop it on note\ndragged item(s) will go \nunder that note\n\nif you drop it on folder\nwhen whole folder node is green\ndragged item(s) will move\nto that folder, on top of its list\n\nif you drop it on folder\nwhen green BOTTOM LINE\nis active dragged item(s) \nwill go under that folder\n\nif you hover mouse over the \nfolder for a second while dragging,\nfolder will expand"
+            }
+        ],
+        "text": "folder example"
+    },
+    {
+        "id": "mapa_1426368581530_c",
+        "list": [
+            {
+                "id": "linked_1426360915567_r",
+                "text": "linked note example\n\ndouble click linked note \nto visit its URL\nin current tab\n\n\nLykke Li - I Follow Rivers\n\n\ncreate linked note by \nselecting any text on \nweb page you visit,\nright click it and choose\n\"make note\"\n\nit behaves like a bookmark\nin which you can add\nadditional description (here)\n\nhowever you change \nlinked note text,\nurl won't change\n\n\n ",
+                "url": "https://www.youtube.com/watch?v=vZYbEL06lEU"
+            },
+            {
+                "id": "linked_1426368376638_r",
+                "text": "middle click example\n\nwill open linked note \nin new active tab\n\n\nTribute to the Joker\nU2 - Hold Me, Thrill Me, Kiss Me, Kill Me",
+                "url": "https://www.youtube.com/watch?v=UeSd_2aLVoE"
+            },
+            {
+                "id": "linked_1426369718720_r",
+                "text": "drag to page example\n\nyou can drag and drop\nlinked notes to web pages\non the right to open them \nin new background tab\n\nsingle or multi-selection\n\nMassive Attack - Live With Me",
+                "url": "https://www.youtube.com/watch?v=AIIovpUQiro"
+            }
+        ],
+        "text": "some music"
+    },
+    {
+        "id": "note_1426359309076_c",
+        "text": "click me\n\n-this is simple note\n select it to show its \n text in this box\n\n-you can type here,\n cut, copy, paste...\n\n-first line is note title\n\n-if title is too long,\n break it with ENTER\n\n-everything you type here\n is saved, no extra\n save buttons or so...\n"
+    },
+    {
+        "id": "note_1426359570646_c",
+        "text": "double click me\n\nwhen you double click\nsimple note, note text \nis copied into clipboard\nso you can paste it \nanywhere you like\n(not only in browser forms)\n\n*if you double click linked note,\nyou will open its url in current tab\n\n"
+    },
+    {
+        "id": "note_1426360755551_c",
+        "text": "resizing\n\nclick and hold upper border \nof this box to resize its height\n(height is remembered)\n\nwidth is resized by sidebar"
+    },
+    {
+        "id": "note_1426371126129_c",
+        "text": "about trash\n\nright click note/folder,\nsingle or multiple selected\nand choose \"delete selected\"\n\ntrash icon will indicated \nthat there is something in it\n(orange color)\n\nyou can empty trash \nby right clicking on icon\n\n...or open trash with normal \n(left) click and delete all in it\nor restore something by \nright clicking on deleted items\n(single or multiple)\n\n*SHIFT won't work in trash\nonly CTRL\n\nuse arrow to go back \nto notes\n"
+    },
+    {
+        "id": "note_1426853788105_c",
+        "text": "about tooltips\n\nyou can disable \nthem in options\n(close/open extension\nfrom the sidebar for\nchange to take effect)\n\nthat will disable only \nnotes tooltips\n(not UI)\n\nI add them only\nfor notes (not folders)\nI think this is less annoying\n\n"
+    },
+    {
+        "id": "note_1426371762962_c",
+        "text": "about search\n\n...it triggers on third letter\n\nand for now searches only notes\n(I'll add folders in next ver :P )"
+    },
+    {
+        "id": "mapa_1426371410561_c",
+        "list": [
+            {
+                "id": "mapa_1426371419206_c",
+                "list": [
+                    {
+                        "id": "mapa_1426371420965_c",
+                        "list": [
+                            {
+                                "id": "mapa_1426371422286_c",
+                                "list": [
+                                    {
+                                        "id": "mapa_1426371423588_c",
+                                        "list": [
+                                            {
+                                                "id": "mapa_1426371425070_c",
+                                                "list": [
+                                                    {
+                                                        "id": "note_1426371427990_c",
+                                                        "text": "you can nest folders \nas much as you like\n\n*I know it's silly to explain\nbut many ppl don't realize it"
+                                                    }
+                                                ],
+                                                "text": "example nest 6"
+                                            }
+                                        ],
+                                        "text": "example nest 5 "
+                                    }
+                                ],
+                                "text": "example nest 4"
+                            }
+                        ],
+                        "text": "example nest 3"
+                    }
+                ],
+                "text": "example nest 2 "
+            }
+        ],
+        "text": "example nest 1 "
+    },
+    {
+        "id": "note_1426507883484_c",
+        "text": "WARNING!!!\n\nNotes are stored in localStorage\n(using chrome.storage API)\n\nif you are using some addons\nfor clearing extensions localStorage\nthere is possibility that it \nwill wipe Notes data\n\nto be safe, export them first\n\nnative browser\n\"clear browsing data\"\nis safe to use"
+    },
+    {
+        "id": "mapa_1430090918859_c",
+        "list": [
+            {
+                "id": "note_1430091321247_c",
+                "text": "<a href=\"url\">text</a>"
+            },
+            {
+                "id": "note_1430091351485_c",
+                "text": "<blockquote>quotation</blockquote>"
+            },
+            {
+                "id": "note_1430091398271_c",
+                "text": "[Google](http://www.google.com/)"
+            },
+            {
+                "id": "note_1430091489692_c",
+                "text": "![altTEXT](imgURLmarkdown)"
+            },
+            {
+                "id": "note_1430090934221_c",
+                "text": "๏̯͡๏ "
+            },
+            {
+                "id": "note_1430090993237_c",
+                "text": "ツ"
+            },
+            {
+                "id": "note_1430090993623_c",
+                "text": "€"
+            },
+            {
+                "id": "note_1430090993999_c",
+                "text": "℃"
+            },
+            {
+                "id": "note_1430090994351_c",
+                "text": "℉"
+            },
+            {
+                "id": "note_1430090994519_c",
+                "text": "¿ "
+            },
+            {
+                "id": "note_1430090994679_c",
+                "text": "©"
+            },
+            {
+                "id": "note_1430090994839_c",
+                "text": "™"
+            },
+            {
+                "id": "note_1430090995031_c",
+                "text": "★"
+            },
+            {
+                "id": "note_1430091280647_c",
+                "text": "☠ "
+            },
+            {
+                "id": "note_1430091726547_c",
+                "text": "½"
+            },
+            {
+                "id": "note_1430091746445_c",
+                "text": "✔"
+            }
+        ],
+        "text": "some useful stuff\n\ndouble click note in this folder to copy it into clipboard\n\nexamples how you can use notes for special characters or html tags"
+    },
+    {
+        "id": "linked_1438082005739_r",
+        "text": "V7 Notes - insert note feature",
+        "url": "https://www.youtube.com/watch?v=-QEKtWIXHDQ"
+    },
+    {
+        "id": "mapa_1558718506788_c",
+        "list": [
+            {
+                "id": "note_1558718522649_c",
+                "text": "pandas.DataFrame.iterrows()\n\n"
+            }
+        ],
+        "text": "pandas"
+    },
+    {
+        "id": "note_1558725863868_c",
+        "text": "Amazing Sites\n\nwww.programcreek.com/python/\ngeeksforgeeks.org/python-programming-language/"
+    }
+]
