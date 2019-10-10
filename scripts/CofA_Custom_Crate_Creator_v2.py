@@ -2,6 +2,9 @@
 """
 Created on Wed Oct  9 14:16:30 2019
 
+TAKEN FROM: "CofA_Custom_Crate_Creator_v1.py"
+IMPLEMENTED fixes & better program structure
+
 @author: derbates
 """
 
@@ -70,6 +73,11 @@ def setup_logger(): #{
 if __name__ == "__main__": #{
     # SETUP LOGGER
     setup_logger()
+    # TRY THE FOLLOWING:
+    try: #{
+        root = tk.Tk()
+        }
+    """
     # TRY THE FOLLOWING:
     try: #{
         # INSTANTIATE GLOBAL VARIABLES
@@ -183,5 +191,5 @@ if __name__ == "__main__": #{
     else: #{
         print("SUCCESS! VERY NICE!")
     #}
-    
+    """
 #}

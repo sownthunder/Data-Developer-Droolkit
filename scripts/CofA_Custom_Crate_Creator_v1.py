@@ -96,7 +96,9 @@ def display_batch_list(file_path):  # {
         top = tk.Toplevel(master=root)
         top.title('Crate-Batch-List:')
         top.geometry('300x450+550+300')
-        top.resizable(width=False, height=False)
+        top.minsize(width=300, height=450)
+        top.maxsize(width=300, height=1050)
+        top.resizable(width=False, height=True)
 
         # CREATE SCROLL BAR?
         scrollbar = tk.Scrollbar(master=top)
@@ -224,6 +226,7 @@ def select_zip_folder():  # {
             preliminaries_selected = True
         # }
     # }
+    #return out_directory
 # }
 
 def create_watermark(input_pdf, output, watermark):  # {
@@ -410,7 +413,8 @@ def create_custom_crate(): #{
     for lot_no in df_batch.itertuples(): #{
         logging.info("=======" + str(lot_no[1]) + "========")
         # CHECK AND CREATE NEW DIR PATH
-        new_dir_path = os.path.join(out_directory, str(lot_no[1]))
+        # [2019-10-10]... new_dir_path = os.path.join(out_directory, str(lot_no[1]))
+        new_dir_path = os.path.join(zip_folder, str(lot_no[1]))
         # IF 'lot_no' DIRECTORY DOES NOT EXIST:
         if not os.path.exists(new_dir_path): #{
             # MAKE IT EXIST!
@@ -425,19 +429,29 @@ def create_custom_crate(): #{
             for name in sorted(glob.glob(in_directory + "*" + str(lot_no[1]) + "*")): #{
                 # CREATE PATH VARIABLE
                 pdf_path = Path(str(name))
-                print(os.path.exists(pdf_path))
+                logging.info("PDF_EXISTS == " + str(os.path.exists(pdf_path)))
                 # GET BASE NAME (file name)
                 file_name = os.path.basename(pdf_path)
                 # CREATE TEMP PATH
                 temp_path = os.path.join(the_dir, file_name)
                 # CREATE NEW PATH
                 new_path = os.path.join(new_dir_path, file_name)
+                logging.info("NEW_PATH == " + str(new_path))
                 # COPY FILE TO NEW LOCATION
                 shutil.copy2(pdf_path, temp_path)
                 # CREATE WATERMARK ON NEW FILE
                 create_watermark(input_pdf=temp_path,
                                  output=new_path,
                                  watermark=watermark_pdf)
+                # GET METADATA OF OLD ORIGINAL FILE
+                old_stinfo = os.stat(pdf_path)
+                logging.info("OLD FILE STATS: \n" + str(old_stinfo))
+                old_atime = old_stinfo.st_atime
+                logging.info("OLD FILE A-TIME: \n" + str(old_atime))
+                old_mtime = old_stinfo.st_mtime
+                logging.info("OLD FILE M-TIME: \n" + str(old_mtime))
+                # CHANGE METADATA OF COPIED FILE TO ORIGINAL
+                os.utime(new_path, (old_atime, old_mtime))
                 # increase count
                 x += 1
         #}
