@@ -70,108 +70,116 @@ def setup_logger(): #{
     #}
 #}
 
+def test_popup(): #{
+    # RE-INSTANTIATE GLOBALS
+    global root
+    # get root pos
+    #x_pos = root.
+    #y_pos = root.y
+    # MAIN TOP LEVEL PROPERTIES
+    toplevel = tk.Toplevel(master=root)
+    toplevel.geometry("250x250+" + str(x_pos) + "+" + str(y_pos))
+    toplevel.title("test")
+    
+    toplevel.config()
+    toplevel.mainloop()
+    
+#}
+
 if __name__ == "__main__": #{
     # SETUP LOGGER
     setup_logger()
     # TRY THE FOLLOWING:
     try: #{
         root = tk.Tk()
-        }
-    """
-    # TRY THE FOLLOWING:
-    try: #{
-        # INSTANTIATE GLOBAL VARIABLES
-        root = tk.Tk()
-        selected_batch_list = False
-        selected_zip_folder = False
-        e1_var = tk.StringVar()
-        e2_var = tk.StringVar()
-        check_var = tk.IntVar()
-        ##################################################
-        # MAIN APP PROPERTIES
-        # [2019-10-09]... root = tk.Tk()
-        root.title('CofA_Custom_Crate')
-        root.geometry('552x282+250+250')
-        root.minsize(width=474, height=282)  # WAS: (width=375, height=275)
-        root.maxsize(width=552, height=450)  # WAS: (width=False, height=False)
-        root.resizable(width=True, height=True)
-        b1 = tk.Button(master=root)
-        #####################################################################################
-        # TOP FRAME
+        root.title('CofA_Custom_Crate_v2.exe')
+        root.geometry('650x150+250+250')  # (width x height + xPost + yPos)
+        root.minsize(width=625, height=125)
+        root.maxsize(width=750, height=175)
+        
+        # TKINTER VARIABLES:
+        check_var = tk.BooleanVar()
+        entry1_var = tk.StringVar(master=root, value="<<batch file location>>")
+        entry2_var = tk.StringVar(master=root, value="<<zip folder location>>")
+        
+        #########################################################
+        # TOP-FRAME
         topframe = tk.Frame(master=root)
-        topframe.pack(expand=1, fill=tk.BOTH, side=tk.TOP)
+        topframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
-        e1_str = "<<INSERT BATCH LIST FILE HERE>>"
-        e1_var.set(e1_str)
+        batch_entrybox = tk.Entry(master=topframe, width=25,
+                                  textvariable=entry1_var,
+                                  font=("Liberation Serif", 12),  # was: 15
+                                  bd=4)
+        batch_entrybox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        # E1
-        e1 = tk.Entry(master=topframe,
-                      width=35,
-                      textvariable=e1_var,
-                      relief=tk.GROOVE,
-                      cursor="rightbutton")
-        e1.place(x=50, y=5, height=25, width=200)  # WAS: (height=30, width=200, x=50, y=20)
+        batch_button = tk.Button(master=topframe, width=25, height=1,
+                                 text="Browse for Batch", command=test_popup,
+                                 font=("Courier New", 10),
+                                 bg="#cccc00", fg="#000000")  # WAS: #008080
+        batch_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)  # WAS: true
         
-        # B1
-        b1 = tk.Button(master=topframe, width=30,
-                       text="Browse for BATCH_LIST",
-                       font=("Sourcecode Semibold", 10),
-                       command=select_batch_list,
-                       relief=tk.GROOVE, cursor="pirate")
-        b1.place(x=300, y=5, height=25, width=150)  # WAS: (height=30, width=100, x=250, y=20)
-        # b1.config(command=test_messagebox)
+        ############################################################
+        # MIDDLE-FRAME
+        middleframe = tk.Frame(master=root)
+        middleframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
         
-        ######################################################################################
-        # BOTTOM FRAME
+        zip_entrybox = tk.Entry(master=middleframe, width=25,
+                                textvariable=entry2_var,
+                                font=("Liberation Serif", 12),  # was: 15
+                                bd=4)
+        zip_entrybox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        zip_button = tk.Button(master=middleframe, width=25, height=1,
+                               text="Browse for Zip", command=test_popup,
+                               font=("Courier New", 10),
+                               bg="#cccc00", fg="#000000")  # WAS: #008080
+        zip_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)  # WAS: true
+        
+        #########################################################
+        # BOTTOM-FRAME
         bottomframe = tk.Frame(master=root)
-        bottomframe.pack(expand=1, fill=tk.BOTH, side=tk.BOTTOM)
+        bottomframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         
-        e2_str = "<<INSERT (to) ZIP FOLDER HERE>>"  # WAS: "C:/"
-        e2_var.set(e2_str)
+        #####################################################################
+        # bottomleft
+        bottomleft = tk.Frame(master=bottomframe)
+        bottomleft.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        # E2
-        e2 = tk.Entry(master=bottomframe, width=20, textvariable=e2_var)
-        e2.place(x=50, y=5, height=25, width=200)  # WAS: (x=50, y=30, height=30, width=200)
+        confirm_button = tk.Button(master=bottomleft, text="Confirm",
+                                   font=("Courier New", 10),
+                                   bg="#0099cc", fg="#000000",
+                                   width=25, height=1, relief=tk.GROOVE)
+        confirm_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        # B2
-        b2 = tk.Button(master=bottomframe, width=30,
-                       text="Browse for ZIP Dir",
-                       state=tk.DISABLED,
-                       font=("Sourcecode Semibold", 10),
-                       command=select_zip_folder,
-                       relief=tk.GROOVE, cursor="spider")
-        b2.place(x=300, y=5, height=25, width=150)  # WAS: (x=250, y=30, height=30, width=100)
+        cancel_button = tk.Button(master=bottomleft, text="Cancel",
+                                  font=("Courier New", 10),
+                                  bg="#0099cc", fg="#000000",
+                                  width=25, height=1, relief=tk.GROOVE)
+        cancel_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
         
-        # CONFIRM BUTTON /b3
-        b3 = tk.Button(master=bottomframe,
-                       text="Confirm",
-                       width=10,
-                       state=tk.DISABLED,  # if b1_var.get() == False else tk.ENABLED,
-                       font=("Sourcecode Semibold", 12),
-                       command=create_custom_crate,  # WAS: custom_cofa_crate
-                       relief=tk.RAISED, cursor="sb_down_arrow")
-        b3.place(x=50, y=50, height=25, width=100)
+        #####################################################################
+        # bottomright
+        bottomright = tk.Frame(master=bottomframe)
+        bottomright.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)  # was: FALSE
         
-        # CANCEL BUTTON /b4
-        b4 = tk.Button(master=bottomframe, text="Cancel", width=10,
-                       font=("Sourcecode Semibold", 12), command=root.destroy,
-                       relief=tk.RAISED, cursor="circle")
+        R1 = tk.Radiobutton(master=bottomright, text="Most Recent CofA(s)",
+                            font=("Lucida Sans Typewriter", 10), width=25, height=1,
+                            variable=check_var, value=1, state=tk.DISABLED,
+                            bg="#0099cc", fg="#ffffff", command=test_messagebox)
+        R1.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        #R1.place(x=250, y=35, height=50, width=200)
         
-        b4.place(x=150, y=50, height=25, width=100)
-        
-        # CHECK BUTOTNS FOR ( most recent / all ) SELECTION TYPES
-        # CheckVar1 = tk.IntVar()
-        # CheckVar2 = tk.IntVar()
-        R1 = tk.Radiobutton(master=bottomframe, text="Most Recent CofA(s)", font=("Sourcecode Light", 12),
-                            variable=check_var, value=1, state=tk.DISABLED, command=test_messagebox)
-        R1.place(x=250, y=35, height=50, width=200)
-        R2 = tk.Radiobutton(master=bottomframe, text="Return All CofA(s)", font=("Sourcecode Light", 12),
-                            variable=check_var, value=2, state=tk.DISABLED, command=test_messagebox)
-        R2.place(x=250, y=85, height=50, width=200)
+        R2 = tk.Radiobutton(master=bottomright, text="Return All CofA(s)", 
+                            font=("Lucida Sans Typewriter", 10), width=25, height=1,
+                            variable=check_var, value=2, state=tk.DISABLED, 
+                            bg="#0099cc", fg="#000000")
+        #R2.place(x=250, y=85, height=50, width=200)
+        R2.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         
         root.config()
         root.mainloop()
-        ##################################################
+        
     #}
     except: #{
         errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -191,5 +199,4 @@ if __name__ == "__main__": #{
     else: #{
         print("SUCCESS! VERY NICE!")
     #}
-    """
 #}
