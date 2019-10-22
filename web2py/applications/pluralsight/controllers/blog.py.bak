@@ -29,7 +29,7 @@ def thanks():
 
 @auth.requires_membership('blog_poster')
 def post():
-    form = SQLFORM(db.blog.process()
+    form = SQLFORM(db.blog).process()
     return locals()
 
 @auth.requires.login()

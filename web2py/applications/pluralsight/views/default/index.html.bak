@@ -31,7 +31,7 @@
           <i class="fa fa-cog"></i>
           {{=T("admin")}}
         </a>
-        <a class="btn btn-secondary" href="{{=URL('examples','default','index')}}">{{=T("Online Examples")}}</a>
+        <a class="btn btn-secondary" href="{{=URL('examples','default','index')}}">{{=T("Online POOP")}}</a>
         <a class="btn btn-secondary" href="http://web2py.com">web2py.com</a>
         <a class="btn btn-secondary" href="http://web2py.com/book">{{=T('Documentation')}}</a>
         <a class="btn btn-secondary" href="{{=URL('default','api_get_user_email')}}">{{=T('API Example')}}</a>

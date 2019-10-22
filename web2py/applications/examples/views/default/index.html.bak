@@ -3,7 +3,7 @@
 <div class="container">
   <div class="twothirds">
     <div class="padded">
-      <h3><img src="{{=URL('static/images', 'web2py_logo.png')}}"> Test Framework</h3>
+      <h3><img src="{{=URL('static/images', 'web2py_logo.png')}}"> Web Framework</h3>
       <p>Free open source full-stack framework for rapid development of fast, scalable, <a href="http://www.web2py.com/book/default/chapter/01#Security" target="_blank">secure</a> and portable database-driven web-based applications. Written and programmable in <a href="http://www.python.org" target="_blank">Python</a> (version 3 and 2.7).</p>
       <table width="100%">
 	<tr>
