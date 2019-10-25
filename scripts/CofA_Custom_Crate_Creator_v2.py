@@ -35,6 +35,52 @@ def select_zip_folder(): #{
 #}
 
 def select_batch_list(): #{
+    # RE-INSTANTIATE GLOBALS
+    global root, e1_var, selected_batch_list, b2
+    logging.info("BATCH_LIST_SELECTED(bool)==" + str(selected_batch_list))
+    # TRY THE FOLLOWING
+    try: #{
+        root.filename = filedialog.askopenfilename(initialdir="C:/",
+                                                   title="Select BATCH LIST",
+                                                   filetypes=(("csv files", "*.csv"),
+                                                              ("xlsx files", "*.xlsx"),
+                                                              ("all files", "*.*")))
+        logging.info(root.filename)
+        e1_var.set(root.filename)
+        # CREATE FILE_PATH FOR "BATCH_LIST"
+        batch_path = Path(root.filename)
+        # ENABLE ZIP DIR SELECTION BUTTON... WAS: CONFIRM BUTTON
+        b2.configure(state=tk.ACTIVE)
+        # CALL THE DISPLAY FUNCTION
+        display_batch_list(batch_path)
+    #}
+    except: #{
+        errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+        errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        typeE = str("TYPE : " + str(exc_type))
+        fileE = str("FILE : " + str(fname))
+        lineE = str("LINE : " + str(exc_tb.tb_lineno))
+        messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+        logging.error("\n" + typeE +
+                      "\n" + fileE +
+                      "\n" + lineE +
+                      "\n" + messageE)
+    #}
+    else: #{
+        pass
+    #}
+    finally: #{
+        # SET BOOL TO TRUE
+        selected_batch_list = True
+        logging.info("BATCH_LIST_SELECTED(bool)==" + str(select_batch_list))
+    #}
+    
+#}
+
+def display_batch_list(file_path): #{
     pass
 #}
     

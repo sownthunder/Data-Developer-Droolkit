@@ -25,6 +25,8 @@ from tkinter import filedialog
 from tkinter import messagebox
 import logging, sqlite3
 
+
+"""
 class QuotesBook: #{
     
     db_filename =  'test.db'  #'quotesbook.db'
@@ -200,3 +202,4 @@ if __name__ == "__main__": #{
     application = QuotesBook(root)
     root.mainloop()
 #}
+"""

@@ -29,3 +29,11 @@
 [2019-10-22 15:01:19] EDIT pluralsight/models/db.py: 0
 [2019-10-22 15:02:45] EDIT pluralsight/models/db.py: 0
 [2019-10-22 15:11:58] EDIT pluralsight/controllers/blog.py: 0
+[2019-10-24 15:49:22] DELETE pluralsight/controllers/blog.py: -31
+[2019-10-24 15:49:30] CREATE blog.py: 0
+[2019-10-24 15:57:11] EDIT pluralsight/controllers/blog.py: 3
+[2019-10-24 15:59:11] EDIT pluralsight/controllers/blog.py: 3
+[2019-10-24 16:12:19] EDIT pluralsight/controllers/blog.py: 0
+[2019-10-24 16:14:18] CREATE blog/post.html: 0
+[2019-10-24 16:21:50] EDIT pluralsight/views/blog/post.html: 0
+[2019-10-24 16:51:49] CREATE blog/view.html: 0
