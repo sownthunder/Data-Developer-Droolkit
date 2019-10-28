@@ -162,3 +162,19 @@ db.define_table('blog',
                 Field('blog_category', requires=IS_IN_SET(['News', 'Events']) ),
                 Field('blog_date_posted', type='date', requires=IS_DATE() )
                 )
+
+## https://www.braindunning.com/sampple-data/
+db.define_table('contacts',
+                Field('first_name'),
+                Field('last_name'),
+                Field('company_name'),
+                Field('address'),
+                Field('city'),
+                Field('county'),
+                Field('state_name')
+                Field('zip'),
+                Field('phone1'),
+                Field('phone2'),
+                Field('email'),
+                Field('web')
+                )

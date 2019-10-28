@@ -65,3 +65,20 @@ CREATE TABLE "blog"(
 );
 success!
 success!
+timestamp: 2019-10-28T16:01:54.185000
+CREATE TABLE "contacts"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "first_name" CHAR(512),
+    "last_name" CHAR(512),
+    "company_name" CHAR(512),
+    "address" CHAR(512),
+    "city" CHAR(512),
+    "county" CHAR(512),
+    "state_name" CHAR(512),
+    "zip" CHAR(512),
+    "phone1" CHAR(512),
+    "phone2" CHAR(512),
+    "email" CHAR(512),
+    "web" CHAR(512)
+);
+success!

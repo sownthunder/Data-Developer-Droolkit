@@ -4,6 +4,12 @@
 # this file is released under public domain and you can use without limitations
 # -------------------------------------------------------------------------
 
+def first():
+    return dict()
+
+def second():
+    return dict()
+
 # ---- example index page ----
 def index():
     if not session.counter:

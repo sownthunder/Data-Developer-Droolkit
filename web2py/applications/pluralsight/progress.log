@@ -37,3 +37,11 @@
 [2019-10-24 16:14:18] CREATE blog/post.html: 0
 [2019-10-24 16:21:50] EDIT pluralsight/views/blog/post.html: 0
 [2019-10-24 16:51:49] CREATE blog/view.html: 0
+[2019-10-28 10:29:26] EDIT pluralsight/controllers/blog.py: 10
+[2019-10-28 10:51:46] EDIT pluralsight/controllers/blog.py: 8
+[2019-10-28 10:52:10] CREATE blog/update.html: 0
+[2019-10-28 10:52:47] EDIT pluralsight/views/blog/update.html: 0
+[2019-10-28 11:10:24] EDIT pluralsight/views/blog/view.html: 13
+[2019-10-28 11:18:51] EDIT pluralsight/views/blog/view.html: 0
+[2019-10-28 16:01:14] EDIT pluralsight/models/db.py: 14
+[2019-10-28 16:01:24] EDIT pluralsight/models/db.py: 0

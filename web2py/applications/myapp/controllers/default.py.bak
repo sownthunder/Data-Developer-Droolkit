@@ -6,7 +6,12 @@
 
 # ---- example index page ----
 def index():
-    return dict(message="Hello from MyApp")
+    if not session.counter:
+        session.counter = 1
+    else:
+        session.counter += 1
+    return dict(message="Hello from MyApp", counter=session.counter)
+    # [2019-10-25]\\return dict(message="Hello from MyApp")
     """
     response.flash = T("Hello World")
     return dict(message=T('Welcome to web2py!'))

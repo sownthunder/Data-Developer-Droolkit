@@ -2,6 +2,17 @@
 # try something like
 def index(): return dict(message="hello from blog.py")
 
+def display_form():
+    form = SQLFORM(db.blog)
+    if form.process().accepted:
+        sesssion.flash = 'form accepted'
+        redirect(URL('thanks'))
+    elif form.errors:
+        response.flash = 'form has errors'
+    else:
+        response.flash = 'please fill out the form'
+    return locals()
+
 def post():
     form = SQLFORM(db.blog).process()
     return locals()
