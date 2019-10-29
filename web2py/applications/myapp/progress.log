@@ -11,3 +11,6 @@
 [2019-10-25 16:35:57] EDIT myapp/views/default/index.html: 1
 [2019-10-27 17:29:22] EDIT myapp/controllers/default.py: 4
 [2019-10-27 17:35:50] EDIT myapp/views/default/index.html: -1
+[2019-10-29 16:04:33] DELETE myapp/views/default/index.html.1: -6
+[2019-10-29 16:11:12] CREATE default/first.html: 0
+[2019-10-29 16:49:21] EDIT myapp/views/default/first.html: 0
