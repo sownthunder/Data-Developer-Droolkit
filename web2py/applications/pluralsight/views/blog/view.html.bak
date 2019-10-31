@@ -13,4 +13,4 @@
         <p>{{=x.blog_date_posted</p>
     </div>
 </div>
-{{ pass }}
+{{=pass}}

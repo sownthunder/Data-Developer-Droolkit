@@ -2,6 +2,7 @@
 # try something like
 def index(): return dict(message="hello from blog.py")
 
+@auth.requires_membership('blog_poster')
 def update():
     record = db.blog(request.args(0)) or redirect(URL('post'))
     form = SQLFORM(db.blog, record)
@@ -22,10 +23,16 @@ def display_form():
         response.flash = 'please fill out the form'
     return locals()
 
+def thanks():
+    msg = "Thank you for submitting your post"
+    return locals()
+
+@auth.requires_membership("blog_poster")
 def post():
     form = SQLFORM(db.blog).process()
     return locals()
 
+@auth.requires_login()
 def view():
-    rows = db(db.blog).select(orderby=~db.blog.id)
+    rows = db(db.blog).select(orderby=db.blog.id)
     return locals()
