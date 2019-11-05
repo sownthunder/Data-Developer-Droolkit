@@ -1,7 +1,8 @@
 """
 taken from CofA_Custom_Crate.py in archive folder
-
-
+TO-DO:
+(1) include ZIPPING of folder once complete inside OUT-DIRECTORY
+(2)
 """
 
 # IMPORT THE GOODS
