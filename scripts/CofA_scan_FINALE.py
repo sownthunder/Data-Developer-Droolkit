@@ -1,6 +1,7 @@
 """
 Created on May 07, 10:07 AM - DB
 Modified on May 28, 09:11 AM - DB # INCLUDE SQLITE3
+Modified on Nov 15, 09:52 AM - DB
 
 USES:
 (1) "single_directory_scanning_SDS.py"
@@ -20,7 +21,7 @@ import os
 import sys
 import time
 import datetime
-from datetime import date
+# [2019-11-15]\\from datetime import date
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -278,10 +279,12 @@ def scanDirectory(aBool, aDir): #{
                     print("| the file-name: " + fileStr)
                     fileList.append(fileStr)
                     ## CREATION DATE OPERATIONS
-                    testPath = Path(str(root) + "\\" + str(f))
-                    date = os.path.getctime(testPath)
+                    # [2019-11-15]\\testPath = Path(str(root) + "\\" + str(f))
+                    testPath = os.path.join(root, f)
+                    # [2019-11-15]\\date = os.path.getctime(testPath)
+                    date = os.path.getmtime(testPath)
                     dateStr = str(datetime.date.fromtimestamp(date))
-                    print("C-DATE: " + dateStr + "\n")
+                    print("M-DATE: " + dateStr + "\n")
                     dateList.append(dateStr)
                     print("{*} current count: " + str(x) + " {*} \n")
                     # OLD#print("string: " + theStr + "\n length: " + str(theLen) + "\n")
