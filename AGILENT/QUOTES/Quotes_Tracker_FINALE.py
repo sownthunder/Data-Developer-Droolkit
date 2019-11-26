@@ -17,6 +17,10 @@ from threading import Thread, Timer
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
+from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, backref
 
 
 class QuotesBook: #{
@@ -28,7 +32,7 @@ class QuotesBook: #{
         self.root = root
         self.root.title('AGILENT Quotes')
         #self.root.geometry('1050x1250+250+250') # (WIDTH x HEIGHT + x + y)
-        self.root.resizable(width=True, height=True)
+        self.root.resizable(width=True, height=False)
         self.root.minsize(height=1250)
         ###############################################
         # CREATE / START THREAD FOR "timestamp puller"
@@ -235,24 +239,24 @@ class QuotesBook: #{
             """
             self.style = ttk.Style()
             # Modify the font of the body
-            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Candara', 11))
+            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
-            self.style.configure("mystyle.Treeview.Heading", font=('Candara', 14, 'bold')) 
+            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 12, 'bold')) 
             # REMOVE THE BORDERS
             self.style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
             # BUTTON STYLE
             self.button_style = ttk.Style().configure("TButton", padding=4, 
                                                       relief="groove", background="#96A853",
-                                                      font=('Calibri', 8, 'bold'), foreground="#bbc0c9")
+                                                      font=('Calibri', 8, 'bold'), foreground="#600080")
             # ENTRY BOX STYLE
             self.entry_style = ttk.Style().configure("TEntry", padding=4, 
-                                                     relief="ridge", font=('Candara', 8, 'bold'))
+                                                     relief="ridge", font=('Calibri', 8, 'bold'))
             # SPIN BOX STYLE
             self.spinbox_style = ttk.Style().configure("TSpinbox", padding=4,
-                                                       relief="groove", font=('Candara', 8, 'bold'))
+                                                       relief="groove", font=('Calibri', 8, 'bold'))
             # RADIO BUTTON STYLE
             self.radio_style = ttk.Style().configure("TRadio", padding=1,
-                                                     relief="sunken", font=('Candara', 8, 'bold'))
+                                                     relief="sunken", font=('Calibri', 8, 'bold'))
             """
             # LABEL STYLE
             self.label_style = ttk.Style().configure("TLabel", padding=6,
@@ -295,7 +299,7 @@ class QuotesBook: #{
     
     def create_tab_control(self): #{
         # CREATE MESSGE AREA
-        self.message = ttk.Label(master = self.leftframe, text='<message area>', 
+        self.message = ttk.Label(master = self.leftframe, text='', 
                                  font=("Sourcecode Pro", 18), foreground='red')
         self.message.pack(side = tk.TOP, expand = True, fill = tk.BOTH)
         
@@ -399,10 +403,10 @@ class QuotesBook: #{
             self.radio_type_var = tk.StringVar(master=self.lblframe_create, value="email")
             ################################################################################
             self.radio_type_1 = ttk.Radiobutton(master=self.lblframe_create, variable=self.radio_type_var,
-                                                value="web", text="Web", width=12, style="TButton")
+                                                value="web", text="Web", width=12) #, style="TButton")
             self.radio_type_1.grid(row=2, column=1, sticky='w', padx=1, pady=1)
             self.radio_type_2 = ttk.Radiobutton(master=self.lblframe_create, variable=self.radio_type_var,
-                                          value="email", text="Email", width=12, style="TButton")
+                                          value="email", text="Email", width=12) #, style="TButton")
             self.radio_type_2.grid(row=2, column=1, sticky='e', padx=1, pady=1)
             
             # xXxXxXxXxXxXxXxXx
@@ -432,7 +436,7 @@ class QuotesBook: #{
             self.quote_num = ttk.Entry(master = self.lblframe_create, width=24)
             self.quote_num.grid(row=6, column=1, sticky='w', padx=5, pady=5)
             
-            # Timestamp
+            # Timestamp TKinter variable...
             self.timestamp_var = tk.StringVar(master=self.lblframe_create) #value=str(self.pull_timestamp))
             ttk.Label(master = self.lblframe_create, text = 'Timestamp: ').grid(row=7, column=0, padx=5, pady=5, sticky='w')
             
@@ -461,9 +465,9 @@ class QuotesBook: #{
             self.timestamp_tab = tk.Text(master=self.lblframe_create, height=15, width=15)
             # Add them to the notebook
             self.notes.add(self.note_tab, text="NOTES", )
-            self.notes.add(self.trackingnum_tab, text="TRACKING #")
-            self.notes.add(self.quotenum_tab, text="QUOTE #")
-            self.notes.add(self.timestamp_tab, text="TIMESTAMP")
+            # [2019-11-26]\\self.notes.add(self.trackingnum_tab, text="TRACKING #")
+            # [2019--11-26]\\self.notes.add(self.quotenum_tab, text="QUOTE #")
+            # [2019-11-26]\\self.notes.add(self.timestamp_tab, text="TIMESTAMP")
             
             #keep_em_seperated = ttk.Separator(master=self.lblframe_create, orient=tk.HORIZONTAL)
             #keep_em_seperated.grid(row=6, column=0, columnspan=4)
@@ -474,7 +478,7 @@ class QuotesBook: #{
             
             # xXxXXxXxXxXXXXXX
             # SUBMIT "CREATE" BUTTON
-            ttk.Button(master=self.lblframe_create, text = 'SUBMIT', width=24).grid(row=9, column=0,
+            ttk.Button(master=self.lblframe_create, text = 'SUBMIT', width=24, command=self.insert_record).grid(row=9, column=0,
                                                                                     rowspan=1, columnspan=2,
                                                                                     padx=5, pady=5, sticky='nesw')
             # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
@@ -499,7 +503,7 @@ class QuotesBook: #{
             self.read_keywords.grid(row = 1, column = 1, sticky = 'w', padx=5, pady=5)
 
             
-            ttk.Button(master=self.lblframe_read, text = 'SEARCH', width=24).grid(row=2, column=0, 
+            ttk.Button(master=self.lblframe_read, text = 'READ NOTES', width=24).grid(row=2, column=0, 
                                                                                   rowspan=1, columnspan=2, 
                                                                                   padx=5, pady=5, sticky='nesw')
             
@@ -507,15 +511,19 @@ class QuotesBook: #{
             # () UPDATE TAB CONTENTS () #
             # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
             # Filter input
-            ttk.Label(master=self.lblframe_update, text = 'Filter: ').grid(row=0, column=0, padx=5,
+            ttk.Label(master=self.lblframe_update, text = 'Tracking #: ').grid(row=0, column=0, padx=5,
                                                                            pady=5, sticky='w')
             self.update_filter_var = tk.StringVar(master=self.lblframe_update, value="Tracking #")
+            self.update_filter = ttk.Entry(master=self.lblframe_update, textvariable=self.update_filter_var, state='readonly')
+            self.update_filter.grid(row=0, column=1, sticky='w', padx=5, pady=5)
+            """
             self.update_filter = ttk.Spinbox(master=self.lblframe_update, values=['Tracking #', 'Name',
                                                                                   'Email','Type',
                                                                                   'Timestamp','Sent',
                                                                                   'Quote #','Product #'],
                                              textvariable=self.update_filter_var)
             self.update_filter.grid(row=0, column=1, sticky='w', padx=5, pady=5)
+            """
             
             # Filter KEYWORDS
             ttk.Label(master=self.lblframe_update, text='Keywords: ').grid(row=1, column=0, padx=5,
@@ -523,7 +531,7 @@ class QuotesBook: #{
             self.update_keywords = ttk.Entry(master = self.lblframe_update, width=24)
             self.update_keywords.grid(row = 1, column = 1, sticky = 'w', padx=5, pady=5)
             
-            ttk.Button(master=self.lblframe_update, text = 'SEARCH', width=24).grid(row=2, column=0,
+            ttk.Button(master=self.lblframe_update, text = 'UPDATE', width=24, command=self.on_modify_selected_button_clicked).grid(row=2, column=0,
                                                                                     rowspan=1, columnspan=2,
                                                                                     padx=5, pady=5, sticky='nesw')
             
@@ -579,22 +587,6 @@ class QuotesBook: #{
     def confirm_message(self): #{
         pass
     #}
-    
-    def create_record(self): #{
-        pass
-    #}
-    
-    def read_record(self): #{
-        pass
-    #}
-    
-    def update_record(self): #{
-        pass
-    #}
-    
-    def delete_record(self): #{
-        pass
-    #}
         
     def create_right_side(self): #{
         # Create a Frame Container
@@ -607,14 +599,14 @@ class QuotesBook: #{
         self.tree = ttk. Treeview(master = self.rightframe, style="mystyle.Treeview", 
                                   height = 30, columns = 8)  # height = 20
         self.tree["columns"] = ("one","two","three","four","five","six","seven")
-        self.tree.column('#0', width=80, minwidth=80, stretch=tk.NO)
-        self.tree.column("one", width=125, minwidth=125, stretch=tk.YES)
-        self.tree.column("two", width=150, minwidth=150, stretch=tk.YES)
-        self.tree.column("three", width=40, minwidth=40, stretch=tk.YES)
-        self.tree.column("four", width=150, minwidth=150, stretch=tk.YES)
-        self.tree.column("five", width=40, minwidth=35, stretch=tk.YES)
-        self.tree.column("six", width=80, minwidth=75, stretch=tk.YES)
-        self.tree.column("seven", width=80, minwidth=75, stretch=tk.YES)
+        self.tree.column('#0', width=100, minwidth=90, stretch=tk.NO)
+        self.tree.column("one", width=125, minwidth=125, stretch=tk.NO)
+        self.tree.column("two", width=150, minwidth=150, stretch=tk.NO)
+        self.tree.column("three", width=50, minwidth=50, stretch=tk.NO)
+        self.tree.column("four", width=128, minwidth=128, stretch=tk.NO)
+        self.tree.column("five", width=45, minwidth=45, stretch=tk.NO)
+        self.tree.column("six", width=100, minwidth=90, stretch=tk.NO)
+        self.tree.column("seven", width=100, minwidth=90, stretch=tk.YES)
         
         # Definitions of Headings
         self.tree.grid(row = 1, column = 0, columnspan = 8)
@@ -647,13 +639,180 @@ class QuotesBook: #{
     def on_modify_selected_button_clicked(self): #{
         self.message['text'] = ''
         try: #{
-            self.tree.item(self.tree.selection())['values'][0]
+            self.tree.item(self.tree.selection())['values'][3]
+            print(str(self.tree.item(self.tree.selection())['values'][3]))
         #}
         except IndexError as e: #{
-            self.message['text'] = 'No Item selected to modify'
+            self.message['text'] = 'No Item selected to modify\n[' + str(e) +']'
             return
         #}
-        self.open_modify_window()
+        test_name = str(self.tree.item(self.tree.selection())['values'][0])
+        test_two = str(self.tree.item(self.tree.selection())['values'][1])
+        print(str(self.tree.item(self.tree.selection())['values'][3]))
+        print(str(self.tree.item(self.tree.selection())['values'][4]))
+        #print(str(self.tree.item(self.tree.selection())['values'][5]))
+        #print(str(self.tree.item(self.tree.selection())['values'][6]))
+        #print(str(self.tree.item(self.tree.selection())['values'][7]))
+        #print(str(self.tree.item(self.tree.selection())['values'][8]))
+        the_timestamp = str(self.tree.item(self.tree.selection())['values'][3])
+        self.open_modify_window_test(tracking_num="", the_name=test_name, 
+                                     the_email=test_two, the_type="", 
+                                     the_ts=the_timestamp, the_sent="",
+                                     quote_num="", product_num="", the_notes="")
+    #}
+    
+    def open_modify_window_test(self, tracking_num, the_name, 
+                                the_email, the_type, the_ts, the_sent, 
+                                quote_num, product_num, the_notes): #{
+        print("[open_modify_window] BEGIN..." )
+        print(tracking_num)
+        print(the_name)
+        print(the_email)
+        print(the_type)
+        print(the_ts)
+        print(the_sent)
+        print(quote_num)
+        print(product_num)
+        print(the_notes)
+        # CREATE TKINTER TOPLEVEL
+        self.transient = tk.Toplevel(master=self.root)
+        # CREATE TKINTER STRING/BOOL/VARS
+        self.old_name_var = tk.StringVar(master=self.transient, value=str(the_name))
+        self.old_email_var = tk.StringVar(master=self.transient, value=str(the_email))
+        self.old_type_var = tk.StringVar(master=self.transient, value=str(the_type))
+        self.old_sent_var = tk.StringVar(master=self.transient, value=str(the_sent))
+        self.old_ts_var = tk.StringVar(master=self.transient, value=str(the_ts))
+        self.old_track_var = tk.StringVar(master=self.transient, value=str(tracking_num))
+        self.old_quote_var = tk.StringVar(master=self.transient, value=str(quote_num))
+        self.old_product_var = tk.StringVar(master=self.transient, value=str(product_num))
+        self.old_notes_var = tk.StringVar(master=self.transient, value=(str(the_notes)))
+        # CREATE TKINTER LABELS & ENTRY BOXES
+        ttk.Label(self.transient, text='Name:').grid(row=0, column=1)
+        self.new_name = ttk.Entry(self.transient, textvariable=self.old_name_var).grid(row=0, column=2)
+        ttk.Label(self.transient, text='Email:').grid(row=1, column=1)
+        self.new_email = ttk.Entry(self.transient, textvariable=self.old_email_var).grid(row=1, column=2)
+        ttk.Label(self.transient, text='Type:').grid(row=2, column=1)
+        self.new_type = ttk.Entry(self.transient, textvariable=self.old_type_var).grid(row=2, column=2)
+        ttk.Label(self.transient, text='Sent:').grid(row=3, column=1)
+        self.new_sent = ttk.Entry(self.transient, textvariable=self.old_sent_var).grid(row=3, column=2)
+        ttk.Label(self.transient, text='Timestamp:').grid(row=4, column=1)
+        self.new_ts = ttk.Entry(self.transient, textvariable=self.old_ts_var, state='readonly').grid(row=4, column=2)
+        ttk.Label(self.transient, text='Tracking #:').grid(row=5, column=1)
+        self.new_track = ttk.Entry(self.transient, textvariable=self.old_track_var, state='readonly').grid(row=5, column=2)
+        ttk.Label(self.transient, text='Quote #:').grid(row=6, column=1)
+        self.new_quote = ttk.Entry(self.transient, textvariable=self.old_quote_var, state='readonly').grid(row=6, column=2)
+        ttk.Label(self.transient, text='Product #:').grid(row=7, column=1)
+        self.new_product = ttk.Entry(self.transient, textvariable=self.old_product_var, state='readonly').grid(row=7, column=2)
+        ttk.Button(self.transient, text='Update Record', command=self.modify_record).grid(row=8, column=2)
+    #}
+    
+    def modify_record(self): #{
+        # TRY THE FOLLOWING
+        try: #{
+            # CHECK AND MAKE SURE USER IS SURE
+            confirm_bool = messagebox.askokcancel(title="ARE YOU SURE??", message="Last Chance!\nThis will overwrite record. Do you wish to continue?")
+            print(confirm_bool)
+            # IF USER WANTS... OVERWRITE RECORD
+            if confirm_bool is True: #{
+                print("CONFIRMED!")
+                print(self.new_name.get())
+                print(self.new_email.get())
+                print(self.new_type.get())
+                print(self.new_sent.get())
+                print(self.new_ts.get())
+                print(self.new_track.get())
+                print(self.new_quote.get())
+                print(self.new_product.get())
+            #}
+            # ELSE... let them edit it some more
+            else: #{
+                print("NOPE!")
+            #}
+        #}
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.critical("\n" + typeE +
+                  "\n" + fileE +
+                  "\n" + lineE +
+                  "\n" + messageE)
+            messagebox.showerror(title="ERROR!", 
+                                 message=typeE +
+                                 "\n" + fileE + 
+                                 "\n" + lineE + 
+                                 "\n" + messageE)
+        #}
+        else: #{
+            print("[modify_record] Operation completed successfully...")
+        #}
+    #}
+    
+    """
+    ###########################################################################
+    """
+    
+    def insert_record(self): #{
+        # TRY THE FOLLOWING
+        try: #{
+            print("...INSERTING RECORD...")
+            #print("timestamp == " + str(self.clock.get()))
+            print("timestamp == " + str(pd.Timestamp(self.time2)))
+            print("name == " + str(self.name.get()))
+            print("email == " + str(self.email.get()))
+            print("web/email == " + str(self.radio_type_var.get()))
+            print("sent == " + str(self.radio_sent_var.get()))
+            # CREATE SEPERATE LIST FOR EACH COLUMN
+            track_num = [str(self.tracking_num.get())]
+            name = [str(self.name.get())]
+            email = [str(self.email.get())]
+            the_type = [str(self.radio_type_var.get())]
+            # [2019-11-26]\\ts = [str(self.timestamp_var.get())]
+            ts = [str(pd.Timestamp(self.time2))]
+            sent = [str(self.radio_sent_var.get())]
+            # DICTIONARY OF LISTS
+            dict = {'Tracking#': track_num,
+                    'Name': name,
+                    'Email': email,
+                    'Type': the_type,
+                    'Timestamp': ts,
+                    'Sent': sent}
+            create_record_df = pd.DataFrame(data=dict)
+            # CREATE ENGINE (for sendning to Database)
+            engine = create_engine('sqlite:///test_quotes.db')
+            # SEND DATAFRAME TO DATABASE
+            create_record_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+            self.view_records()
+        #}
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.critical("\n" + typeE +
+                  "\n" + fileE +
+                  "\n" + lineE +
+                  "\n" + messageE)
+            messagebox.showerror(title="ERROR!", 
+                                 message=typeE +
+                                 "\n" + fileE + 
+                                 "\n" + lineE + 
+                                 "\n" + messageE)
+        #}\
+        else: #{
+            print("[insert_record] Operation Completed Successfully...")
+        #}
     #}
     
     def add_new_record(self): #{
@@ -688,7 +847,7 @@ class QuotesBook: #{
             for item in items: #{
                 self.tree.delete(item)
             #}
-            query = 'SELECT * FROM quotes ORDER BY NAME desc'
+            query = 'SELECT * FROM quotes ORDER BY TIMESTAMP desc'
             quote_book_entries = self.execute_db_query(query)
             for row in quote_book_entries: #{
                 logging.info("TRACKING # == " + str(row[0]))
@@ -738,25 +897,29 @@ class QuotesBook: #{
         self.view_records()
     #}
     
-    def open_modify_window(self): #{
+    def open_modify_window(self, record_to_modify): #{
+        print("[open_modify_window]..BEGIN...")
+        print(record_to_modify)
         # TRY THE FOLLOWING
         try: #{
-            name = self.tree.item(self.tree.selection())['text']
+            # [2019-11-26]\name = self.tree.item(self.tree.selection())['text']
+            name = str(record_to_modify)
             # [2019-11-19]\\old_phone_number = self.tree.item(self.tree.selection())['values'][0]
-            old_time_stamp = self.tree.item(self.tree.selection())['#4'][0] # Timestamp
+            # [2019-11-26]old_time_stamp = self.tree.item(self.tree.selection())['values'][3] # Timestamp
+            old_time_stamp = str(record_to_modify)
             self.transient = tk.Toplevel()
             ttk.Label(self.transient, text='Name:').grid(row=0, column=1)
             ttk.Entry(self.transient, textvariable=tk.StringVar(
                 self.transient, value=name), state='readonly').grid(row=0, column=2)
-            ttk.Label(self.transient, text='Old Phone Number:').grid(row=1, column=1)
+            ttk.Label(self.transient, text='Old Timestamp:').grid(row=1, column=1)
             ttk.Entry(self.transient, textvariable=tk.StringVar(
-                self.transient, value=old_phone_number), state='readonly').grid(row=1, column=2)
-            ttk.Label(self.transient, text='New Phone Number:').grid(
+                self.transient, value=old_time_stamp), state='readonly').grid(row=1, column=2)
+            ttk.Label(self.transient, text='New Timestamp:').grid(
                 row=2, column=1)
             new_phone_number_entry_widget = ttk.Entry(self.transient)
             new_phone_number_entry_widget.grid(row=2, column=2)
             ttk.Button(self.transient, text='Update Record', command=lambda: self.update_record(
-                new_phone_number_entry_widget.get(), old_phone_number, name)).grid(row=3, column=2, sticky=E)
+                new_phone_number_entry_widget.get(), old_time_stamp, name)).grid(row=3, column=2, sticky=tk.E)
             self.transient.mainloop()
         #}
         except: #{
@@ -782,7 +945,6 @@ class QuotesBook: #{
         else: #{
             print("[open_modify_window] Operation completed successfully")
         #}
-        
     #}
     
     def update_record(self, newtimestamp, old_time_stamp, tracking_num): #{
@@ -790,7 +952,7 @@ class QuotesBook: #{
         parameters = (newtimestamp, old_time_stamp, tracking_num)
         self.execute_db_query(query, parameters)
         self.transient.destroy()
-        self.message['text'] = 'Quotes of {} modified'.format(name)
+        self.message['text'] = 'Quotes of {} modified'.format(self.name)
         self.view_records()
     #}
     
