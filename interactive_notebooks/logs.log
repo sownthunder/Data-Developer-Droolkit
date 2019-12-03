@@ -1,0 +1,6 @@
+2019-12-03 16:02:16,277 - __main__ - DEBUG - This log's level is 'DEBUG'
+2019-12-03 16:02:16,277 - __main__ - DEBUG - This log's level is 'DEBUG'
+2019-12-03 16:02:16,286 - __main__ - INFO - This log's level is 'info'
+2019-12-03 16:02:16,286 - __main__ - INFO - This log's level is 'info'
+2019-12-03 16:02:16,287 - __main__ - ERROR - This log's level is 'error'
+2019-12-03 16:02:16,287 - __main__ - ERROR - This log's level is 'error'
