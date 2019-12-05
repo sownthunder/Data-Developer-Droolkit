@@ -4,3 +4,22 @@
 2019-12-03 16:02:16,286 - __main__ - INFO - This log's level is 'info'
 2019-12-03 16:02:16,287 - __main__ - ERROR - This log's level is 'error'
 2019-12-03 16:02:16,287 - __main__ - ERROR - This log's level is 'error'
+2019-12-05 10:26:11,772 - __main__ - DEBUG - POOP
+2019-12-05 10:26:57,930 - __main__ - DEBUG - POOP
+2019-12-05 10:26:57,930 - __main__ - DEBUG - POOP
+2019-12-05 10:26:57,933 - __main__ - ERROR - error message
+2019-12-05 10:26:57,933 - __main__ - ERROR - error message
+2019-12-05 10:27:15,771 - __main__ - DEBUG - POOP
+2019-12-05 10:27:15,776 - __main__ - ERROR - error message
+2019-12-05 14:38:55,717 - __main__ - DEBUG - POOP
+2019-12-05 14:38:55,724 - __main__ - ERROR - error message
+2019-12-05 14:41:22,069 - __main__ - DEBUG - POOP
+2019-12-05 14:41:22,077 - __main__ - ERROR - error message
+2019-12-05 14:43:51,080 - __main__ - DEBUG - POOP
+2019-12-05 14:43:51,085 - __main__ - ERROR - error message
+2019-12-05 14:49:18,214 - __main__ - DEBUG - POOP
+2019-12-05 14:49:18,222 - __main__ - ERROR - error message
+2019-12-05 14:50:41,176 - __main__ - DEBUG - POOP
+2019-12-05 14:50:41,182 - __main__ - ERROR - error message
+2019-12-05 14:51:34,256 - __main__ - DEBUG - POOP
+2019-12-05 14:51:34,264 - __main__ - ERROR - error message

@@ -32,7 +32,7 @@ class QuotesBook: #{
         self.root = root
         self.root.title('AGILENT Quotes')
         #self.root.geometry('1050x1250+250+250') # (WIDTH x HEIGHT + x + y)
-        self.root.resizable(width=True, height=False)
+        self.root.resizable(width=True, height=True)
         self.root.minsize(height=1250)
         ###############################################
         # CREATE / START THREAD FOR "timestamp puller"
@@ -609,7 +609,8 @@ class QuotesBook: #{
         self.tree.column("seven", width=100, minwidth=90, stretch=tk.YES)
         
         # Definitions of Headings
-        self.tree.grid(row = 1, column = 0, columnspan = 8)
+        # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
+        self.tree.pack(side = tk.TOP, fill = tk.BOTH, expand = True)
         self.tree.heading('#0', text = 'Tracking #', anchor = tk.CENTER)
         self.tree.heading('#1', text = 'Name', anchor = tk.CENTER)
         self.tree.heading('#2', text = 'Email', anchor = tk.CENTER)
