@@ -488,6 +488,10 @@ class QuotesBook: #{
             ttk.Label(master=self.lblframe_read, text = 'Filter: ' ).grid(row=0, column=0, padx=5,
                                                                           pady=5, sticky='w')
             self.read_filter_var = tk.StringVar(master=self.lblframe_read, value="Tracking #")
+            self.read_filter = ttk.Entry(master=self.lblframe_update, textvariable=self.read_filter_var, state='readonly')
+            self.read_filter.grid(row=0, column=1, sticky='w', padx=5, pady=5)
+            """[2019-12-09]"""
+            """
             self.read_filter = ttk.Spinbox(master=self.lblframe_read, values=['Tracking #','Name', 
                                                                               'Email','Type', 
                                                                               'Timestamp','Sent', 
@@ -495,6 +499,7 @@ class QuotesBook: #{
                                            textvariable=self.read_filter_var, 
                                            style="TSpinbox")
             self.read_filter.grid(row=0, column=1, sticky='w', padx=5, pady=5)
+            """
             
             # Filter KEYWORDS
             ttk.Label(master=self.lblframe_read, text='Keywords: ').grid(row=1, column=0, padx=5,
@@ -619,10 +624,19 @@ class QuotesBook: #{
         self.tree.heading('#5', text = 'Sent', anchor = tk.CENTER)
         self.tree.heading('#6', text = 'Quote #', anchor = tk.CENTER)
         self.tree.heading('#7', text = 'Product #', anchor = tk.CENTER)
+
+        # BIND CLICK ACTIONS/EVENTS
+        self.tree.bind("<Double-1>", self.on_double_click)
     #}
     
     def on_add_record_button_clicked(self): #{
         self.add_new_record()
+    #}
+
+    def on_double_click(self, event): #{
+        item = self.tree.selection()[0]
+        #"you clicked on", self.tree.item(item, "text")
+        messagebox.showinfo(title="test:", message="you clicked on" + str(self.tree.item(item, "text")))
     #}
     
     def on_delete_selected_button_clicked(self): #{
