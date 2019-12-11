@@ -2,6 +2,14 @@
 """
 Created on Fri Nov 22 12:05:28 2019
 
+**TRANSFERRED TO**
+"Agilent_Quotes_Tracker.py"
+**INSIDE OF **
+C:/Data-Developer-Droolkit/scripts/
+
+**ON**
+2019-12-11
+
 @author: derbates
 """
 
