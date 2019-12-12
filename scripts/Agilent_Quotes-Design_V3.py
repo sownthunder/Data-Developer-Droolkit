@@ -669,7 +669,7 @@ class QuotesBook: #{
         self.tree.column("three", width=40, minwidth=40, stretch=tk.YES)
         self.tree.column("four", width=150, minwidth=150, stretch=tk.YES)
         self.tree.column("five", width=40, minwidth=35, stretch=tk.YES)
-        self.tree.column("six", width=80, minwidth=75, sn ctretch=tk.YES)
+        self.tree.column("six", width=80, minwidth=75, stretch=tk.YES)
         self.tree.column("seven", width=80, minwidth=75, stretch=tk.YES)
         
         # Definitions of Headings
