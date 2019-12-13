@@ -341,7 +341,7 @@ class AgilentQuotesTracker():  # {
         try:  # {
             # CREATE MESSAGE AREA
             self.message = ttk.Label(master=self.leftframe, text='',
-                                     font=("Sourcode Pro", 18), foreground='red')
+                                     font=("Sourcode Pro", 14), foreground='red')
             #self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
@@ -360,13 +360,15 @@ class AgilentQuotesTracker():  # {
 
             # TAB-3 // EXPORT OPTIONS
             self.tab3 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab3, text='EXPORT')
+            self.tab_control.add(self.tab3, text='HELP')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
 
+            """
             # TAB-4 // HELP SECTION
             self.tab4 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab4, text="HELP")
+            self.tab_control.add(self.tab4, text="EXPORT")
             self.tab_control.pack(expand=2, fill=tk.BOTH)
+            """
         #}
         except: #{
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -406,12 +408,15 @@ class AgilentQuotesTracker():  # {
             self.lblframe_import.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
 
             # Create the EXPORT Tab Container
-            self.lblframe_export = ttk.LabelFrame(master=self.tab3, text="EXPORT One or Multiple Quotes:")
-            self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+            self.lblframe_export = ttk.LabelFrame(master=self.tab3, text="Help Section:")
+            self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
 
+            """[2019-12-13]"""
+            """
             # Create the HELP Tab Container
-            self.lblframe_help = ttk.LabelFrame(master=self.tab4, text="Help Section:")
+            self.lblframe_help = ttk.LabelFrame(master=self.tab4, text="EXPORT One or Multiple Quotes:")
             self.lblframe_help.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+            """
 
             # Create the UPDATE Tab Container
             # [2019-12-12]\\self.lblframe_update = ttk.LabelFrame(master=self.tab3, text="UPDATE")
@@ -471,10 +476,10 @@ class AgilentQuotesTracker():  # {
             ################################################################################
             self.radio_type_1 = ttk.Radiobutton(master=self.lblframe_create, variable=self.radio_type_var,
                                                 value="web", text="Web", width=15)  # style="TButton")
-            self.radio_type_1.grid(row=2, column=1, sticky='w', padx=5, pady=5)
+            self.radio_type_1.grid(row=2, column=1, columnspan=2, sticky='w', padx=5, pady=5)
             self.radio_type_2 = ttk.Radiobutton(master=self.lblframe_create, variable=self.radio_type_var,
                                                 value="email", text="Email", width=15)
-            self.radio_type_2.grid(row=2, column=1, sticky='e', padx=5, pady=5)
+            self.radio_type_2.grid(row=2, column=1, columnspan=2, sticky='e', padx=55, pady=5)
 
             # xXxXxXxXxXxXxXxXx
             # Sent Input
@@ -494,7 +499,7 @@ class AgilentQuotesTracker():  # {
             # TRACKING NUMBER #
             ttk.Label(master=self.lblframe_create, text='Tracking #: ').grid(row=5, column=0,
                                                                              padx=5, pady=5, sticky='w')
-            self.tracking_num = ttk.Entry(master=self.lblframe_create, width=24)
+            self.tracking_num = ttk.Entry(master=self.lblframe_create, width=24, state='readonly')
             self.tracking_num.grid(row=5, column=1, sticky='w', padx=5, pady=5)
 
             # Timestamp (start_time)
@@ -593,8 +598,8 @@ class AgilentQuotesTracker():  # {
                                      height=30, columns=8)  # height = 20
             self.tree["columns"] = ("one", "two", "three", "four", "five", "six", "seven")
             self.tree.column('#0', width=120, minwidth=115, stretch=tk.NO)
-            self.tree.column("one", width=125, minwidth=125, stretch=tk.YES)
-            self.tree.column("two", width=150, minwidth=150, stretch=tk.YES)
+            self.tree.column("one", width=100, minwidth=115, stretch=tk.YES)
+            self.tree.column("two", width=100, minwidth=115, stretch=tk.YES)
             self.tree.column("three", width=50, minwidth=50, stretch=tk.YES)
             self.tree.column("four", width=128, minwidth=128, stretch=tk.YES)
             self.tree.column("five", width=45, minwidth=45, stretch=tk.YES)
@@ -608,7 +613,7 @@ class AgilentQuotesTracker():  # {
             self.tree.heading('#1', text='Name', anchor=tk.CENTER)
             self.tree.heading('#2', text='Email', anchor=tk.CENTER)
             self.tree.heading('#3', text='Type', anchor=tk.CENTER)
-            self.tree.heading('#4', text='Timestamp', anchor=tk.CENTER) # "Open_time" in BACKEND
+            self.tree.heading('#4', text='Open Time', anchor=tk.CENTER) # "Open_time" in BACKEND
             self.tree.heading('#5', text='Sent', anchor=tk.CENTER)
             self.tree.heading('#6', text='Turn Around', anchor=tk.CENTER)
             self.tree.heading('#7', text='Notes', anchor=tk.CENTER)
@@ -654,22 +659,25 @@ class AgilentQuotesTracker():  # {
         print(self.tree.item(item)['values'][0]) # prints the first value of the values (the id value)
         # [2019-12-12]\\item_2 = str(self.tree.item(self.tree.selection())['columns'][0])
         # [2019-12-12]\\logging.info("ITEM 2 == " + str(item_2))
-        messagebox.showinfo(title="test:", message="you clicked on:\n" + str(self.tree.item(item, option="text")))
+        # [2019-12-13]\\messagebox.showinfo(title="test:", message="you clicked on:\n" + str(self.tree.item(item, option="text")))
+        selected_tracking_number = str(self.tree.item(item, option="text"))
         selected_name = str(self.tree.item(item)['values'][1])
         selected_email = str(self.tree.item(item)['values'][2])
         selected_type = str(self.tree.item(item)['values'][3])
         selected_sent = str(self.tree.item(item)['values'][4])
         selected_notes = str(self.tree.item(item)['values'][6])
+        # CREATE LIST TO HOLD SELECTIONS
+        selection_list = [selected_tracking_number, selected_name, selected_email, selected_type, selected_sent, selected_notes]
+        logging.info(str(selection_list))
         selection_string = "YOU SELECTED:\n" + selected_name + "\n" + selected_email + "\n" + selected_type + "\n" + selected_sent + "\n" + selected_notes
-        messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
+        logging.info(str(selection_string))
+        # SEND SELECTIONS AND OPEN MODIFY WINDOW
+        self.open_modify_window(selected_item=item, the_selection_list=selection_list)
+        # [2019-12-12]\\messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
         # [2019-12-12]\\messagebox.showinfo(title="yupp!", message=str(self.tree.item(item_2, "text")))
-        """
-        selected_open_time = 
-        selected_close_time =
-        selected_turn_around = 
-        """
     # }
 
+    """
     def on_delete_selected_button_selected(self):  # {
         # TRY THE FOLLOWING
         try:  # {
@@ -715,6 +723,7 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         # }
     # }
+    """
 
     ######################################################################################################
     # QUOTE NUMBER CONVENTION AND PROGRESS CHECKS #
@@ -780,6 +789,13 @@ class AgilentQuotesTracker():  # {
     Example: 301201912121051
     """
     def quote_number_convention(self): # {
+        # TRY THE FOLLOWING:
+        try: #{
+            pass
+        # }
+        except: #{
+            pass
+        #}
         # CREATE TIME STAMP FOR QUOTE NUMBER CONVENTION
         date_object = datetime.date.today()
         time_object = str('{0:%Y%m%d%H%M}'.format(datetime.datetime.now()))
@@ -798,6 +814,7 @@ class AgilentQuotesTracker():  # {
     def add_new_record(self):  # {
         # TRY THE FOLLOWING
         try:  # {
+            # >>> if self.new_
             logging.info("...ADDING NEW RECORD...")
             # create ENTRY variables
             track_num = [self.quote_number_convention()]  # auto-creates number
@@ -831,6 +848,8 @@ class AgilentQuotesTracker():  # {
             engine = create_engine('sqlite:///data/quotes_tracker.db')
             # SEND DATAFRAME TO DATABASE
             new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+            # UPDATE DISPLAY MESSAGE
+            self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
         # }
@@ -860,7 +879,11 @@ class AgilentQuotesTracker():  # {
     # }
 
     def new_records_validated(self):  # {
-        return len(self.name.get()) != 0 and len(self.email.get()) !=0 and len(self.radio_type_var.get()) !=0 and len(self.radio_sent_var.get())
+        return len(self.name.get()) != 0 \
+               and len(self.email.get()) != 0 \
+               and len(self.radio_type_var.get()) != 0 \
+               and len(self.radio_sent_var.get()) != 0 \
+               and len(self.notes.get()) != 0
     # }
 
     def view_records(self):  # {
@@ -953,34 +976,81 @@ class AgilentQuotesTracker():  # {
         # }
     # }
 
-    def open_modify_window(self):  # {
+    def open_modify_window(self, selected_item, the_selection_list):  # {
         # TRY THE FOLLOWING
         try: #{
             logging.info("MODIFYING RECORD")
-            track_num = self.tree.item(self.tree.selection()['text'])
-            old_name = self.tree.item(self.tree.selection())['values'][0]
-            self.transient = tk.TopLevel(master=self.root)
+            print("SELECTION LIST:\n" + str(the_selection_list))
+            print(the_selection_list[1])
+            # tracking_number = str(self.tree.item(item)['values'][0])
+            #track_num = self.tree.item(self.tree.selection()['text'])
+            # old_name = self.tree.item(self.tree.selection())['values'][0]
+            self.transient = tk.Toplevel(master=self.root)
+            self.transient.resizable(width=False, height=False)
             # TRACKING #
-            ttk.Label(master=self.transient, text='Tracking #:').grid(row=0, column=1)
-            ttk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=track_num), state='readonly').grid(row=0, colum=2)
+            ttk.Label(master=self.transient, text='Tracking #:').grid(row=0, column=0)
+            tk.Entry(master=self.transient, font=("Calibri", 12), textvariable=tk.StringVar(
+                self.transient, value=str(the_selection_list[0])), state='readonly').grid(row=0, column=1)
+            test_name = str(self.tree.item(selected_item)['values'][0])
             # OLD-NAME
-            ttk.Label(master=self.transient, text="Old Name:").grid(row=1, column=1)
-            ttk.Entry(self.transient, textvariable=tk.StringVar(
-                self.transient, value=old_name), state='readonly').grid(row=1, column=2)
+            ttk.Label(master=self.transient, text="OLD Name:").grid(row=1, column=0)
+            tk.Entry(self.transient, textvariable=tk.StringVar(
+                self.transient, value=test_name), state='readonly').grid(row=1, column=1)
             # NEW-NAME
-            ttk.Label(master=self.transient, text="New Name:").grid(
-                row=2, column=1)
+            ttk.Label(master=self.transient, text="NEW Name:").grid(row=1, column=2)
             new_name_entry_widget = ttk.Entry(self.transient)
-            new_name_entry_widget.grid(row=2, column=2)
-            ttk.Button(self.transient, text='Update Quote', command=lambda: self.update_record(
-                newname=new_name_entry_widget.get(), old_name=old_name, tracking_number=track_num)).grid(row=3,
-                                                                                                         column=2,
-                                                                                                         sticky=tk.E)
-            self.transient.mainloop()
+            new_name_entry_widget.grid(row=1, column=3)
+            # OLD-EMAIL
+            ttk.Label(master=self.transient, text="OLD Email:").grid(row=2, column=0)
+            tk.Entry(self.transient, textvariable=tk.StringVar(
+                self.transient, value=str(the_selection_list[1])), state='readonly').grid(row=2, column=1)
+            # NEW-EMAIL
+            ttk.Label(master=self.transient, text="NEW Email:").grid(row=2, column=2)
+            new_email_entry_widget = ttk.Entry(self.transient)
+            new_email_entry_widget.grid(row=2, column=3)
+            # THE TYPE #
+            ttk.Label(master=self.transient, text="Type:").grid(row=3, column=0)
+            tk.Entry(master=self.transient, textvariable=tk.StringVar(
+                self.transient, value=str(the_selection_list[2])), state='readonly').grid(row=3, column=1)
+            # OLD-SENT #
+            ttk.Label(master=self.transient, text="OLD Sent:").grid(row=4, column=0)
+            tk.Entry(master=self.transient, textvariable=tk.StringVar(
+                self.transient, value=str(the_selection_list[4])), state='readonly').grid(row=4, column=1)
+            # NEW-SENT #
+            ttk.Label(master=self.transient, text="NEW Sent:").grid(row=4, column=2)
+            new_sent_radio_var = tk.BooleanVar(master=self.transient, value=bool(the_selection_list[4])) # BOOL VARIABLE
+            new_sent_radio_widget_1 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
+                                                    value=True, text="Yes", width=12).grid(row=4, column=3,
+                                                                                           padx=5, sticky='w')
+            new_sent_radio_widget_2 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
+                                                      value=False, text="No", width=12).grid(row=4, column=3,
+                                                                                             padx=65, sticky='e')
+            # TIMESTAMP (open_time) #
+            ttk.Label(master=self.transient, text="Timetamp:").grid(row=5, column=0)
+            open_time_entry_widget = tk.Entry(master=self.transient, width=24, textvariable=tk.StringVar(
+                self.transient, value=str(the_selection_list[3])), state='readonly').grid(row=5, column=1)
+            # NOTES #
+            ttk.Label(master=self.transient, text="Notes:").grid(row=6, column=0)
+            new_notes_text_widget = tk.Text(master=self.transient, height=10, width=24)  #.grid(row=6, column=1)
+            new_notes_text_widget.insert(tk.INSERT, str(the_selection_list[5]))
+            new_notes_text_widget.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky='nesw')
+            """
+            tk.Entry(master=self.transient, textvariable=tk.StringVar(
+                         #    self.transient, value=str(the_selection_list[5])), width=40).grid(row=6, column=1, columnspan=2, rowspan=2, sticky='w')
+            """
             ############################
             # CALL UPDATE RECORD BELOW #
             ############################
+            # CONFIRM BUTTON
+            ttk.Button(master=self.transient, text='UPDATE', command=lambda: self.update_record(
+                newname=new_name_entry_widget.get(), old_name=test_name,
+                newemail=new_email_entry_widget.get(), old_email=str(the_selection_list[1]),
+                the_type=str(the_selection_list[2]),
+                newsent=str(new_sent_radio_var.get()), old_sent=str(the_selection_list[4]),
+                open_time=str(the_selection_list[3]),
+                newnotes=str(new_notes_text_widget.get(index1="1.0", index2=tk.END)), old_notes=str(the_selection_list[5]),
+                tracking_number=str(the_selection_list[0]))).grid(row=7, column=3)
+            self.transient.mainloop()
         #}
         except: #{
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1007,13 +1077,53 @@ class AgilentQuotesTracker():  # {
         # }
     # }
 
-    def update_record(self, newname, old_name, newemail, old_email, newtype, old_type, newsent, old_sent,
-                      newopentime, old_open_time, newclosetime, old_close_time, newturnaround, old_turn_around,
-                      newnotes, old_notes, tracking_number):  # {
+    def update_record(self, newname, old_name, newemail, old_email, the_type,
+                      newsent, old_sent, open_time, newnotes, old_notes, tracking_number):  # {
+        """
+        CALL THE "check_quote_progress() FUNCTION HERE
+
+        """
         # TRY THE FOLLOWING
         try: #{
-            logging.info("UPDATING RECORD")
-            logging.info("NEW name == " + str(newname))
+            print("UPDATING RECORD...")
+            print(newsent)
+            # CHECK IF SENT HAS BEEN SWITCHED!
+            # IF SO UPDATE: sent, close_time, turn_around AND ALSO name, email, notes
+            if str(newsent) == "True":  # {
+                print("\n\t\t\t>>>> SWITCHING OVER!")
+                # CREATE TEMPORARY TIMESTAMP
+                time_meow = pd.Timestamp.now()
+                print("TIME MEOW == " + str(time_meow))
+                # COMPUTE TURN AROUND TIME
+                time_start = pd.Timestamp(ts_input=str(open_time))
+                print("TIME START == " + str(time_start))
+                run_time = time_meow - time_start
+                print("RUN TIME == " + str(run_time))
+                query = 'UPDATE quotes ' \
+                        'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=? ' \
+                        'WHERE tracking_number=?'
+                parameters = (newname, newemail, the_type, newsent, str(time_meow),
+                              str(run_time), newnotes, tracking_number)
+                # EXECUTE
+                self.execute_db_query(query, parameters)
+                self.transient.destroy()
+                self.message['text'] = 'Quote Record of {} modified'.format(tracking_number)
+                self.view_records()
+            # }
+            # NOT BEEN SWITCHED OVER YET
+            # ONLY UPDATE: name, email, notes
+            else:  # {
+                print("\n\t\t\t>>>>>>> NOPE")
+                query = 'UPDATE quotes SET name=?, email=?, type=?, notes=? ' \
+                        'WHERE tracking_number=? '
+                parameters = (newname, newemail, the_type, newnotes, tracking_number)
+                print("QUERY:\n" + str(query) + "\nPARAMS:\n" + str(parameters))
+                # EXECUTE
+                self.execute_db_query(query, parameters)
+                self.transient.destroy()
+                self.message['text'] = 'Quote Record of {} modified'.format(tracking_number)
+                self.view_records()
+            # }
         #}
         except: #{
             errorMessage = str(sys.exc_info()[0]) + "\n"
