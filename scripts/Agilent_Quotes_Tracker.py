@@ -1,6 +1,9 @@
 """
 Created on Mon Dec 9 12:05:28 2019
 
+TO-DO:
+( ) - clear entry boxes when new QUOTE is created/submitted
+( ) - import/export from and to .xlsx
 
 @author: derbates
 """
@@ -204,6 +207,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-11]\\self.create_menubar()
             self.create_ttk_styles()
             # [2019-12-11]\\self.create_menubar()
+            self.create_menubar()
             self.create_left_side()
             self.create_tab_control()
             self.create_tab_containers()
@@ -211,6 +215,7 @@ class AgilentQuotesTracker():  # {
             self.create_right_side()
             self.create_tree_view()
             self.view_records()
+            self.root.config(menu=self.menubar)
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"

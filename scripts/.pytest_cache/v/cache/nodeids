@@ -1,3 +1,5 @@
 [
-  "CofA_Custom_Crate.py::test_messagebox"
+  "CofA_Custom_Crate.py::test_messagebox",
+  "CofA_Custom_Crate_Creator_v2.py::test_messagebox",
+  "CofA_Custom_Crate_Creator_v2.py::test_popup"
 ]

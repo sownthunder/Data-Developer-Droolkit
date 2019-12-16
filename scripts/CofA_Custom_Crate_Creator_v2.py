@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct  9 14:16:30 2019
+Edited on Mon Dev 16 12:45:00 2019
 
 TAKEN FROM: "CofA_Custom_Crate_Creator_v1.py"
 IMPLEMENTED fixes & better program structure
@@ -117,6 +118,8 @@ def setup_logger(): #{
 #}
 
 def test_popup(): #{
+    pass
+    """
     # RE-INSTANTIATE GLOBALS
     global root
     # get root pos
@@ -129,7 +132,7 @@ def test_popup(): #{
     
     toplevel.config()
     toplevel.mainloop()
-    
+    """
 #}
 
 if __name__ == "__main__": #{
