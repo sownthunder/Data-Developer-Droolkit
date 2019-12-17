@@ -63,9 +63,16 @@ class CofACatchup:  # {
     # }
 
     def create_buttons(self):  # {
-        self.begin_button = ttk.Button(master=self.root, text='<<BEGIN>>')
+        self.begin_button = ttk.Button(master=self.root, text='<<BEGIN>>', command=self.run)
         self.begin_button.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
     # }
+    
+    """
+    [runs the main functions that were originally part of CofA_Catchup_Script]
+    """
+    def run(self):  # {
+        pass
+    #}
 
 # }
 
@@ -100,11 +107,18 @@ def setup_logger():  # {
     else: # {
         logging.info("Operation Completed Successfully...")
     # }
+# }
 
 
 def main():  # {
     # INSTANTIATE GLOBAL VARIABLES
     ts_now = pd.Timestamp.now()
+    ts_str = str(ts_now)[:10]
+    watermark = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
+    in_directory_1 = "F:/APPS/CofA/"
+    in_directory_2 = "G:/C of A's/Agilent/"
+    out_directory = filedialog.askdirectory(parent=None, title="select OUTPUT folder:", initialdir="C;/")
+    outbound_directory = "G:/C of A's/#Email Node/"
     root=tk.Tk()
     application = CofACatchup(root=root, the_timestamp=ts_now)
     root.config()
