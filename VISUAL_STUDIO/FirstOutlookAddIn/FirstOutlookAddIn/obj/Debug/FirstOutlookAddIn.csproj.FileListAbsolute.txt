@@ -1,0 +1,12 @@
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\bin\Debug\FirstOutlookAddIn.dll
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\bin\Debug\FirstOutlookAddIn.pdb
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\bin\Debug\FirstOutlookAddIn.dll.manifest
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\bin\Debug\FirstOutlookAddIn.vsto
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\obj\Debug\FirstOutlookAddIn.csprojAssemblyReference.cache
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\obj\Debug\FirstOutlookAddIn.Properties.Resources.resources
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\obj\Debug\FirstOutlookAddIn.csproj.GenerateResource.cache
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\obj\Debug\FirstOutlookAddIn.csproj.CopyComplete
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\obj\Debug\FirstOutlookAddIn.dll
+C:\Users\derbates\source\repos\FirstOutlookAddIn\FirstOutlookAddIn\obj\Debug\FirstOutlookAddIn.pdb

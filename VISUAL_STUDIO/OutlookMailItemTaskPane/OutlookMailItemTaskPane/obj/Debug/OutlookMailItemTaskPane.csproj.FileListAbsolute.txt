@@ -1,0 +1,14 @@
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.csprojAssemblyReference.cache
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.ManageTaskPaneRibbon.resources
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.Properties.Resources.resources
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.TaskPaneControl.resources
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.csproj.GenerateResource.cache
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\bin\Debug\OutlookMailItemTaskPane.dll
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\bin\Debug\OutlookMailItemTaskPane.pdb
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\bin\Debug\OutlookMailItemTaskPane.dll.manifest
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\bin\Debug\OutlookMailItemTaskPane.vsto
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.csproj.CopyComplete
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.dll
+C:\Users\derbates\source\repos\OutlookMailItemTaskPane\OutlookMailItemTaskPane\obj\Debug\OutlookMailItemTaskPane.pdb

@@ -117,7 +117,7 @@ def main():  # {
     watermark = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
     in_directory_1 = "F:/APPS/CofA/"
     in_directory_2 = "G:/C of A's/Agilent/"
-    out_directory = filedialog.askdirectory(parent=None, title="select OUTPUT folder:", initialdir="C;/")
+    out_directory = filedialog.askdirectory(parent=None, title="select OUTPUT folder:", initialdir="C:/")
     outbound_directory = "G:/C of A's/#Email Node/"
     root=tk.Tk()
     application = CofACatchup(root=root, the_timestamp=ts_now)

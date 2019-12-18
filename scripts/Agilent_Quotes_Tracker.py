@@ -5,6 +5,10 @@ TO-DO:
 ( ) - clear entry boxes when new QUOTE is created/submitted
 ( ) - import/export from and to .xlsx
 
+EDITS:
+12/18/19 - made database accessible via anywhere by file_path to E_DRIVE
+         - calls "new_records_validated()" function to fail-check new DB entry
+
 @author: derbates
 """
 
@@ -27,7 +31,7 @@ from sqlalchemy.orm import relationship, backref
 
 class AgilentQuotesTracker():  # {
 
-    db_filename = "data/quotes_tracker.db"
+    db_filename = "E:/_Quotes_Tracker/data/quotes_tracker.db"
     time1 = ""
 
     def __init__(self, root):  # {
@@ -819,42 +823,60 @@ class AgilentQuotesTracker():  # {
     def add_new_record(self):  # {
         # TRY THE FOLLOWING
         try:  # {
-            # >>> if self.new_
-            logging.info("...ADDING NEW RECORD...")
-            # create ENTRY variables
-            track_num = [self.quote_number_convention()]  # auto-creates number
-            the_name = [str(self.name.get())]
-            the_email = [str(self.email.get())]
-            the_type = [str(self.radio_type_var.get())]
-            the_sent = [str(self.radio_sent_var.get())]
-            open_time = [str(pd.Timestamp.now())]
-            close_time = [str("")]
-            turn_around = [str("None")]  # np.Nan?
-            the_notes = [str(self.notes.get())]
-            # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
-            # DICTIONARY OF LISTS
-            """
-            *************************
-            MUST BE THE SAME AS THE SQLite COLUMN NAMES
-            ****************************
-            """
-            new_entry_dict = {'tracking_number': track_num,
-                              'name': the_name,
-                              'email': the_email,
-                              'type': the_type,
-                              'sent': the_sent,
-                              'open_time': open_time,
-                              'close_time': close_time,
-                              'turn_around': turn_around,
-                              'notes': the_notes}
-            # CREATE EMPTY DATAFRAME
-            new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
-            # CREATE ENGINE (for sending to Database)
-            engine = create_engine('sqlite:///data/quotes_tracker.db')
-            # SEND DATAFRAME TO DATABASE
-            new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
-            # UPDATE DISPLAY MESSAGE
-            self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
+            # CHECK IF RECORD IS VALIDATED (every box)
+            if self.new_records_validated():  # {
+                logging.info("...ADDING NEW RECORD...")
+                # create ENTRY variables
+                track_num = [self.quote_number_convention()]  # auto-creates number
+                the_name = [str(self.name.get())]
+                the_email = [str(self.email.get())]
+                the_type = [str(self.radio_type_var.get())]
+                the_sent = [str(self.radio_sent_var.get())]
+                open_time = [str(pd.Timestamp.now())]
+                close_time = [str("")]
+                turn_around = [str("None")]  # np.Nan?
+                # [2019-12-18]\\the_notes = [str(self.notes.get())]
+                # IF NOTES IS LEFT EMPTY ADD IN THAT IT IS SO
+                if str(self.notes.get()) == "":  # {
+                    # SET NOTES TO STRING OF "none"
+                    the_notes = ["None"]
+                #}
+                # ELSE ITS NOT EMPTY SO ASSIGN TO DATAFRAME
+                else: # {
+                    the_notes=[str(self.notes.get())]
+                #}
+                # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
+                # DICTIONARY OF LISTS
+                """
+                *************************
+                MUST BE THE SAME AS THE SQLite COLUMN NAMES
+                ****************************
+                """
+                new_entry_dict = {'tracking_number': track_num,
+                                  'name': the_name,
+                                  'email': the_email,
+                                  'type': the_type,
+                                  'sent': the_sent,
+                                  'open_time': open_time,
+                                  'close_time': close_time,
+                                  'turn_around': turn_around,
+                                  'notes': the_notes}
+                # CREATE EMPTY DATAFRAME
+                new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
+                # CREATE ENGINE (for sending to Database)
+                engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                # SEND DATAFRAME TO DATABASE
+                new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+                # UPDATE DISPLAY MESSAGE
+                self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
+                # CLEAR ENTRY BOXES
+                self.name.delete(0, tk.END)
+                self.email.delete(0, tk.END)
+                self.notes.delete(0, tk.END)
+            #}
+            else:  # {
+                self.message['text'] = 'Name and Email Address cannot be blank'
+            #}
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
         # }
@@ -884,11 +906,37 @@ class AgilentQuotesTracker():  # {
     # }
 
     def new_records_validated(self):  # {
-        return len(self.name.get()) != 0 \
+        # TRY THE FOLLOWING
+        try:  # {
+            return len(self.name.get()) != 0 \
                and len(self.email.get()) != 0 \
-               and len(self.radio_type_var.get()) != 0 \
-               and len(self.radio_sent_var.get()) != 0 \
-               and len(self.notes.get()) != 0
+               # [2019-12-18]\\and len(self.radio_type_var.get()) != 0 \
+               # [2019-12-18]\\and len(self.radio_sent_var.get()) != 0 
+               # [2019-12-18]\\and len(self.notes.get()) != 0
+        #}
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        #}
+        else: #{
+            logging.info("Operation Completed Successfully...")
+        #}
     # }
 
     def view_records(self):  # {
