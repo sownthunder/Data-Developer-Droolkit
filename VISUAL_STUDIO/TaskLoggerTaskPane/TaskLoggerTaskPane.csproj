@@ -159,9 +159,18 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="NewTaskControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NewTaskControl.Designer.cs">
+      <DependentUpon>NewTaskControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="NewTaskControl.resx">
+      <DependentUpon>NewTaskControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

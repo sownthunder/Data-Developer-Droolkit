@@ -37,6 +37,7 @@
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.toggleButton1 = this.Factory.CreateRibbonToggleButton();
+            this.toggleButton2 = this.Factory.CreateRibbonToggleButton();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
@@ -51,19 +52,26 @@
             // group1
             // 
             this.group1.Items.Add(this.toggleButton1);
-            this.group1.Label = "Task Logger Manager";
+            this.group1.Items.Add(this.toggleButton2);
+            this.group1.Label = "IT Task Logger";
             this.group1.Name = "group1";
             // 
             // toggleButton1
             // 
-            this.toggleButton1.Label = "Show Task Logger";
+            this.toggleButton1.Label = "New Window";
             this.toggleButton1.Name = "toggleButton1";
             this.toggleButton1.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.toggleButton1_Click);
             // 
-            // TaskLoggerTaskPaneRibboncs
+            // toggleButton2
             // 
-            this.Name = "TaskLoggerTaskPaneRibboncs";
-            this.RibbonType = "Microsoft.Outlook.Mail.Compose, Microsoft.Outlook.Mail.Read";
+            this.toggleButton2.Label = "";
+            this.toggleButton2.Name = "toggleButton2";
+            // 
+            // TaskLoggerTaskPaneRibbon
+            // 
+            this.Name = "TaskLoggerTaskPaneRibbon";
+            this.RibbonType = "Microsoft.Outlook.Explorer, Microsoft.Outlook.Mail.Compose, Microsoft.Outlook.Mai" +
+    "l.Read";
             this.Tabs.Add(this.tab1);
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.TaskLoggerTaskPaneRibbon_Load);
             this.tab1.ResumeLayout(false);
@@ -79,6 +87,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton toggleButton1;
+        internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton toggleButton2;
     }
 
     partial class ThisRibbonCollection

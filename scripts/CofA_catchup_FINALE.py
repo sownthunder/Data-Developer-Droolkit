@@ -34,9 +34,14 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 
 class CofACatchup:  # {
 
-    def __init__(self, root, the_timestamp):  # {
+    def __init__(self, root, the_timestamp, in_directory_1, in_directory_2, 
+                 the_watermark, the_outbound_dir):  # {
         self.root = root
         self.the_timestamp = the_timestamp
+        self.in_directory_1 = in_directory_1
+        self.in_directory_2 = in_directory_2
+        self.the_watermark = the_watermark
+        self.the_outbound_dir = the_outbound_dir
         self.root.title("CofA Catchup: " + str(self.the_timestamp)[:16])
         self.root.geometry('350x200+250+250')
         self.root.resizable(width=True, height=False)
@@ -68,9 +73,45 @@ class CofACatchup:  # {
     # }
     
     """
-    [runs the main functions that were originally part of CofA_Catchup_Script]
+    {runs the __main__: function that were originally part of [2019_12_15]_CofA_Email_Catchup_fix]}
     """
     def run(self):  # {
+        # TAKE INPUT FROM ENTRY BOXES AND SET AS START TIME / END TIME
+        time_start = str(self.start_datefield.get())
+        time_end = str(self.end_datefield.get())
+        # CREATE TIME STAMP VAR for filter requirements
+        start_check = pd.Timestamp(time_start)
+        logging.info("\n\t\t CHECK-START-DATE:\t" + str(start_check))
+        logging.info("\n\t\t" + str(type(start_check)))
+        end_check = pd.Timestamp(time_end)
+        logging.info("\n\t\t CHECK-END-DATE:\t" + str(end_check))
+        logging.info("\n\t\t" + str(type(end_check)))
+        # INSTANTIATE (class-wide) VARIABLES
+        ignore_list = ['Archive ERR',
+                       'Archive - For all archived CofA, see G CofA folder',
+                       'Instruction Sheets']
+        # LIST TO HOLD ALL PATHS FOR FILES (F_DRIVE)
+        self.file_list = []
+        # LIST TO HOLD ALL PATHS FOR NEW FILE NAME CONVENTIONS
+        self.file_name_conv_list = []
+        # LIST TO HOLD ALL DIRECTORY NAMES
+        self.dir_list = []
+        # LIST TO HOLD ALL TIMESTAMPS
+        self.ts_list = []
+        # CALL TRAVERSE/SCAN FUNCTION ON (F:/APPS/CofA/) DIRECTORY
+        self.directory_scan(the_directory=self.in_directory_1, 
+                            the_ignore_list=ignore_list, 
+                            file_type_list=[".pdf"])
+        # CALL TRAVERSE/SCAN FUNCTION ON (G:/C of A's/Agilent/) DIRECTORY
+        self.directory_scan(the_directory=self.in_directory_2,
+                            the_ignore_list=ignore_list,
+                            file_type_list=[".pdf"])
+        ###############################################
+        # CREATE DATAFRAME ETC (line 518 in original) #
+        ###############################################
+    #}
+    
+    def directory_scan(self, the_directory, the_ignore_list, file_type_list):  # {
         pass
     #}
 
@@ -109,18 +150,29 @@ def setup_logger():  # {
     # }
 # }
 
-
+"""
+{runs the "In[11]" that were originally part of [2019_12_15]_CofA_Email_Catchup_fix]}
+"""
 def main():  # {
-    # INSTANTIATE GLOBAL VARIABLES
+    ################################
+    # INSTANTIATE GLOBAL VARIABLES #
+    ################################
     ts_now = pd.Timestamp.now()
     ts_str = str(ts_now)[:10]
     watermark = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
     in_directory_1 = "F:/APPS/CofA/"
     in_directory_2 = "G:/C of A's/Agilent/"
-    out_directory = filedialog.askdirectory(parent=None, title="select OUTPUT folder:", initialdir="C:/")
+    # [2019-12-19]\\out_directory = filedialog.askdirectory(parent=None, title="select OUTPUT folder:", initialdir="C:/")
     outbound_directory = "G:/C of A's/#Email Node/"
+    ###################################################
+    # INSTANTIATE GUI AND FEED IN VARIABLE PARAMETERS #
+    ###################################################
     root=tk.Tk()
-    application = CofACatchup(root=root, the_timestamp=ts_now)
+    application = CofACatchup(root=root, the_timestamp=ts_str,
+                              in_directory_1=in_directory_1,
+                              in_directory_2=in_directory_2,
+                              the_watermark=watermark,
+                              the_outbound_dir=outbound_directory)
     root.config()
     root.mainloop()
 # }

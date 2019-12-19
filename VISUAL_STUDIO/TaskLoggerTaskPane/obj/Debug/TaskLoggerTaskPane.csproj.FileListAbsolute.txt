@@ -12,3 +12,4 @@ C:\Users\derbates\OneDrive - Agilent Technologies\Documents\_staging\Data-Develo
 C:\Users\derbates\OneDrive - Agilent Technologies\Documents\_staging\Data-Developer-Droolkit\VISUAL_STUDIO\TaskLoggerTaskPane\obj\Debug\TaskLoggerTaskPane.dll
 C:\Users\derbates\OneDrive - Agilent Technologies\Documents\_staging\Data-Developer-Droolkit\VISUAL_STUDIO\TaskLoggerTaskPane\obj\Debug\TaskLoggerTaskPane.pdb
 C:\Users\derbates\OneDrive - Agilent Technologies\Documents\_staging\Data-Developer-Droolkit\VISUAL_STUDIO\TaskLoggerTaskPane\obj\Debug\TaskLoggerTaskPane.TaskLoggerTaskPaneRibbon.resources
+C:\Users\derbates\OneDrive - Agilent Technologies\Documents\_staging\Data-Developer-Droolkit\VISUAL_STUDIO\TaskLoggerTaskPane\obj\Debug\TaskLoggerTaskPane.NewTaskControl.resources

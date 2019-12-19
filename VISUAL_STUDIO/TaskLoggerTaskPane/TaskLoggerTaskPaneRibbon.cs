@@ -25,6 +25,8 @@ namespace TaskLoggerTaskPane
             {
                 taskPane.Visible = ((RibbonToggleButton)sender).Checked;
             }
+
         }
+  
     }
 }

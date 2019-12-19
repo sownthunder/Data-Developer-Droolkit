@@ -16,16 +16,19 @@ namespace TaskLoggerTaskPane
             new Dictionary<Outlook.Inspector, InspectorWrapper>();
         private Outlook.Inspectors inspectors;
 
+        // [2019-12-19]
         private TaskPaneControl myTaskPaneControl1;
         private Microsoft.Office.Tools.CustomTaskPane myCustomTaskPane;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
-
+            // [2019-12-19]
             myTaskPaneControl1 = new TaskPaneControl();
-            myCustomTaskPane = this.CustomTaskPanes.Add(myTaskPaneControl1, "My Task Pane");
+            myCustomTaskPane = this.CustomTaskPanes.Add(myTaskPaneControl1, "IT Task Logger");
             myCustomTaskPane.Visible = true;
 
+            // [2019-12-19]
+            // REMOV ETHIS FOR [NEW MAIL ITEM] FUNCTIONALITY
             inspectors = this.Application.Inspectors;
             inspectors.NewInspector +=
                 new Outlook.InspectorsEvents_NewInspectorEventHandler(
@@ -43,6 +46,8 @@ namespace TaskLoggerTaskPane
             // Note: Outlook no longer raises this event. If you have code that 
             //    must run when Outlook shuts down, see https://go.microsoft.com/fwlink/?LinkId=506785
 
+            // [2019-12-19] 
+            // REMOVE THIS FOR [NEW MAIL ITEM] FUNCTIONALITY
             inspectors.NewInspector -=
                 new Outlook.InspectorsEvents_NewInspectorEventHandler(
                     Inspectors_NewInspector);
