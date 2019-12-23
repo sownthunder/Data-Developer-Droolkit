@@ -18,6 +18,9 @@ import os, sys, time
 from time import sleep
 from pathlib import Path
 import threading, logging
+import pandas as pd
+import numpy as np
+from pandas import Series, DataFrame
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, LoggingEventHandler
 
@@ -41,6 +44,10 @@ class Logger():  # {
 
 class CofA_Culprit_Catcher(FileSystemEventHandler):  # {
     
+    """
+    takes in DATAFRAME to append csvs to 
+    takes in DIRECTORY to move/copy pdfs to OUTBOUNDly
+    """
     def __init__(self, save_dataframe, the_directory):  # {
         self.save_dataframe = save_dataframe
         self.the_directory = the_directory
@@ -51,7 +58,21 @@ class CofA_Culprit_Catcher(FileSystemEventHandler):  # {
     # }
     
     def on_created(self, event):  # {
-        pass
+        # TRY THE FOLLOWING
+        try:  # {
+            # CREATE TIMESTAMP
+            ts_meow = pd.Timestamp.now()
+            # CREATE EVENT PATH VAR
+            the_event_path = Path(event.src_path)
+            # CREATE 'file_name' VARIABLE
+            the_file_name = os.path.basename(the_event_path)
+        # }
+        except: # {
+            pass
+        # }
+        else:  # {
+            pass
+        # }
     # }
     
     def on_deleted(self, event): # {

@@ -1073,10 +1073,10 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=self.transient, text="NEW Sent:").grid(row=4, column=2)
             new_sent_radio_var = tk.BooleanVar(master=self.transient, value=bool(the_selection_list[4])) # BOOL VARIABLE
             new_sent_radio_widget_1 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
-                                                    value=True, text="Yes", width=12).grid(row=4, column=3,
+                                                    value=False, text="Yes", width=12).grid(row=4, column=3,
                                                                                            padx=5, sticky='w')
             new_sent_radio_widget_2 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
-                                                      value=False, text="No", width=12).grid(row=4, column=3,
+                                                      value=True, text="No", width=12).grid(row=4, column=3,
                                                                                              padx=65, sticky='e')
             # TIMESTAMP (open_time) #
             ttk.Label(master=self.transient, text="Timetamp:").grid(row=5, column=0)
