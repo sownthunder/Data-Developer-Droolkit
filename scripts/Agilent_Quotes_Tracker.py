@@ -499,7 +499,7 @@ class AgilentQuotesTracker():  # {
             self.radio_sent_var = tk.BooleanVar(master=self.lblframe_create, value=False)
             ################################################################################
             self.radio_sent_1 = ttk.Radiobutton(master=self.lblframe_create, variable=self.radio_sent_var,
-                                                value=True, text="Yes", width=15)  # style="TButton")
+                                                value=True, text="Yes", width=15, state=tk.DISABLED)  # style="TButton")
             self.radio_sent_1.grid(row=3, column=1, sticky='w', padx=5, pady=5)
             self.radio_sent_2 = ttk.Radiobutton(master=self.lblframe_create, variable=self.radio_sent_var,
                                                 value=False, text="No", width=15)

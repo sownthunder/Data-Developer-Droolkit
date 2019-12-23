@@ -108,10 +108,10 @@ class CofACatchup:  # {
                 # CREATE TIME STAMP VAR for filter requirements
                 self.start_check = pd.Timestamp(time_start)
                 logging.info("\n\t\t CHECK-START-DATE:\t" + str(self.start_check))
-                logging.info("\n\t\t" + str(type(start_check)))
+                logging.info("\n\t\t" + str(type(self.start_check)))
                 self.end_check = pd.Timestamp(time_end)
                 logging.info("\n\t\t CHECK-END-DATE:\t" + str(self.end_check))
-                logging.info("\n\t\t" + str(type(end_check)))
+                logging.info("\n\t\t" + str(type(self.end_check)))
                 # INSTANTIATE (class-wide) VARIABLES
                 ignore_list = ['Archive ERR',
                                'Archive - For all archived CofA, see G CofA folder',
@@ -184,9 +184,15 @@ class CofACatchup:  # {
             for root, dirs, files in os.walk(scan_directory):  # {
                 # FOR EACH ITEM IN IGNORE LIST...
                 for item in the_ignore_list:  # {
+                    if str(item) in dirs:  # {
+                        # REMOVE FROM OS.WALK
+                        dirs.remove(str(item))
+                    #}
+                #}
+                for f in files:  # {
                     # CREATE FILE_MATCH VAR
                     file_match = str("*" + item)
-                    # DO FNMATCH FOR THIS 'item'
+                    # DO FNMATCH FOR THIS 'item
                     if fnmatch.fnmatch(f, file_match):  # {
                         # <<< STRING OPERATIONS >>>
                         ############################
@@ -197,15 +203,92 @@ class CofACatchup:  # {
                         file_date = self.pull_creation_timestamp(file_path)
                         logging.info("FILE_DATE == " + str(file_date))
                         ###################################################
-                        #
-                        #
-                        #
-                        # << FINISH DIRECTORY SCAN >> (dir_traverse)
-                        #
-                        #
-                        #
-                        #
-                        #
+                        check_timestamp = pd.Timestamp(file_date)
+                        # COMPARE TO CHECK_DATE VARIABLE
+                        check_delta = pd.Timedelta(check_timestamp - self.start_check)
+                        logging.debug("\n\tDELTA == " + str(check_delta))
+                        # COMPARE TO CHECK_END_DATE VARIABLE
+                        end_delta = pd.Timedelta(check_timestamp - self.end_check)
+                        logging.debug("\n\tEND_DELTA ==" + str(end_delta))
+                        # IF CHECK DELTA IS POSITIVE ** and END_DELTA is NEGATIVE
+                        #(test_date occurred AFTER date_check)
+                        if check_delta.days >= 0: #{
+                            logging.info("\tCREATED AFTER " + str(self.start_check))
+                            # IF END_DELTA IS NEGATIVE
+                            if end_delta.days <=0: #{
+                                logging.info("\tCREATED BEFORE " + str(self.end_check))
+                                x += 1 # increase PDF-count
+                                # CREATE FILE_NAME VARIABLE
+                                file_name = os.path.basename(file_path)
+                                # CREATE DIR NAME VARIABLE
+                                dir_name = os.path.dirname(file_path)
+                                # CHECK WHICH DIRECTORY WE ARE IN AND WHETHER OR NOT TO MAKE FILE_NAME_CONV
+                                if str(os.path.dirname(file_path)) == "F:\APPS\CofA": #{
+                                    # CREATE NEW NAMING CONVENTION
+                                    file_name_conv = self.generate_naming_convention(file_name)
+                                    # CREATE VARIABLE FOR (new) zip PATH
+                                    new_path = os.path.join(self.zip_dir_path, file_name_conv)
+                                    # CREATE VARIABLE FOR (new) non-zip PATH
+                                    newer_path = os.path.join(self.outbound_directory, file_name_conv)
+                                    # CREATE WATERMARK/COPY IN FOLDER TO BE ZIPPED
+                                    self.create_watermark(input_pdf=file_path,
+                                                     output=new_path,
+                                                     watermark=watermark)
+                                    # COPY TO OUTBOUND_DIRECTORY
+                                    shutil.copy2(src=new_path, dst=newer_path)
+                                    # GET METADATA OF OLD ORIGINAL FILE
+                                    old_stinfo = os.stat(file_path)
+                                    logging.info("OLD FILE STATS: \n" + str(old_stinfo))
+                                    old_atime = old_stinfo.st_atime
+                                    logging.info("OLD FILE A-TIME: \n" + str(old_atime))
+                                    old_mtime = old_stinfo.st_mtime
+                                    logging.info("OLD FILE M-TIME: \n" + str(old_mtime))
+                                    # CHANGE METADATA OF COPIED FILE TO ORIGINAL
+                                    os.utime(newer_path, (old_atime, old_mtime))
+                                    # APPEND TO FILE LIST
+                                    self.file_list.append(file_name_conv)
+                                    # APPEND TO DIR LIST
+                                    self.dir_list.append(dir_name)
+                                    # APPEND TO TIMESTAMP_LIST
+                                    self.ts_list.append(check_date)
+                                #}
+                                # ELSE... we are in "G:/C of A's/Agilent/" 
+                                else: #{
+                                    # CREATE VARIABLE FOR (new) zip PATH
+                                    new_path = os.path.join(self.zip_dir_path_2, file_name)
+                                    # CREATE VARIABLE FOR (new) non-zip PATH
+                                    newer_path = os.path.join(outbound_directory, file_name)
+                                    # COPY FILE TO FOLDER TO BE ZIPPED (no watermark)
+                                    shutil.copy2(src=file_path, dst=new_path)
+                                    """
+                                    # CREATE WATERMARK/COPY IN FOLDER TO BE ZIPPED
+                                    create_watermark(input_pdf=file_path,
+                                                     output=new_path,
+                                                     watermark=watermark)
+                                    """
+                                    # COPY TO OUTBOUND_DIRECTORY
+                                    shutil.copy2(src=file_path, dst=newer_path)
+                                    # APPEND TO FILE LIST
+                                    self.file_list.append(file_name)
+                                    # APPEND TO DIR LIST
+                                    self.dir_list.append(dir_name)
+                                    # APPEND TO TIMESTAMP_LIST
+                                    self.ts_list.append(file_date)
+                                #}
+                                """
+                                # APPEND TO FILE LIST
+                                file_list.append(file_path)
+                                # APPEND TO TIMESTAMP_LIST
+                                ts_list.append(test_date)
+                                """
+                            #}
+                            else: #{
+                                logging.info("CREATED AFTER " + str(end_check))
+                            #}
+                        #}
+                        else: #{
+                            logging.info("CREATED BEFORE " + str(time_start))
+                        #}
                         ###################################################
                     # }
                     else:  # {
