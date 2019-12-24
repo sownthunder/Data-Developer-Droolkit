@@ -53,8 +53,19 @@ class CofA_Culprit_Catcher(FileSystemEventHandler):  # {
         self.the_directory = the_directory
     # }
     
-    def dispatch(self, event): # {
+    def create_watermark(input_pdf, output, watermark):  # {
         pass
+    # }
+    
+    def dispatch(self, event): # {
+        output_str = "EVENT >> " + str(event.event_type)
+        output_str += str("IS_DIR >> " + str(event.is_directory))
+        output_str += str("SRC_PATH >> " + str(event.src_path))
+        # CREATE VARIABLE TO SEND TO FUNCTION
+        event_str = str(event.event_type)
+        event_path = Path(event.src_path)
+        # PERFOM ACTION(S)
+        self.perform_on_event(event_type=event_str, event_path=event_path)
     # }
     
     def on_created(self, event):  # {
@@ -83,8 +94,35 @@ class CofA_Culprit_Catcher(FileSystemEventHandler):  # {
         pass
     # }
     
-    def on_moved(self, the_event): # {
+    def on_moved(self, event): # {
         pass
+    # }
+    
+    def perform_on_event(self, the_event_type, the_event_path):  # {
+        # # TRY THE FOLLOWING
+        try: # {
+            if str(the_event_type) == "created":  # {
+                print("\tCREATED >>> ")
+            # }
+            elif str(the_event_type) == "deleted": # {
+                print("\tDELETED >>> ")
+            # }
+            elif str(the_event_type) == "modified": # {
+                print("\tMODIFIED >>> ")
+            # }
+            elif str(the_event_type) == "moved": # {
+                print("\tMOVED >>> ")
+            # }
+            #######################################
+            # CREATE TIMESTAMP
+            ts = pd.Timestamp.now()
+            # CREATE PATH TO FILE OF EVENT
+            the_event_path = Path(the_event_path)
+            
+        # }
+        except: # {
+            pass
+        # }
     # }
     
 #}

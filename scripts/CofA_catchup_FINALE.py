@@ -18,6 +18,7 @@ D) ZIPS ALL FILES INTO ONE and creates .CSV listing
 ()-------------------------------------------------------()
 
 2019-12-23: NEED TO ADD IN NAMING CONVENTION SET TO "end_check_date"
+2019-12-24: CHECK IN "CofA_fix_*XDATEX*" in Jupyter Notebook for code
     
 """
 
