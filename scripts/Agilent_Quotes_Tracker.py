@@ -8,6 +8,8 @@ TO-DO:
 EDITS:
 12/18/19 - made database accessible via anywhere by file_path to E_DRIVE
          - calls "new_records_validated()" function to fail-check new DB entry
+12/26/19 - quotes naming convention to properly create _QUOTES_T_NUMBER_
+         - added COLUMNS [initials], [sap_quote_number], and [product_number]
 
 @author: derbates
 """
@@ -20,6 +22,7 @@ import datetime
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import sqlite3, logging, random
+import pickle
 import pyodbc
 import pandas as pd
 import numpy as np
@@ -32,6 +35,7 @@ from sqlalchemy.orm import relationship, backref
 class AgilentQuotesTracker():  # {
 
     db_filename = "E:/_Quotes_Tracker/data/quotes_tracker.db"
+    t_count_filename = "E:/_Quotes_Tracker/config/quotes_t_number.pkl"
     time1 = ""
 
     def __init__(self, root):  # {
@@ -40,7 +44,8 @@ class AgilentQuotesTracker():  # {
         self.root.resizable(width=True, height=True)
         # [2019-12-12]\\self.root.minsize(height=1250)
         self.root.minsize(width=1175, height=375)
-        self.root.maxsize(width=1500, height=1250)
+        # [2019-12-26]\\self.root.maxsize(width=1500, height=1250)
+        self.root.maxsize(width=1750, height=1375)
         # CREATE DATAFRAME-DATABASE FROM FILE
         # [2019-12-11]\\self.quotes_db = self.create_database(db_csv=self.db_filename)
         # [2019-12-11]\\print(self.quotes_db)
@@ -342,7 +347,8 @@ class AgilentQuotesTracker():  # {
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True) # fill=tk.Both
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=True)
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
-        self.leftframe.pack(side=tk.LEFT, fill=tk.X, expand=False)
+        # [2019-12-26]\\self.leftframe.pack(side=tk.LEFT, fill=tk.X, expand=False)
+        self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=False)
     #}
 
     def create_tab_control(self):  # {
@@ -370,7 +376,8 @@ class AgilentQuotesTracker():  # {
             # TAB-3 // EXPORT OPTIONS
             self.tab3 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab3, text='HELP')
-            self.tab_control.pack(expand=2, fill=tk.BOTH)
+            # [2019-12-26]\\self.tab_control.pack(expand=2, fill=tk.BOTH)
+            self.tab_control.pack(expand=2, fill=None)
 
             """
             # TAB-4 // HELP SECTION
@@ -604,16 +611,17 @@ class AgilentQuotesTracker():  # {
         try: #{
             # TABLE
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
-                                     height=30, columns=8)  # height = 20
-            self.tree["columns"] = ("one", "two", "three", "four", "five", "six", "seven")
+                                     height=30, columns=9)  # height = 20
+            self.tree["columns"] = ("one", "two", "three", "four", "five", "six", "seven", "eight")
             self.tree.column('#0', width=120, minwidth=115, stretch=tk.NO)
-            self.tree.column("one", width=100, minwidth=115, stretch=tk.YES)
+            self.tree.column("one", width=100, minwidth=115, stretch=tk.NO)
             self.tree.column("two", width=100, minwidth=115, stretch=tk.YES)
-            self.tree.column("three", width=50, minwidth=50, stretch=tk.YES)
-            self.tree.column("four", width=128, minwidth=128, stretch=tk.YES)
-            self.tree.column("five", width=45, minwidth=45, stretch=tk.YES)
-            self.tree.column("six", width=100, minwidth=90, stretch=tk.YES)
-            self.tree.column("seven", width=100, minwidth=90, stretch=tk.NO)
+            self.tree.column("three", width=50, minwidth=50, stretch=tk.NO)
+            self.tree.column("four", width=128, minwidth=128, stretch=tk.NO)
+            self.tree.column("five", width=35, minwidth=35, stretch=tk.NO) # SENT , 45, 45
+            self.tree.column("six", width=75, minwidth=75, stretch=tk.NO)  # TURN_AROUND, 100, 90
+            self.tree.column("seven", width=100, minwidth=90, stretch=tk.YES) # NOTES
+            self.tree.column("eight", width=70, minwidth=40, stretch=tk.NO) # INITIALS
 
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
@@ -626,6 +634,7 @@ class AgilentQuotesTracker():  # {
             self.tree.heading('#5', text='Sent', anchor=tk.CENTER)
             self.tree.heading('#6', text='Turn Around', anchor=tk.CENTER)
             self.tree.heading('#7', text='Notes', anchor=tk.CENTER)
+            self.tree.heading("#8", text='Initials', anchor=tk.CENTER)
 
             # BIND CLICK ACTIONS/EVENTS
             self.tree.bind("<Double-1>", self.on_double_click)
@@ -675,10 +684,11 @@ class AgilentQuotesTracker():  # {
         selected_type = str(self.tree.item(item)['values'][3])
         selected_sent = str(self.tree.item(item)['values'][4])
         selected_notes = str(self.tree.item(item)['values'][6])
+        selected_initials = str(self.tree.item(item)['values'][7])
         # CREATE LIST TO HOLD SELECTIONS
-        selection_list = [selected_tracking_number, selected_name, selected_email, selected_type, selected_sent, selected_notes]
+        selection_list = [selected_tracking_number, selected_name, selected_email, selected_type, selected_sent, selected_notes, selected_initials]
         logging.info(str(selection_list))
-        selection_string = "YOU SELECTED:\n" + selected_name + "\n" + selected_email + "\n" + selected_type + "\n" + selected_sent + "\n" + selected_notes
+        selection_string = "YOU SELECTED:\n" + selected_name + "\n" + selected_email + "\n" + selected_type + "\n" + selected_sent + "\n" + selected_notes + "\n" + selected_initials
         logging.info(str(selection_string))
         # SEND SELECTIONS AND OPEN MODIFY WINDOW
         self.open_modify_window(selected_item=item, the_selection_list=selection_list)
@@ -791,7 +801,64 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         #}
     #}
-
+    
+    """
+    TAKES IN:
+        (1) pickle of current "Quotes-Number" count
+        (2) TOTAL number of digits to complete with zfill
+        >>> increments that by 1 and overwrites the file <<<
+    RETURNS:
+        (1) string with proper file naming convention for database use
+    """
+    def create_file_name_convention(self, the_pickle, number_of_digits): # {
+        # TRY THE FOLLOWING:
+        try:  # {
+            # LOAD IN PICKLE FROM FILE
+            with open(Path(the_pickle), 'rb') as le_pickle: # {
+                # LOAD PICKLE AS TYPE INT
+                current_count = int(pickle.load(le_pickle))
+            # }
+            # DISPLAY VALUE FOR DEBUG
+            print("current count == " + str(current_count))
+            # INCREASE COUNT
+            current_count += 1
+            # CREATE STRING WITH COUNT + zero fill
+            count_str = str(current_count).zfill(int(number_of_digits))
+            print("count_str == " + str(count_str))
+            # CREATE STRING
+            file_name_conv = str("T000" + count_str)
+            print("FINAL RESULT == " + str(file_name_conv))
+        # }
+        except: #{
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            print("\n" + typeE +
+                      "\n" + fileE +
+                      "\n" + lineE +
+                      "\n" + messageE)
+        # }
+        else:  # {
+            print("Operation Completed Successfully...")
+        # }
+        finally:  # {
+            print("... saving COUNT TO PICKLE == " + str(current_count))
+            # OVERWRITE PICKLE WITH NEW INCREMENTED COUNT
+            with open(Path(the_pickle), 'wb') as le_pickle: # {
+                # SAVE PICKLE AS TYPE INT
+                pickle.dump(current_count, le_pickle)
+            # }
+            # RETURN THE STRING
+            return file_name_conv
+        # }
+    # }
+    
     """
     CREATES NEW QUOTE NUMBER ACCORDING TO NAMING CONVENTION:
     301 + (YYYYMMDD) + Hour + Minute
@@ -827,7 +894,8 @@ class AgilentQuotesTracker():  # {
             if self.new_records_validated():  # {
                 logging.info("...ADDING NEW RECORD...")
                 # create ENTRY variables
-                track_num = [self.quote_number_convention()]  # auto-creates number
+                # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
+                track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
                 the_name = [str(self.name.get())]
                 the_email = [str(self.email.get())]
                 the_type = [str(self.radio_type_var.get())]
@@ -959,10 +1027,11 @@ class AgilentQuotesTracker():  # {
                 logging.info("Close_Time == " + str(row[6]))
                 logging.info("Turn_Around == " + str(row[7]))
                 logging.info("Notes == " + str(row[8]))
+                logging.info("Initials == " + str(row[9]))
                 # CREATE LIST TO HOLD RECORD ENTRY
                 # [Tracking #] [Name] [Email] [Type] [Timestamp/open_time]
                 record_entry = [str(row[1]), str(row[2]), str(row[3]), str(row[5]),
-                                str(row[4]), str(row[7]), str(row[8])]
+                                str(row[4]), str(row[7]), str(row[8]), str(row[9])]
                 # INSERT RECORD ENTRY INTO TREE
                 self.tree.insert('', 0, text=str(row[0]), values=record_entry)
             # }
@@ -1087,6 +1156,11 @@ class AgilentQuotesTracker():  # {
             new_notes_text_widget = tk.Text(master=self.transient, height=10, width=24)  #.grid(row=6, column=1)
             new_notes_text_widget.insert(tk.INSERT, str(the_selection_list[5]))
             new_notes_text_widget.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky='nesw')
+            # INITIALS #
+            #ttk.Label(master=self.transient, text="Initials:").grid(row=5, column=0)
+            #new_initials_entry_widget = tk.Text(master=self.transient, height=10, width=24)
+            #new_initials_text.widget.insert(tk.INSERT, str(the_selection_list[7]))
+            #new_initials_text_widget.grid(row=8, column=0)
             """
             tk.Entry(master=self.transient, textvariable=tk.StringVar(
                          #    self.transient, value=str(the_selection_list[5])), width=40).grid(row=6, column=1, columnspan=2, rowspan=2, sticky='w')
