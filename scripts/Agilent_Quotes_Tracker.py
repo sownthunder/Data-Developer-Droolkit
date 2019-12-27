@@ -1146,7 +1146,7 @@ class AgilentQuotesTracker():  # {
                 self.transient, value=bool(the_selection_list[4])), state='readonly').grid(row=4, column=1)
             # NEW-SENT #
             ttk.Label(master=self.transient, text="NEW Sent:").grid(row=4, column=2)
-            new_sent_radio_var = tk.BooleanVar(master=self.transient, value=bool(the_selection_list[4]))
+            new_sent_radio_var = tk.BooleanVar(master=self.transient, value=False)  #bool(the_selection_list[4]))
             ####### VARIABLE FOR RADIO_SENT BOOLEAN
             sent_bool = bool(new_sent_radio_var.get())
             print("NEW_SENT_RADIO_VAR.get() // sent_bool // == " + str(sent_bool))
@@ -1184,7 +1184,7 @@ class AgilentQuotesTracker():  # {
             # CALL UPDATE RECORD BELOW #
             ############################
             # CONFIRM BUTTON
-            ttk.Button(master=self.transient, text='UPDATE', width=25, command=lambda: self.update_record(
+            ttk.Button(master=self.transient, text='UPDATE', width=15, command=lambda: self.update_record(
                 newname=new_name_entry_widget.get(), old_name=test_name,
                 newemail=new_email_entry_widget.get(), old_email=str(the_selection_list[1]),
                 the_type=str(the_selection_list[2]),
@@ -1195,7 +1195,7 @@ class AgilentQuotesTracker():  # {
                 newinitials=new_initials_entry_widget.get(), old_initials=str(the_selection_list[6]),
                 tracking_number=str(the_selection_list[0]))).grid(row=8, column=1, padx=5, pady=5)
             # CANCEL BUTTON
-            ttk.Button(master=self.transient, text='CANCEL', width=25, command=self.transient.destroy).grid(row=8, column=2, padx=5, pady=5)
+            ttk.Button(master=self.transient, text='CANCEL', width=15, command=self.transient.destroy).grid(row=8, column=2, padx=5, pady=5)
             self.transient.mainloop()
         #}
         except: #{
@@ -1243,16 +1243,18 @@ class AgilentQuotesTracker():  # {
                 # CREATE TEMPORARY TIMESTAMP
                 time_meow = pd.Timestamp.now()
                 print("TIME MEOW == " + str(time_meow))
+                print("open_time == " + str(open_time))
+                print("old_sent == " + str(old_sent))
                 # COMPUTE TURN AROUND TIME
-                time_start = pd.Timestamp(ts_input=str(open_time))
+                time_start = pd.Timestamp(ts_input=open_time)
                 print("TIME START == " + str(time_start))
                 run_time = time_meow - time_start
                 print("RUN TIME == " + str(run_time))
                 query = 'UPDATE quotes ' \
-                        'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=? ' \
+                        'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=? ' \
                         'WHERE tracking_number=?'
                 parameters = (newname, newemail, the_type, newsent, str(time_meow),
-                              str(run_time), newnotes, tracking_number)
+                              str(run_time), newnotes, newinitials, tracking_number)
                 # EXECUTE
                 self.execute_db_query(query, parameters)
                 self.transient.destroy()
@@ -1273,10 +1275,6 @@ class AgilentQuotesTracker():  # {
                 self.message['text'] = 'Quote Record of {} modified'.format(tracking_number)
                 self.view_records()
             # }
-        #}
-        except ValueError: # {
-            print("\n\t\t VALUUE ERROR!")
-            print("")
         #}
         except: #{
             errorMessage = str(sys.exc_info()[0]) + "\n"
