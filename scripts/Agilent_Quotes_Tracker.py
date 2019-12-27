@@ -686,7 +686,13 @@ class AgilentQuotesTracker():  # {
         selected_notes = str(self.tree.item(item)['values'][6])
         selected_initials = str(self.tree.item(item)['values'][7])
         # CREATE LIST TO HOLD SELECTIONS
-        selection_list = [selected_tracking_number, selected_name, selected_email, selected_type, selected_sent, selected_notes, selected_initials]
+        selection_list = [selected_tracking_number, 
+                          selected_name, 
+                          selected_email, 
+                          selected_type, 
+                          selected_sent, 
+                          selected_notes, 
+                          selected_initials]
         logging.info(str(selection_list))
         selection_string = "YOU SELECTED:\n" + selected_name + "\n" + selected_email + "\n" + selected_type + "\n" + selected_sent + "\n" + selected_notes + "\n" + selected_initials
         logging.info(str(selection_string))
@@ -1137,30 +1143,39 @@ class AgilentQuotesTracker():  # {
             # OLD-SENT #
             ttk.Label(master=self.transient, text="OLD Sent:").grid(row=4, column=0)
             tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[4])), state='readonly').grid(row=4, column=1)
+                self.transient, value=bool(the_selection_list[4])), state='readonly').grid(row=4, column=1)
             # NEW-SENT #
             ttk.Label(master=self.transient, text="NEW Sent:").grid(row=4, column=2)
-            new_sent_radio_var = tk.BooleanVar(master=self.transient, value=bool(the_selection_list[4])) # BOOL VARIABLE
+            new_sent_radio_var = tk.BooleanVar(master=self.transient, value=bool(the_selection_list[4]))
+            ####### VARIABLE FOR RADIO_SENT BOOLEAN
+            sent_bool = bool(new_sent_radio_var.get())
+            print("NEW_SENT_RADIO_VAR.get() // sent_bool // == " + str(sent_bool))
+            print("NEW_SENT_RADIO_VAR.get() == " + str(new_sent_radio_var.get()))
             new_sent_radio_widget_1 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
-                                                    value=False, text="Yes", width=12).grid(row=4, column=3,
+                                                    value=True, text="Yes", width=12).grid(row=4, column=3,
                                                                                            padx=5, sticky='w')
             new_sent_radio_widget_2 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
-                                                      value=True, text="No", width=12).grid(row=4, column=3,
+                                                      value=False, text="No", width=12).grid(row=4, column=3,
                                                                                              padx=65, sticky='e')
             # TIMESTAMP (open_time) #
             ttk.Label(master=self.transient, text="Timetamp:").grid(row=5, column=0)
-            open_time_entry_widget = tk.Entry(master=self.transient, width=24, textvariable=tk.StringVar(
+            open_time_entry_widget = tk.Entry(master=self.transient, textvariable=tk.StringVar(
                 self.transient, value=str(the_selection_list[3])), state='readonly').grid(row=5, column=1)
+            # OLD-INITIALS
+            ttk.Label(master=self.transient, text="OLD Initials:").grid(row=6, column=0)
+            tk.Entry(master=self.transient, textvariable=tk.StringVar(
+                self.transient, value=str(the_selection_list[6])), state='readonly').grid(row=6, column=1)
+            # NEW-INITIALS
+            ttk.Label(master=self.transient, text="NEW Initials:").grid(row=6, column=2)
+            new_initials_entry_widget = tk.Entry(master=self.transient)
+            new_initials_entry_widget.grid(row=6, column=3)
             # NOTES #
-            ttk.Label(master=self.transient, text="Notes:").grid(row=6, column=0)
+            # [2019-12-27]\\ttk.Label(master=self.transient, text="Notes:").grid(row=6, column=0)
+            ttk.Label(master=self.transient, text="Notes:").grid(row=7, column=0)
             new_notes_text_widget = tk.Text(master=self.transient, height=10, width=24)  #.grid(row=6, column=1)
             new_notes_text_widget.insert(tk.INSERT, str(the_selection_list[5]))
-            new_notes_text_widget.grid(row=7, column=1, columnspan=2, padx=5, pady=5, sticky='nesw')
-            # INITIALS #
-            #ttk.Label(master=self.transient, text="Initials:").grid(row=5, column=0)
-            #new_initials_entry_widget = tk.Text(master=self.transient, height=10, width=24)
-            #new_initials_text.widget.insert(tk.INSERT, str(the_selection_list[7]))
-            #new_initials_text_widget.grid(row=8, column=0)
+            # [2019-12-27]\\new_notes_text_widget.grid(row=6, column=1, columnspan=3, padx=5, pady=5, sticky='nesw')
+            new_notes_text_widget.grid(row=7, column=1, columnspan=3, padx=5, pady=5, sticky='nesw')
             """
             tk.Entry(master=self.transient, textvariable=tk.StringVar(
                          #    self.transient, value=str(the_selection_list[5])), width=40).grid(row=6, column=1, columnspan=2, rowspan=2, sticky='w')
@@ -1169,14 +1184,18 @@ class AgilentQuotesTracker():  # {
             # CALL UPDATE RECORD BELOW #
             ############################
             # CONFIRM BUTTON
-            ttk.Button(master=self.transient, text='UPDATE', command=lambda: self.update_record(
+            ttk.Button(master=self.transient, text='UPDATE', width=25, command=lambda: self.update_record(
                 newname=new_name_entry_widget.get(), old_name=test_name,
                 newemail=new_email_entry_widget.get(), old_email=str(the_selection_list[1]),
                 the_type=str(the_selection_list[2]),
-                newsent=str(new_sent_radio_var.get()), old_sent=str(the_selection_list[4]),
+                #newsent=str(new_sent_radio_var.get())
+                newsent=str(sent_bool), old_sent=str(the_selection_list[4]),
                 open_time=str(the_selection_list[3]),
                 newnotes=str(new_notes_text_widget.get(index1="1.0", index2=tk.END)), old_notes=str(the_selection_list[5]),
-                tracking_number=str(the_selection_list[0]))).grid(row=7, column=3)
+                newinitials=new_initials_entry_widget.get(), old_initials=str(the_selection_list[6]),
+                tracking_number=str(the_selection_list[0]))).grid(row=8, column=1, padx=5, pady=5)
+            # CANCEL BUTTON
+            ttk.Button(master=self.transient, text='CANCEL', width=25, command=self.transient.destroy).grid(row=8, column=2, padx=5, pady=5)
             self.transient.mainloop()
         #}
         except: #{
@@ -1204,19 +1223,22 @@ class AgilentQuotesTracker():  # {
         # }
     # }
 
-    def update_record(self, newname, old_name, newemail, old_email, the_type,
-                      newsent, old_sent, open_time, newnotes, old_notes, tracking_number):  # {
+    def update_record(self, newname, old_name, newemail, 
+                      old_email, the_type, newsent, 
+                      old_sent, open_time, newnotes, 
+                      old_notes, newinitials, old_initials, tracking_number):  # {
         """
         CALL THE "check_quote_progress() FUNCTION HERE
-
+        [ 2019-12-27 ] == addition of "initials" into METHOD
         """
         # TRY THE FOLLOWING
         try: #{
             print("UPDATING RECORD...")
-            print(newsent)
+            print("NEW_SENT RADIO VAR [passed_thru_function] == " + str(newsent))
             # CHECK IF SENT HAS BEEN SWITCHED!
             # IF SO UPDATE: sent, close_time, turn_around AND ALSO name, email, notes
-            if str(newsent) == "True":  # {
+            # [2019-12-27]\\if bool(newsent) is True:  # {
+            if newsent == "True": # {
                 print("\n\t\t\t>>>> SWITCHING OVER!")
                 # CREATE TEMPORARY TIMESTAMP
                 time_meow = pd.Timestamp.now()
@@ -1251,6 +1273,10 @@ class AgilentQuotesTracker():  # {
                 self.message['text'] = 'Quote Record of {} modified'.format(tracking_number)
                 self.view_records()
             # }
+        #}
+        except ValueError: # {
+            print("\n\t\t VALUUE ERROR!")
+            print("")
         #}
         except: #{
             errorMessage = str(sys.exc_info()[0]) + "\n"
