@@ -546,9 +546,9 @@ class AgilentQuotesTracker():  # {
                                    background='#2b303b', foreground="#bbc0c9")
             self.clock.grid(row=6, column=1, padx=5, pady=5, stick='w')
 
-            # Initials (company name)
+            # Initials (agilent worker)
             self.initials_var = tk.StringVar(master=self.lblframe_create)
-            ttk.Label(master=self.lblframe_create, text='Company Initials: ', font=("Calibri", 12, 'bold'),
+            ttk.Label(master=self.lblframe_create, text='Initials: ', font=("Calibri", 12, 'bold'),
                       background='#666666', foreground='#000000').grid(row=7, column=0, sticky='w', padx=5, pady=5)
             self.initials = ttk.Entry(master=self.lblframe_create, width=24)
             self.initials.grid(row=7, column=1, sticky='w', padx=5, pady=5)
@@ -625,7 +625,7 @@ class AgilentQuotesTracker():  # {
             # CLOSE_TIME (end_timestamp) #
             # TURN_AROUND (overall timestamp) #
             # NOTES #
-            # INITIALS (company name) #
+            # INITIALS (agilent worker) #
             # ACCOUNT ID #
             # PRODFLOW QUOTE NUMBER #
             # SAP QUOTE NUMBER #
@@ -689,15 +689,15 @@ class AgilentQuotesTracker():  # {
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER)
+            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER)  # 'tracking_number' in BACKEND
             self.tree.heading('#1', text='Name', anchor=tk.CENTER)
             self.tree.heading('#2', text='Email', anchor=tk.CENTER)
             self.tree.heading('#3', text='Type', anchor=tk.CENTER)
             self.tree.heading('#4', text='Open Time', anchor=tk.CENTER)  # "Open_time" in BACKEND
             self.tree.heading('#5', text='Sent', anchor=tk.CENTER)
-            self.tree.heading('#6', text='Turn Around', anchor=tk.CENTER)
+            self.tree.heading('#6', text='Turn Around', anchor=tk.CENTER) # 'turn_around' in BACKEND
             self.tree.heading('#7', text='Notes', anchor=tk.CENTER)
-            self.tree.heading("#8", text='Initials (Company Name)', anchor=tk.CENTER)
+            self.tree.heading("#8", text='Initials', anchor=tk.CENTER)
             self.tree.heading('#9', text='Account ID', anchor=tk.CENTER)
             self.tree.heading('#10', text='Prodflow Quote #', anchor=tk.CENTER)
             self.tree.heading('#11', text='SAP Quote #', anchor=tk.CENTER)
