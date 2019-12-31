@@ -25,7 +25,9 @@ from time import sleep
 from pathlib import Path
 import datetime
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+import tkinter.ttk as ttk
+from ttkthemes import ThemedStyle
+from tkinter import filedialog, messagebox
 import sqlite3, logging, random
 import pickle
 import pyodbc
@@ -310,8 +312,10 @@ class AgilentQuotesTracker():  # {
                 logging.info(str(t))
             # }
             # CONFIGURE THE STYLE
-            self.style = ttk.Style()
-            # Modify the font of the body
+            # [2019-12-31]\\self.style = ttk.Style()
+            self.style = ThemedStyle(self.root)
+            # # STYLE THEME
+            self.style.set_theme("scidblue") # radiance, black, scidpink, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -382,17 +386,17 @@ class AgilentQuotesTracker():  # {
 
             # TAB-1 // CREATE
             self.tab1 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab1, text='CREATE')
+            self.tab_control.add(self.tab1, text='Tracking Info')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
 
             # TAB-2 // ABOUT INFORMATION
             self.tab2 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab2, text='ABOUT')
+            self.tab_control.add(self.tab2, text='Account Info')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
 
             # TAB-3 // HELP OPTIONS
             self.tab3 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab3, text='HELP')
+            self.tab_control.add(self.tab3, text='Quote Info')
             # [2019-12-26]\\self.tab_control.pack(expand=2, fill=tk.BOTH)
             self.tab_control.pack(expand=2, fill=None)
 
@@ -402,6 +406,11 @@ class AgilentQuotesTracker():  # {
             self.tab_control.add(self.tab4, text="EXPORT")
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             """
+            
+            # UNIVERSAL BUTTON?
+            self.uni_button = ttk.Button(master=self.leftframe, text="CREATE", state='disabled')
+            self.uni_button.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+            
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -433,7 +442,7 @@ class AgilentQuotesTracker():  # {
         # TRY THE FOLLOWING:
         try:  # {
             # Create the CREATE Tab Container
-            self.lblframe_create = ttk.LabelFrame(master=self.tab1, text="Begin A New Quote:")
+            self.lblframe_create = ttk.LabelFrame(master=self.tab1, text="Input Tracking Information:")
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
 
@@ -555,36 +564,62 @@ class AgilentQuotesTracker():  # {
 
             # account_id [row=8]
             self.account_id_var = tk.StringVar(master=self.lblframe_create)
-            ttk.Label(master=self.lblframe_create, text="Account ID: ").grid(row=8, column=0, sticky='w', padx=5, pady=5)
+            ttk.Label(master=self.lblframe_create, text="Account ID: ").grid(row=8, column=0, sticky='w', padx=5,
+                                                                             pady=5)
             self.account_id = ttk.Entry(master=self.lblframe_create, width=24)
             self.account_id.grid(row=8, column=1, sticky='w', padx=5, pady=5)
+            
+            # PRODUCT_NUMBER [row=9]
+            self.product_num_var = tk.StringVar(master=self.lblframe_create)
+            ttk.Label(master=self.lblframe_create, text='Product #: ').grid(row=9, column=0, sticky='w', padx=5,
+                                                                            pady=5)
+            self.product_num = ttk.Entry(master=self.lblframe_create, width=24)
+            self.product_num.grid(row=9, column=1, sticky='w', padx=5, pady=5)
 
-            # prodflow quote number [row-9]
+            # prodflow quote number [row=10]
             self.prodflow_quote_var = tk.StringVar(master=self.lblframe_create)
-            ttk.Label(master=self.lblframe_create, text='Prodflow Quote #: ').grid(row=9, column=0, sticky='w', padx=5, pady=5)
-            self.prodflow_quote_num = ttk.Entry(master=self.lblframe_create, width=24, state='readonly')
-            self.prodflow_quote_num.grid(row=9, column=1, sticky='w', padx=5, pady=5)
+            ttk.Label(master=self.lblframe_create, text='Prodflow Quote #: ').grid(row=10, column=0, sticky='w', padx=5,
+                                                                                   pady=5)
+            self.prodflow_quote_num = ttk.Entry(master=self.lblframe_create, width=24)
+            self.prodflow_quote_num.grid(row=10, column=1, sticky='w', padx=5, pady=5)
 
-            # SAP quote number [row=10]
+            # SAP quote number [row=11]
             self.sap_quote_var = tk.StringVar(master=self.lblframe_create)
-            ttk.Label(master=self.lblframe_create, text='SAP Quote #: ').grid(row=10, column=0, sticky='w', padx=5, pady=5)
-            self.sap_quote_num = ttk.Entry(master=self.lblframe_create, width=24, state='readonly')
-            self.sap_quote_num.grid(row=10, column=1, sticky='w', padx=5, pady=5)
+            ttk.Label(master=self.lblframe_create, text='SAP Quote #: ').grid(row=11, column=0, sticky='w', padx=5,
+                                                                              pady=5)
+            self.sap_quote_num = ttk.Entry(master=self.lblframe_create, 
+                                           textvariable=self.sap_quote_var,
+                                           width=24)
+            self.sap_quote_num.grid(row=11, column=1, sticky='w', padx=5, pady=5)
+            
+            # company name [row=12]
+            self.company_var= tk.StringVar(master=self.lblframe_create)
+            ttk.Label(master=self.lblframe_create, text='Company Name: ').grid(row=12, column=0, sticky='w', padx=5, pady=5)
+            self.company_name = ttk.Entry(master=self.lblframe_create, 
+                                          textvariable=self.company_var, 
+                                          width=24)
+            self.company_name.grid(row=12, column=1, sticky='w', padx=5, pady=5)
 
             # price [row=11]
+            """ [2019-12-31] """
+            """
             self.price_var = tk.IntVar(master=self.lblframe_create)
             ttk.Label(master=self.lblframe_create, text='Price: ').grid(row=11, column=0, sticky='w', padx=5, pady=5)
-            self.price= ttk.Entry(master=self.lblframe_create, width=24)
+            self.price = ttk.Entry(master=self.lblframe_create, width=24)
             self.price.grid(row=11, column=1, sticky='w', padx=5, pady=5)
+            """
 
-            # notes [row=12/13]
+            # notes [row=13/14]
             # xXxXxXxXxXxXxXxXx
             # Notes Section
-            ttk.Label(master=self.lblframe_create, text="NOTES: ").grid(row=12, column=0,
+            ttk.Label(master=self.lblframe_create, text="NOTES: ").grid(row=13, column=0,
                                                                         padx=5, pady=5, sticky='w')
-            self.notes = tk.Text(master=self.lblframe_create, width=36, height=10)
+            self.notes_var = tk.StringVar(master=self.lblframe_create)
+            self.notes = tk.Entry(master=self.lblframe_create, 
+                                  textvariable=self.notes_var, 
+                                  width=24)
             # [2019-12-30]\\self.notes = ttk.Entry(master=self.lblframe_create, width=24)
-            self.notes.grid(row=13, column=0, columnspan=2, padx=5, pady=5, sticky='w')
+            self.notes.grid(row=13, column=1, columnspan=2, rowspan=2, padx=5, pady=5, sticky='w')
 
             """[2019-12-12]"""
             """
@@ -615,7 +650,7 @@ class AgilentQuotesTracker():  # {
             # SUBMIT "CREATE" BUTTON
             ttk.Button(master=self.lblframe_create,
                        text="CREATE", width=24,
-                       command=self.add_new_record).grid(row=14, column=0, columnspan=2, padx=5, pady=5, sticky='nesw')
+                       command=self.add_new_record).grid(row=15, column=0, columnspan=2, padx=5, pady=5, sticky='nesw')
             # TRACKING_NUMBER (tracking#) #
             # NAME #
             # EMAIL #
@@ -627,9 +662,10 @@ class AgilentQuotesTracker():  # {
             # NOTES #
             # INITIALS (agilent worker) #
             # ACCOUNT ID #
+            # PRODUCT NUMBER #
             # PRODFLOW QUOTE NUMBER #
             # SAP QUOTE NUMBER #
-            # PRICE # 
+            # COMPANY NAME #
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -669,39 +705,41 @@ class AgilentQuotesTracker():  # {
         try:  # {
             # TABLE
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
-                                     height=30, columns=9)  # height = 20
-            self.tree["columns"] = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
-            self.tree.column('#0', width=120, minwidth=115, stretch=tk.NO)  # TRACKING #
-            self.tree.column("one", width=75, minwidth=50, stretch=tk.NO)  # NAME
-            self.tree.column("two", width=75, minwidth=50, stretch=tk.NO)  # EMAIL
-            self.tree.column("three", width=50, minwidth=50, stretch=tk.NO)  # TYPE
-            self.tree.column("four", width=128, minwidth=128, stretch=tk.NO)  # OPEN TIME
-            self.tree.column("five", width=35, minwidth=35, stretch=tk.NO)  # SENT , 45, 45
-            self.tree.column("six", width=75, minwidth=75, stretch=tk.NO)  # TURN_AROUND, 100, 90
-            self.tree.column("seven", width=100, minwidth=90, stretch=tk.YES)  # NOTES
-            self.tree.column("eight", width=70, minwidth=40, stretch=tk.NO)  # INITIALS
-            self.tree.column("nine", width=85, minwidth=75, stretch=tk.NO) # ACCOUNT ID
-            self.tree.column("ten", width=85, minwidth=75, stretch=tk.NO) # PRODFLOW QUOTE #
-            self.tree.column("eleven", width=85, minwidth=75, stretch=tk.NO) # SAP QUOTE #
-            self.tree.column("twelve", width=85, minwidth=75, stretch=tk.YES) # PRICE
-
+                                     height=30, columns=13)  # height = 20
+            self.tree["columns"] = (
+            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
+            self.tree.column('#0', anchor=tk.W, width=125, minwidth=125, stretch=tk.NO)  # TRACKING #
+            self.tree.column("one", anchor=tk.W, width=175, minwidth=150, stretch=tk.NO)  # TIME REC. // NAME
+            self.tree.column("two", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # INITIALS // EMAIL
+            self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
+            self.tree.column("four", anchor=tk.CENTER, width=75, minwidth=75, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
+            self.tree.column("five", anchor=tk.W, width=100, minwidth=75, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
+            self.tree.column("six", anchor=tk.CENTER, width=175, minwidth=125, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
+            self.tree.column("seven", anchor=tk.CENTER, width=100, minwidth=100, stretch=tk.NO)  # ACCOUNT ID // NOTES
+            self.tree.column("eight", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
+            self.tree.column("nine", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PF QUOTE #//  ACCOUNT ID
+            self.tree.column("ten", anchor=tk.CENTER, width=100, minwidth=75, stretch=tk.NO)  # SAP QUOTE # // PRODFLOW QUOTE #
+            self.tree.column("eleven", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # SENT
+            self.tree.column("twelve", anchor=tk.CENTER, width=125, minwidth=100, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
+            self.tree.column("thirteen", anchor=tk.E, width=75, minwidth=75, stretch=tk.YES)  # NOTES // PRICE
 
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER)  # 'tracking_number' in BACKEND
-            self.tree.heading('#1', text='Name', anchor=tk.CENTER)
-            self.tree.heading('#2', text='Email', anchor=tk.CENTER)
+            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER) # "Open_time" in BACKEND
+            self.tree.heading('#2', text='Initials', anchor=tk.CENTER)
             self.tree.heading('#3', text='Type', anchor=tk.CENTER)
-            self.tree.heading('#4', text='Open Time', anchor=tk.CENTER)  # "Open_time" in BACKEND
-            self.tree.heading('#5', text='Sent', anchor=tk.CENTER)
-            self.tree.heading('#6', text='Turn Around', anchor=tk.CENTER) # 'turn_around' in BACKEND
-            self.tree.heading('#7', text='Notes', anchor=tk.CENTER)
-            self.tree.heading("#8", text='Initials', anchor=tk.CENTER)
-            self.tree.heading('#9', text='Account ID', anchor=tk.CENTER)
-            self.tree.heading('#10', text='Prodflow Quote #', anchor=tk.CENTER)
-            self.tree.heading('#11', text='SAP Quote #', anchor=tk.CENTER)
-            self.tree.heading('#12', text='Price', anchor=tk.CENTER)
+            self.tree.heading('#4', text='Company', anchor=tk.CENTER)  # COMPANY_NAME
+            self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER) # NAME IN BACKEND
+            self.tree.heading('#6', text='Email Address', anchor=tk.CENTER)  #
+            self.tree.heading('#7', text='Account ID', anchor=tk.CENTER)
+            self.tree.heading("#8", text='Product #', anchor=tk.CENTER)
+            self.tree.heading('#9', text='PF Quote #', anchor=tk.CENTER)
+            self.tree.heading('#10', text='SAP Quote #', anchor=tk.CENTER)
+            self.tree.heading('#11', text='Sent', anchor=tk.CENTER)
+            self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER)       # CLOSE TIME IN BACKEND
+            self.tree.heading('#13', text='Notes', anchor=tk.CENTER)
 
             # BIND CLICK ACTIONS/EVENTS
             self.tree.bind("<Double-1>", self.on_double_click)
@@ -732,58 +770,84 @@ class AgilentQuotesTracker():  # {
 
     # }
 
-    def on_add_record_button_click(self):  # {
-        self.add_new_record()
-
-    # }
-
     def on_double_click(self, event):  # {
-        # [2019-12-12]\\selected_track_num = self.tree.selection()[0]  # which tracking number you selected
-        item = self.tree.selection()[0]  # which row did you click on
-        print("ITEM CLICKED ", str(item))  # variable that represents the row you clicked on
-        # [2019-12-12]\\item_2 = self.tree.item(self.tree.selection())  # gets all the values of the selected row
-        # [20190-12-12]\\print('the test_str = ', type(item_2), item_2, '\n') # prints a dictionary of the selected row
-        print(self.tree.item(item)['values'][0])  # prints the first value of the values (the id value)
-        # [2019-12-12]\\item_2 = str(self.tree.item(self.tree.selection())['columns'][0])
-        # [2019-12-12]\\logging.info("ITEM 2 == " + str(item_2))
-        # [2019-12-13]\\messagebox.showinfo(title="test:", message="you clicked on:\n" + str(self.tree.item(item, option="text")))
-        selected_tracking_number = str(self.tree.item(item, option="text"))
-        selected_name = str(self.tree.item(item)['values'][1])
-        selected_email = str(self.tree.item(item)['values'][2])
-        selected_type = str(self.tree.item(item)['values'][3])
-        selected_sent = str(self.tree.item(item)['values'][4])
-        selected_notes = str(self.tree.item(item)['values'][6])
-        selected_initials = str(self.tree.item(item)['values'][7])
-        selected_account_id = str(self.tree.item(item)['values'][8])
-        selected_prodflow_quote_number = str(self.tree.item(item)['values'][9])
-        selected_sap_quote_number = str(self.tree.item(item)['values'][10])
-        selected_price = str(self.tree.item(item)['values'][11])
-        # CREATE LIST TO HOLD SELECTIONS
-        selection_list = [selected_tracking_number,
-                          selected_name,
-                          selected_email,
-                          selected_type,
-                          selected_sent,
-                          selected_notes,
-                          selected_initials,
-                          selected_account_id,
-                          selected_prodflow_quote_number,
-                          selected_sap_quote_number,
-                          selected_price]
-        logging.info(str(selection_list))
-        selection_string = str("YOU SELECTED:\n" 
-                               + selected_name + "\n" + selected_email + "\n" 
-                               + selected_type + "\n" + selected_sent + "\n" 
-                               + selected_notes + "\n" + selected_initials + "\n" 
-                               + selected_account_id + "\n" + selected_prodflow_quote_number + "\n"
-                               + selected_sap_quote_number + "\n" + selected_price
-                               )
-        logging.info(str(selection_string))
-        # SEND SELECTIONS AND OPEN MODIFY WINDOW
-        self.open_modify_window(selected_item=item, the_selection_list=selection_list)
-        # [2019-12-12]\\messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
-        # [2019-12-12]\\messagebox.showinfo(title="yupp!", message=str(self.tree.item(item_2, "text")))
-
+        # TRY THE FOLLOWING
+        try: # {
+            # [2019-12-12]\\selected_track_num = self.tree.selection()[0]  # which tracking number you selected
+            item = self.tree.selection()[0]  # which row did you click on
+            print("ITEM CLICKED ", str(item))  # variable that represents the row you clicked on
+            # [2019-12-12]\\item_2 = self.tree.item(self.tree.selection())  # gets all the values of the selected row
+            # [20190-12-12]\\print('the test_str = ', type(item_2), item_2, '\n') # prints a dictionary of the selected row
+            print(str(self.tree.item(item)['values'][0]))  # prints the first value of the values (the id value)
+            # [2019-12-12]\\item_2 = str(self.tree.item(self.tree.selection())['columns'][0])
+            # [2019-12-12]\\logging.info("ITEM 2 == " + str(item_2))
+            # [2019-12-13]\\messagebox.showinfo(title="test:", message="you clicked on:\n" + str(self.tree.item(item, option="text")))
+            selected_tracking_number = str(self.tree.item(item, option="text"))
+            selected_time_rec = str(self.tree.item(item)['values'][1]) 
+            selected_name = str(self.tree.item(item)['values'][5])  # WAS 1
+            selected_email = str(self.tree.item(item)['values'][6]) # WAS 2
+            selected_type = str(self.tree.item(item)['values'][3])  # WAS 3
+            selected_sent = str(self.tree.item(item)['values'][12])  # WAS 4
+            selected_notes = str(self.tree.item(item)['values'][11])  # WAS 6
+            selected_initials = str(self.tree.item(item)['values'][2])  # WAS 7
+            selected_account_id = str(self.tree.item(item)['values'][7])  # WAS 8
+            selected_prodflow_quote_number = str(self.tree.item(item)['values'][9])  # WAS 9
+            selected_sap_quote_number = str(self.tree.item(item)['values'][10])  # WAS 10
+            selected_product_number = str(self.tree.item(item)['values'][8])  # WAS 11
+            selected_company_name = str(self.tree.item(item)['values'][4])  # WAS 12
+            # NEED ONE MORE HERE
+            # CREATE LIST TO HOLD SELECTIONS
+            selection_list = [selected_tracking_number,
+                              selected_time_rec,
+                              selected_name,
+                              selected_email,
+                              selected_type,
+                              selected_sent,
+                              selected_notes,
+                              selected_initials,
+                              selected_account_id,
+                              selected_prodflow_quote_number,
+                              selected_sap_quote_number,
+                              selected_product_number,
+                              selected_company_name]
+            logging.info(str(selection_list))
+            selection_string = str("YOU SELECTED:\n"
+                                   + selected_time_rec + "\n" + selected_name + "\n"
+                                   + selected_email + "\n" + selected_type + "\n"
+                                   + selected_sent + "\n" + selected_notes + "\n"
+                                   + selected_initials + "\n" + selected_account_id + "\n"
+                                   + selected_prodflow_quote_number + "\n" + selected_sap_quote_number + "\n"
+                                   + selected_product_number + "\n" + selected_company_name
+                                   )
+            logging.info(str(selection_string))
+            # SEND SELECTIONS AND OPEN MODIFY WINDOW
+            self.open_modify_window(selected_item=item, the_selection_list=selection_list)
+            # [2019-12-12]\\messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
+            # [2019-12-12]\\messagebox.showinfo(title="yupp!", message=str(self.tree.item(item_2, "text")))
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            logging.info("Operation Completed Successfully...")
+        # }
     # }
 
     """
@@ -957,7 +1021,7 @@ class AgilentQuotesTracker():  # {
     301 + (YYYYMMDD) + Hour + Minute
     Example: 301201912121051
     """
-    
+
     """
     def quote_number_convention(self):  # {
         # TRY THE FOLLOWING:
@@ -1015,7 +1079,8 @@ class AgilentQuotesTracker():  # {
                 the_account_id_num = [str(self.account_id.get())]
                 the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
                 the_sap_quote_num = [str(self.sap_quote_num.get())]
-                the_price = [str(self.price.get())]
+                the_product_number = [str(self.product_num.get())]
+                the_company_name = [str(self.company_name.get())]
                 # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
                 # DICTIONARY OF LISTS
                 """
@@ -1036,7 +1101,9 @@ class AgilentQuotesTracker():  # {
                                   'account_id': the_account_id_num,
                                   'prodflow_quote_number': the_prodflow_quote_num,
                                   'sap_quote_number': the_sap_quote_num,
-                                  'price': the_price
+                                  'product_number': the_product_number,
+                                  'company_name': the_company_name
+                                  # [2019-12-31]\\'price': the_price
                                   }
                 # CREATE EMPTY DATAFRAME
                 new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
@@ -1052,10 +1119,14 @@ class AgilentQuotesTracker():  # {
                 self.notes.delete(0, tk.END)
                 self.initials.delete(0, tk.END)
                 self.account_id.delete(0, tk.END)
-                self.price.delete(0, tk.END)
+                self.prodflow_quote_num.delete(0, tk.END)
+                self.sap_quote_num.delete(0, tk.END)
+                self.product_num.delete(0, tk.END)
+                self.company_name.delete(0, tk.END)
+                # [2019-12-31]\\self.price.delete(0, tk.END)
             # }
             else:  # {
-                self.message['text'] = 'Name, Email Address,\nCompany Initials, and \nACCOUNT ID\ncannot be blank'
+                self.message['text'] = ' [Initials, Type, Company Name,\n AccountID, Product #,\n Prodflow Quote # & SAP Quote #]\n CANNOT be left blank!'
             # }
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
@@ -1091,9 +1162,9 @@ class AgilentQuotesTracker():  # {
         try:  # {
             return len(self.name.get()) != 0 \
                    and len(self.email.get()) != 0 \
-                       and len(self.initials.get()) != 0 \
-                           and len(self.account_id.get()) != 0
-                # [2019-12-18]\\and len(self.radio_type_var.get()) != 0 \
+                   and len(self.initials.get()) != 0 \
+                   and len(self.account_id.get()) != 0
+            # [2019-12-18]\\and len(self.radio_type_var.get()) != 0 \
             # [2019-12-18]\\and len(self.radio_sent_var.get()) != 0
             # [2019-12-18]\\and len(self.notes.get()) != 0
         # }
@@ -1134,25 +1205,35 @@ class AgilentQuotesTracker():  # {
             query = 'SELECT * FROM quotes ORDER BY name desc'
             quote_tracker_entries = self.execute_db_query(query)
             for row in quote_tracker_entries:  # {
+                print("PRINTING ROW:\n\t" + str(row))
                 logging.info("TRACKING # == " + str(row[0]))
-                logging.info("NAME === " + str(row[1]))
-                logging.info("Email == " + str(row[2]))
+                logging.info("Time REC. === " + str(row[5])) #  WAS NAME [row=1]
+                logging.info("Initials == " + str(row[9]))  # WAS EMAIL [row=2]
                 logging.info("Type == " + str(row[3]))
-                logging.info("Sent == " + str(row[4]))
-                logging.info("Open_Time == " + str(row[5]))
-                logging.info("Close_Time == " + str(row[6]))
-                logging.info("Turn_Around == " + str(row[7]))
-                logging.info("Notes == " + str(row[8]))
-                logging.info("Initials == " + str(row[9]))
-                logging.info("Account ID == " + str(row[10]))
-                logging.info("PRODFLOW QUOTE # == " + str(row[11]))
-                logging.info("SAP QUOTE # == " + str(row[12]))
-                logging.info("Price == " + str(row[13]))
+                logging.info("COMPANY NAME == " + str(row[14]))  # WAS SENT [row=4]
+                logging.info("CONTACT PERSON == " + str(row[1]))  # WAS open_time [row=5]
+                logging.info("EMAIL ADDRESS == " + str(row[2]))  # WAS close_time [row=6]
+                logging.info("Account ID == " + str(row[10]))  # WAS turn_around [row=7]
+                logging.info("PRODUCT NUMBER == " + str(row[15])) # WAS notes [row=8]
+                logging.info("PF Quote # == " + str(row[11]))  # WAS INITIALS [row=9]
+                logging.info("SAP Quote # == " + str(row[12]))  # WAS Account ID [row=10]
+                # [2019-12-31]\\logging.info("NOTES == " + str(row[8])) # WAS PRODFLOW QUOTE # [row=11]
+                logging.info("SENT == " + str(row[4])) 
+                logging.info("Time Sent. == " + str(row[6])) # WAS SAP QUOTE # [row=12]
+                # [2019-12-31]\\logging.info("SENT  == " + str(row[4]))  # WAS SAP QUOTE # [row=12]
+                # [2019-12-31]\\logging.info("Time Sent. == " + str(row[6])) # WAS PRICE [row=13]
+                logging.info("NOTES == " + str(row[8]))  # WAS PRODFLOW QUOTE # [row=11]
                 # CREATE LIST TO HOLD RECORD ENTRY
                 # [Tracking #] [Name] [Email] [Type] [Timestamp/open_time]
+                # [2019-12-31]
+                """
                 record_entry = [str(row[1]), str(row[2]), str(row[3]), str(row[5]),
                                 str(row[4]), str(row[7]), str(row[8]), str(row[9]),
                                 str(row[10]), str(row[11]), str(row[12]), str(row[13])]
+                """
+                record_entry = [str(row[5]), str(row[9]), str(row[3]), str(row[14]),
+                                str(row[1]), str(row[2]), str(row[10]), str(row[15]),
+                                str(row[11]), str(row[12]), str(row[4]), str(row[6]), str(row[8])]
                 # INSERT RECORD ENTRY INTO TREE
                 self.tree.insert('', 0, text=str(row[0]), values=record_entry)
             # }
@@ -1182,45 +1263,6 @@ class AgilentQuotesTracker():  # {
         # }
 
     # }
-    
-    """
-    def delete_record(self):  # {
-        # TRY THE FOLLOWING
-        try:  # {
-            logging.info("DELETING RECORD")
-            self.message['text'] = ''
-            tracking_num = self.tree.item(self.tree.selection())['text']
-            query = 'DELETE from quotes WHERE tracking_num = ?'
-            self.execute_db_query(query, (tracking_num,))
-            self.message['text'] = 'Quote Record for {} deleted'.format(tracking_num)
-            self.view_records()
-        # }
-        except:  # {
-            errorMessage = str(sys.exc_info()[0]) + "\n"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
-                          "\n" + fileE +
-                          "\n" + lineE +
-                          "\n" + messageE)
-            messagebox.showerror(title="ERROR!",
-                                 message=typeE +
-                                         "\n" + fileE +
-                                         "\n" + lineE +
-                                         "\n" + messageE)
-        # }
-        else:  # {
-            logging.info("Operation Completed Successfully...")
-        # }
-
-    # }
-    """
 
     def open_modify_window(self, selected_item, the_selection_list):  # {
         # TRY THE FOLLOWING
@@ -1318,14 +1360,8 @@ class AgilentQuotesTracker():  # {
             new_notes_text_widget.insert(tk.INSERT, str(the_selection_list[5]))
             # [2019-12-27]\\new_notes_text_widget.grid(row=6, column=1, columnspan=3, padx=5, pady=5, sticky='nesw')
             new_notes_text_widget.grid(row=11, column=1, columnspan=3, padx=5, pady=5, sticky='nesw')
-            """
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                         #    self.transient, value=str(the_selection_list[5])), width=40).grid(row=6, column=1, columnspan=2, rowspan=2, sticky='w')
-            """
-            ############################
-            # CALL UPDATE RECORD BELOW #
-            ############################
-            # CONFIRM BUTTON
+            ##################
+            # CONFIRM BUTTON #
             ttk.Button(master=self.transient, text='UPDATE', width=15, command=lambda: self.update_record(
                 newname=new_name_entry_widget.get(), old_name=test_name,
                 newemail=new_email_entry_widget.get(), old_email=str(the_selection_list[1]),
@@ -1338,11 +1374,12 @@ class AgilentQuotesTracker():  # {
                 newinitials=new_initials_entry_widget.get(), old_initials=str(the_selection_list[6]),
                 newaccountid=str(new_account_id_entry_widget.get()),
                 old_account_id=str(the_selection_list[7]),
-                the_prodflow_quote_num = str(the_selection_list[8]),
-                the_sap_quote_num = str(the_selection_list[9]),
+                the_prodflow_quote_num=str(the_selection_list[8]),
+                the_sap_quote_num=str(the_selection_list[9]),
                 newprice=str(new_price_entry_widget.get()), old_price=str(the_selection_list[10]),
                 tracking_number=str(the_selection_list[0]))).grid(row=12, column=1, padx=5, pady=5)
-            # CANCEL BUTTON
+            #################
+            # CANCEL BUTTON #
             ttk.Button(master=self.transient, text='CANCEL', width=15, command=self.transient.destroy).grid(row=12,
                                                                                                             column=2,
                                                                                                             padx=5,
@@ -1378,15 +1415,15 @@ class AgilentQuotesTracker():  # {
     def update_record(self, newname, old_name, newemail,
                       old_email, the_type, newsent,
                       old_sent, open_time, newnotes,
-                      old_notes, newinitials, 
-                      old_initials, newaccountid, 
-                      old_account_id, the_prodflow_quote_num, 
+                      old_notes, newinitials,
+                      old_initials, newaccountid,
+                      old_account_id, the_prodflow_quote_num,
                       the_sap_quote_num, newprice,
                       old_price, tracking_number):  # {
         """
         CALL THE "check_quote_progress() FUNCTION HERE
         [ 2019-12-27 ] == addition of "initials" into METHOD
-        [ 2019-12-30 ] == addition of "account_id" and "prodflow quote #" 
+        [ 2019-12-30 ] == addition of "account_id" and "prodflow quote #"
         [ 2019-12-30 ] == addition of "sap quote #" and "price"
         """
         """
@@ -1400,24 +1437,24 @@ class AgilentQuotesTracker():  # {
             # }
             else: # {
                 print("LEFT SOME EMPTY YOU NOOB!")
-            # } 
+            # }
         # }
         except: # {
             print("FAILLLLLL")
         # }
         """
         """
-        if self.updated_records_validated(new_name=newname, 
-                                          new_email=newemail, 
-                                          new_initials=newinitials, 
-                                          new_account_id=newaccountid, 
+        if self.updated_records_validated(new_name=newname,
+                                          new_email=newemail,
+                                          new_initials=newinitials,
+                                          new_account_id=newaccountid,
                                           new_price=newprice): # {
             print("filled out fcomplete!")
         # }
         """
 
         # IF NONE OF THE **IMPORTANT** ENTRY BOXES ARE LEFT EMPTY
-        if len(str(newname)) != 0 and len(newemail) != 0 and newaccountid != 0 and newprice != 0: # {
+        if len(str(newname)) != 0 and len(newemail) != 0 and len(newaccountid) != 0 and len(newprice) != 0:  # {
             logging.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askyesno(title="Confirm Update", message="are you sure?")
@@ -1501,14 +1538,16 @@ class AgilentQuotesTracker():  # {
                 logging.info("USER SELECTED NOT READY !...")
             # }
         # }
-        else: # {
-            messagebox.showwarning(title="WARNING:", message="MISSING BLANK FIELD(S)!")
+        else:  # {
+            messagebox.showwarning(parent=self.root, title="WARNING:", message="MISSING REQUIRED FIELD(S)!")
+            # EXIT OUT OF ADD-ON BOX
+            self.transient.destroy()
         # }
 
     # }
 
     """
-    def updated_records_validated(self, new_name, new_email, new_initials, 
+    def updated_records_validated(self, new_name, new_email, new_initials,
                                   new_account_id, new_price): # {
         # TRY THE FOLLOWING
         try: # {
@@ -1543,6 +1582,7 @@ class AgilentQuotesTracker():  # {
         # }
     # }
     """
+
 
 # }
 
