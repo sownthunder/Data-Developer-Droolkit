@@ -315,7 +315,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("scidblue") # radiance, black, scidpink, kroc, keramik, equilux
+            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -377,7 +377,7 @@ class AgilentQuotesTracker():  # {
         try:  # {
             # CREATE MESSAGE AREA
             self.message = ttk.Label(master=self.leftframe, text='',
-                                     font=("Sourcode Pro", 14), foreground='red')
+                                     font=("Comfortaa", 12, 'italic'), foreground='red')
             # self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
@@ -1126,7 +1126,7 @@ class AgilentQuotesTracker():  # {
                 # [2019-12-31]\\self.price.delete(0, tk.END)
             # }
             else:  # {
-                self.message['text'] = ' [Initials, Type, Company Name,\n AccountID, Product #,\n Prodflow Quote # & SAP Quote #]\n CANNOT be left blank!'
+                self.message['text'] = ' >>>\nInitials, Type, Company Name,\n AccountID, Product #,\n Prodflow Quote # & SAP Quote #]\n CANNOT be left blank! <<<'
             # }
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
@@ -1267,7 +1267,7 @@ class AgilentQuotesTracker():  # {
     def open_modify_window(self, selected_item, the_selection_list):  # {
         # TRY THE FOLLOWING
         try:  # {
-            logging.info("MODIFYING RECORD")
+            logging.info("...MODIFYING RECORD...")
             print("SELECTION LIST:\n" + str(the_selection_list))
             print(the_selection_list[1])
             # tracking_number = str(self.tree.item(item)['values'][0])
@@ -1275,6 +1275,15 @@ class AgilentQuotesTracker():  # {
             # old_name = self.tree.item(self.tree.selection())['values'][0]
             self.transient = tk.Toplevel(master=self.root)
             self.transient.resizable(width=False, height=False)
+            """
+            # CREATE NOTEBOOK WIDGET FOR POPUP WINDOW
+            self.transient_tabs = ttk.Notebook(master=self.transient)
+            #####################
+            # TRACKING INFO TAB #
+            self.tab_tracking_info = ttk.Panedwindow(master=self.transient_tabs)
+            self.transient_tabs.add(self.tab_tracking_info, text="Tracking Info:")
+            self.transient_tabs.pack(expan=2, fill=tk.BOTH)
+            """
             # TRACKING #
             ttk.Label(master=self.transient, text='Tracking #:').grid(row=0, column=0)
             tk.Entry(master=self.transient, font=("Calibri", 12), textvariable=tk.StringVar(
