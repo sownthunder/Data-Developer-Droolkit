@@ -1227,65 +1227,79 @@ class AgilentQuotesTracker():  # {
     def open_modify_window(self, selected_item, the_selection_list):  # {
         # TRY THE FOLLOWING
         try:  # {
-            # INSTANTIATE TEST TK
-            root = tk.Tk()
-            root.geometry('425x250')
-            root.title("Quote Tracker - MODIFY WINDOW")
-            root.resizable(width=False, height=False)
+            logging.info("...MODIFYING RECORD...")
+            print("SELECTION LIST:\n" + str(the_selection_list))
+            print(the_selection_list[1])
+            # tracking_number = str(self.tree.item(item)['values'][0])
+            # track_num = self.tree.item(self.tree.selection()['text'])
+            # old_name = self.tree.item(self.tree.selection())['values'][0]
+            self.transient = tk.Toplevel(master=self.root)
+            self.transient.resizable(width=False, height=False)
+            """
+            << insert modify window code here >>
+            """
             ##################################################################################
             # NOTEBOOK WIDGET
-            transient_tabs = ttk.Notebook(root)
+            transient_tabs = ttk.Notebook(self.transient)
             
             # <><><><><><<><<><><<><><><><><><><><><><><><><><><><><><><><> #
             # TAB-1 // OLD TRACKING INFO #
-            tab_tracking_info_old = ttk.Frame(master=transient_tabs)
-            transient_tabs.add(tab_tracking_info_old, text='Tracking Info')
+            tab_tracking_info = ttk.Frame(master=transient_tabs)
+            transient_tabs.add(tab_tracking_info, text='Tracking Info')
             transient_tabs.pack(expand=2, fill=tk.BOTH)
             
             # TRACKING NUMBER #
-            ttk.Label(master=tab_tracking_info_old, 
+            ttk.Label(master=tab_tracking_info, 
                       text='Tracking #: '
                       ).grid(row=0, column=0, padx=10, pady=10)
-            tracking_num = ttk.Entry(master=tab_tracking_info_old, 
+            # GET TRACKING NUMBER FROM "self.tree" 
+            the_tracking_number = str(self.tree.item(selected_item)['values'][0])
+            # TK VARIABLE TO HOLD INPUT As STR
+            self.tracking_num = tk.StringVar(master=tab_tracking_info, 
+                                             value=the_tracking_number
+                                             )
+            ttk.Entry(master=tab_tracking_info, 
                                      state='readonly',
+                                     textvariable=self.tracking_num,
                                      width=40,
                                      ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
-            # TIME RECEIVED #
-            ttk.Label(master=tab_tracking_info_old,
+            # TIME RECEIVED (open_time) #
+            ttk.Label(master=tab_tracking_info,
                       text='Time Received: '
                       ).grid(row=1, column=0, padx=10, pady=10, sticky='e')
-            time_rec = ttk.Entry(master=tab_tracking_info_old,
+            self.open_time = tk.StringVar(master=tab_tracking_info,
+                                          value=str(the_selection_list[3])
+                                          )
+            ttk.Entry(master=tab_tracking_info,
                                  state='readonly',
+                                 textvariable=self.open_time,
                                  width=40,
                                  ).grid(row=1, column=1, padx=10, pady=10, sticky='w')
             # INITIALS #
-            ttk.Label(master=tab_tracking_info_old,
+            ttk.Label(master=tab_tracking_info,
                       text='Initials: '
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
-            initials = ttk.Entry(master=tab_tracking_info_old,
+            self.initials = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[6]))
+            new_initials_entry_widget = ttk.Entry(master=tab_tracking_info,
                                  state='active',
+                                 textvariable=self.initials,
                                  width=40,
                                  ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             # TYPE #
-            ttk.Label(master=tab_tracking_info_old,
+            ttk.Label(master=tab_tracking_info,
                       text='Type: '
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
-            radio_type_var = tk.StringVar(master=tab_tracking_info_old, value="email")
-            radio_type_1 = ttk.Radiobutton(master=tab_tracking_info_old,
-                                  variable=radio_type_var,
-                                  value="web", text="web", width=20)
+            self.radio_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[2]))
+            radio_type_1 = ttk.Radiobutton(master=tab_tracking_info,
+                                  variable=self.radio_type_var,
+                                  value="web", text="web", state='inactive', width=20)
             radio_type_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
-            radio_type_2 = ttk.Radiobutton(master=tab_tracking_info_old,
-                                           variable=radio_type_var,
-                                           value="email", text="email", width=20)
+            radio_type_2 = ttk.Radiobutton(master=tab_tracking_info,
+                                           variable=self.radio_type_var,
+                                           value="email", text="email", state='inactive', width=20)
             radio_type_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             
-            # NEW TRACKING INFO
-            tab_tracking_info_new = ttk.LabelFrame(master=transient_tabs, text="New:")
-            tab_tracking_info_new.pack()
-            
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><> #
-            
             
             # <><><><><><><><><><><<><><><><><><><><><><><><><><><><><><> #
             # TAB-2 // ACCOUNT INFO #
@@ -1297,6 +1311,9 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_account_info,
                       text='Company Name: '
                       ).grid(row=0, column=0, padx=10, pady=10)
+            """
+            tk STRINGVAR HERE
+            """
             company_name = ttk.Entry(master=tab_account_info, width=40)
             company_name.grid(row=0, column=1, padx=10, pady=10, stick=None)
             
@@ -1304,6 +1321,9 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_account_info,
                       text='Contact Person: '
                       ).grid(row=1, column=0, padx=10, pady=10)
+            """
+            tk STRINGVAR HERE
+            """
             contact_person = ttk.Entry(master=tab_account_info,  width=40)
             contact_person.grid(row=1, column=1, padx=10, pady=10, sticky=None)
             
@@ -1311,6 +1331,9 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_account_info,
                       text="Email Address: "
                       ).grid(row=2, column=0, padx=10, pady=10)
+            """
+            tk STRINGVAR HERE
+            """
             email_address = ttk.Entry(master=tab_account_info, width=40)
             email_address.grid(row=2, column=1, padx=10, pady=10, sticky=None)
             
@@ -1318,10 +1341,11 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_account_info,
                       text="Account ID: "
                       ).grid(row=3, column=0, padx=10, pady=10)
+            """
+            tk STRINGVAR HERE
+            """
             account_id = ttk.Entry(master=tab_account_info, width=40)
             account_id.grid(row=3, column=1, padx=10, pady=10, sticky=None)
-            
-            # <><><><><><<><><><><>><><><><><><><><<><><>><><><<><><> #
             
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><<><>< #
             # TAB-3 // QUOTE INFO #
@@ -1400,93 +1424,13 @@ class AgilentQuotesTracker():  # {
             # button_frame = ttk.Frame(master=root).pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
             
             # SUBMIT BUTTON
-            submit_button = ttk.Button(root, text="SUBMIT")
+            submit_button = ttk.Button(self.transient, text="SUBMIT")
             submit_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             
             # CANCEL BUTTON
-            cancel_button = ttk.Button(root, text="CANCEL", command=root.destroy)
+            cancel_button = ttk.Button(self.transient, text="CANCEL", command=self.transient.destroy)
             cancel_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-        # }
-        except: # {
-            pass
-        # }
-        # TRY THE FOLLOWING
-        try:  # {
-            logging.info("...MODIFYING RECORD...")
-            print("SELECTION LIST:\n" + str(the_selection_list))
-            print(the_selection_list[1])
-            # tracking_number = str(self.tree.item(item)['values'][0])
-            # track_num = self.tree.item(self.tree.selection()['text'])
-            # old_name = self.tree.item(self.tree.selection())['values'][0]
-            self.transient = tk.Toplevel(master=self.root)
-            self.transient.resizable(width=False, height=False)
-            """
-            << insert modify window code here >>
-            """
-            ##################################################################################
-            # NOTEBOOK WIDGET
-            transient_tabs = ttk.Notebook(self.transient)
             
-            # <><><><><><<><<><><<><><><><><><><><><><><><><><><><><><><><> #
-            # TAB-1 // OLD TRACKING INFO #
-            tab_tracking_info = ttk.Frame(master=self.transient_tabs)
-            transient_tabs.add(tab_tracking_info_old, text='Tracking Info')
-            transient_tabs.pack(expand=2, fill=tk.BOTH)
-            
-            # TRACKING NUMBER #
-            ttk.Label(master=tab_tracking_info, 
-                      text='Tracking #: '
-                      ).grid(row=0, column=0, padx=10, pady=10)
-            # GET TRACKING NUMBER FROM "self.tree" 
-            the_tracking_number = str(self.tree.item(selected_item)['values'][0])
-            # TK VARIABLE TO HOLD INPUT As STR
-            self.tracking_num = tk.StringVar(master=tab_tracking_info, 
-                                             value=the_tracking_number
-                                             )
-            ttk.Entry(master=tab_tracking_info, 
-                                     state='readonly',
-                                     textvariable=self.tracking_num,
-                                     width=40,
-                                     ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
-            # TIME RECEIVED (open_time) #
-            ttk.Label(master=tab_tracking_info,
-                      text='Time Received: '
-                      ).grid(row=1, column=0, padx=10, pady=10, sticky='e')
-            self.open_time = tk.StringVar(master=tab_tracking_info,
-                                          value=str(the_selection_list[3])
-                                          )
-            ttk.Entry(master=tab_tracking_info,
-                                 state='readonly',
-                                 textvariable=self.open_time,
-                                 width=40,
-                                 ).grid(row=1, column=1, padx=10, pady=10, sticky='w')
-            # INITIALS #
-            ttk.Label(master=tab_tracking_info,
-                      text='Initials: '
-                      ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
-            initials = ttk.Entry(master=tab_tracking_info_old,
-                                 state='active',
-                                 width=40,
-                                 ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
-            # TYPE #
-            ttk.Label(master=tab_tracking_info_old,
-                      text='Type: '
-                      ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
-            radio_type_var = tk.StringVar(master=tab_tracking_info_old, value="email")
-            radio_type_1 = ttk.Radiobutton(master=tab_tracking_info_old,
-                                  variable=radio_type_var,
-                                  value="web", text="web", width=20)
-            radio_type_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
-            radio_type_2 = ttk.Radiobutton(master=tab_tracking_info_old,
-                                           variable=radio_type_var,
-                                           value="email", text="email", width=20)
-            radio_type_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
-            
-            # NEW TRACKING INFO
-            tab_tracking_info_new = ttk.LabelFrame(master=transient_tabs, text="New:")
-            tab_tracking_info_new.pack()
-            
-            # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><> #
             """
             # TRACKING #
             ttk.Label(master=self.transient, text='Tracking #:').grid(row=0, column=0)
@@ -1594,9 +1538,10 @@ class AgilentQuotesTracker():  # {
             #################
             # CANCEL BUTTON #
             ttk.Button(master=self.transient, text='CANCEL', width=15, command=self.transient.destroy).grid(row=12,
-            """                                                                                                column=2,
+                                                                                                            column=2,
                                                                                                             padx=5,
                                                                                                             pady=5)
+            """
             self.transient.mainloop()
         # }
         except:  # {
