@@ -277,8 +277,8 @@ class AgilentQuotesTracker():  # {
                                 background="#0C85CE",
                                 font=("Comfortaa", 12),
                                 tearoff=0)
-        self.filemenu.add_command(label="Import", command="")
-        self.filemenu.add_command(label="Export", command="")
+        self.filemenu.add_command(label="Update Log", command="")
+        self.filemenu.add_command(label="About", command="")
 
         self.filemenu.add_separator()
 
@@ -289,7 +289,7 @@ class AgilentQuotesTracker():  # {
                                 background="#9e0ccf",
                                 font=("Impact", 24),
                                 tearoff=0)
-        self.editmenu.add_command(label="Filter Table", command="")
+        self.editmenu.add_command(label="Preferences", command="")
 
         self.editmenu.add_separator()
 
@@ -297,6 +297,8 @@ class AgilentQuotesTracker():  # {
         self.editmenu.add_command(label="Select All", command="")
 
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+        #self.viewmenu = ttk.OptionMenu(master=self.menubar)
+        #self.viewmenu.add_command(label="Refresh Table", command="")
         self.helpmenu = tk.Menu(master=self.menubar,
                                 background="#ffbf00",
                                 font=("Courier New", 48),
@@ -394,20 +396,20 @@ class AgilentQuotesTracker():  # {
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             
             
-            # TAB-2 // ABOUT INFORMATION
+            # TAB-2 // FILTER TOOLS
             self.tab2 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab2, text='R')
+            self.tab_control.add(self.tab2, text='FILTER')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
 
-            # TAB-3 // HELP OPTIONS
+            # TAB-3 // IMPORT TOOLS
             self.tab3 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab3, text='U')
+            self.tab_control.add(self.tab3, text='IMPORT')
             # [2019-12-26]\\self.tab_control.pack(expand=2, fill=tk.BOTH)
             self.tab_control.pack(expand=2, fill=tk.BOTH)
 
-            # TAB-4 // HELP SECTION
+            # TAB-4 // EXPORT TOOLS
             self.tab4 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab4, text='D')
+            self.tab_control.add(self.tab4, text='EXPORT')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             
             
@@ -453,23 +455,32 @@ class AgilentQuotesTracker():  # {
             self.lblframe_create = ttk.Frame(master=self.tab1)
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            
+            # Create the FILTER Tab Container
+            self.lblframe_filter = ttk.Frame(master=self.tab2)
+            self.lblframe_filter.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            
+            # Create the IMPORT Tab Container
+            self.lblframe_import = ttk.Frame(master=self.tab3)
+            self.lblframe_import.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            
+            # Create the EXPORT Tab Container
+            self.lblframe_export = ttk.Frame(master=self.tab4)
+            self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
 
             # Create the IMPORT Tab Container
             # [2020-01-03]\\self.lblframe_import = ttk.LabelFrame(master=self.tab2, text="ABOUT the Agilent Quotes Tracker:")
-            self.lblframe_import = ttk.Frame(master=self.tab2)
-            self.lblframe_import.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            # [2020-01-06]\\self.lblframe_import = ttk.Frame(master=self.tab2)
+            # [2020-01-06]\\self.lblframe_import.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
 
             # Create the EXPORT Tab Container
             # [2020-01-03]\\self.lblframe_export = ttk.LabelFrame(master=self.tab3, text="Help Section:")
-            self.lblframe_export = ttk.Frame(master=self.tab3)
-            self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
-
-            """[2019-12-13]"""
-            """
+            # [2020-01-06]\\self.lblframe_export = ttk.Frame(master=self.tab3)
+            # [2020-01-06]\\self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            
             # Create the HELP Tab Container
-            self.lblframe_help = ttk.LabelFrame(master=self.tab4, text="EXPORT One or Multiple Quotes:")
-            self.lblframe_help.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
-            """
+            # [2019-12-13]\\self.lblframe_help = ttk.LabelFrame(master=self.tab4, text="EXPORT One or Multiple Quotes:")
+            # [2019-12-13]\\self.lblframe_help.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
 
             # Create the UPDATE Tab Container
             # [2019-12-12]\\self.lblframe_update = ttk.LabelFrame(master=self.tab3, text="UPDATE")
@@ -785,14 +796,14 @@ class AgilentQuotesTracker():  # {
             # [2019-12-12]\\logging.info("ITEM 2 == " + str(item_2))
             # [2019-12-13]\\messagebox.showinfo(title="test:", message="you clicked on:\n" + str(self.tree.item(item, option="text")))
             selected_tracking_number = str(self.tree.item(item, option="text"))
-            selected_time_rec = str(self.tree.item(item)['values'][6])# WAS 1
+            selected_time_rec = str(self.tree.item(item)['values'][1])# WAS 1
             selected_name = str(self.tree.item(item)['values'][5])  # WAS 1
             selected_email = str(self.tree.item(item)['values'][6]) # WAS 2
-            selected_type = str(self.tree.item(item)['values'][3])  # WAS 3
+            selected_type = str(self.tree.item(item)['values'][7])  # WAS 3
             selected_sent = str(self.tree.item(item)['values'][12])  # WAS 4
             selected_notes = str(self.tree.item(item)['values'][11])  # WAS 6
             selected_initials = str(self.tree.item(item)['values'][2])  # WAS 7
-            selected_account_id = str(self.tree.item(item)['values'][7])  # WAS 8
+            selected_account_id = str(self.tree.item(item)['values'][3])  # WAS 8
             selected_prodflow_quote_number = str(self.tree.item(item)['values'][9])  # WAS 9
             selected_sap_quote_number = str(self.tree.item(item)['values'][10])  # WAS 10
             selected_product_number = str(self.tree.item(item)['values'][8])  # WAS 11
@@ -1052,10 +1063,10 @@ class AgilentQuotesTracker():  # {
                                   'turn_around': turn_around,
                                   'notes': the_notes,
                                   'initials': the_initials,
-                                  'account_id': the_account_id_num,
-                                  'prodflow_quote_number': the_prodflow_quote_num,
-                                  'sap_quote_number': the_sap_quote_num,
-                                  'product_number': the_product_number,
+                                  'account_id': str(the_account_id_num),
+                                  'prodflow_quote_number': str(the_prodflow_quote_num),
+                                  'sap_quote_number': str(the_sap_quote_num),
+                                  'product_number': str(the_product_number),
                                   'company_name': the_company_name
                                   # [2019-12-31]\\'price': the_price
                                   }
@@ -1252,8 +1263,8 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_tracking_info, 
                       text='Tracking #: '
                       ).grid(row=0, column=0, padx=10, pady=10)
-            # GET TRACKING NUMBER FROM "self.tree" 
-            the_tracking_number = str(self.tree.item(selected_item)['values'][0])
+            # GET TRACKING NUMBER FROM "selection_list"
+            the_tracking_number = str(the_selection_list[0])
             # TK VARIABLE TO HOLD INPUT As STR
             self.tracking_num = tk.StringVar(master=tab_tracking_info, 
                                              value=the_tracking_number
@@ -1267,8 +1278,10 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_tracking_info,
                       text='Time Received: '
                       ).grid(row=1, column=0, padx=10, pady=10, sticky='e')
+            # GET TIME RECIEVED FROM "self.tree" (old)
+            the_time_rec = str(self.tree.item(selected_item)['values'][0])
             self.open_time = tk.StringVar(master=tab_tracking_info,
-                                          value=str(the_selection_list[3])
+                                          value=the_time_rec,
                                           )
             ttk.Entry(master=tab_tracking_info,
                                  state='readonly',
@@ -1279,7 +1292,9 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_tracking_info,
                       text='Initials: '
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
-            self.initials = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[6]))
+            # GET INITIALS FROM "selection_list"[1] (old)
+            the_initials = str(the_selection_list[1])
+            self.initials = tk.StringVar(master=tab_tracking_info, value=the_initials)
             new_initials_entry_widget = ttk.Entry(master=tab_tracking_info,
                                  state='active',
                                  textvariable=self.initials,
@@ -1289,14 +1304,15 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_tracking_info,
                       text='Type: '
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
-            self.radio_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[2]))
+            # GET RADIO TYPE FROM "selection_list"[7] (old)
+            self.radio_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[7]))
             radio_type_1 = ttk.Radiobutton(master=tab_tracking_info,
                                   variable=self.radio_type_var,
-                                  value="web", text="web", state='inactive', width=20)
+                                  value="web", text="web", state=tk.DISABLED, width=20)
             radio_type_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
             radio_type_2 = ttk.Radiobutton(master=tab_tracking_info,
                                            variable=self.radio_type_var,
-                                           value="email", text="email", state='inactive', width=20)
+                                           value="email", text="email", state=tk.DISABLED, width=20)
             radio_type_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><> #
@@ -1311,41 +1327,53 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_account_info,
                       text='Company Name: '
                       ).grid(row=0, column=0, padx=10, pady=10)
-            """
-            tk STRINGVAR HERE
-            """
-            company_name = ttk.Entry(master=tab_account_info, width=40)
-            company_name.grid(row=0, column=1, padx=10, pady=10, stick=None)
+            # GET COMPANY NAME FROM "selection_list"[8] (old)
+            the_company_name = str(the_selection_list[8])
+            self.company_name = tk.StringVar(master=tab_account_info, value=the_company_name)
+            new_company_name_entry_widget = ttk.Entry(master=tab_account_info, 
+                                                      state='active',
+                                                      textvariable=self.company_name,
+                                                      width=40
+                                                      ).grid(row=0, column=1, padx=10, pady=10, sticky=None)
             
             # CONTACT PERSON #
             ttk.Label(master=tab_account_info,
                       text='Contact Person: '
                       ).grid(row=1, column=0, padx=10, pady=10)
-            """
-            tk STRINGVAR HERE
-            """
-            contact_person = ttk.Entry(master=tab_account_info,  width=40)
-            contact_person.grid(row=1, column=1, padx=10, pady=10, sticky=None)
+            # GET CONTACT PERSON FROM "selection_list"[12] (old)
+            the_contact_person = str(the_selection_list[12])
+            self.contact_person = tk.StringVar(master=tab_account_info, value=the_contact_person)
+            new_contact_person_entry_widget = ttk.Entry(master=tab_account_info, 
+                                                        state='active',
+                                                        textvariable=self.contact_person,
+                                                        width=40
+                                                        ).grid(row=1, column=1, padx=10, pady=10, sticky=None)
             
             # EMAIL ADDRESS #
             ttk.Label(master=tab_account_info,
                       text="Email Address: "
                       ).grid(row=2, column=0, padx=10, pady=10)
-            """
-            tk STRINGVAR HERE
-            """
-            email_address = ttk.Entry(master=tab_account_info, width=40)
-            email_address.grid(row=2, column=1, padx=10, pady=10, sticky=None)
+            # GET EMAIL ADDRESS FROM "selection_list"[2] (old)
+            the_email_address = str(the_selection_list[2])
+            self.email_address = tk.StringVar(master=tab_account_info, value=the_email_address)
+            new_email_address_entry_widget = ttk.Entry(master=tab_account_info, 
+                      state='active',
+                      textvariable=self.email_address,
+                      width=40
+                      ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             
             # ACCOUNT ID #
             ttk.Label(master=tab_account_info,
                       text="Account ID: "
                       ).grid(row=3, column=0, padx=10, pady=10)
-            """
-            tk STRINGVAR HERE
-            """
-            account_id = ttk.Entry(master=tab_account_info, width=40)
-            account_id.grid(row=3, column=1, padx=10, pady=10, sticky=None)
+            # GET ACCOUNT ID FROM "selection_list"[3] (old)
+            the_account_id = str(the_selection_list[3])
+            self.account_id = tk.StringVar(master=tab_account_info, value=the_account_id)
+            new_account_id_entry_widget = ttk.Entry(master=tab_account_info, 
+                                                    state='active',
+                                                    textvariable=self.account_id, 
+                                                    width=40
+                                                    ).grid(row=3, column=1, padx=10, pady=10, sticky=None)
             
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><<><>< #
             # TAB-3 // QUOTE INFO #
@@ -1357,34 +1385,55 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_quote_info,
                       text="Product #: "
                       ).grid(row=0, column=0, padx=10, pady=10, sticky=None)
-            product_number = ttk.Entry(master=tab_quote_info, width=40, state='readonly')
-            product_number.grid(row=0, column=1, padx=10, pady=10, sticky=None)
+            # GET PRODUCT NUMBER FROM "selection_list"[4] (old)
+            the_product_number = str(the_selection_list[4])
+            self.product_number = tk.StringVar(master=tab_quote_info, value=the_product_number)
+            new_product_number_entry_widget = ttk.Entry(master=tab_quote_info, 
+                                                        state='active', 
+                                                        textvariable=self.product_number,
+                                                        width=40
+                                                        ).grid(row=0, column=1, padx=10, pady=10, sticky=None)
             
             # PRODFLOW QUOTE NUMBER #
             ttk.Label(master=tab_quote_info,
                       text="PF Quote #: "
                       ).grid(row=1, column=0, padx=10, pady=10, sticky=None)
-            pf_quote_num = ttk.Entry(master=tab_quote_info, width=40, state='readonly')
-            pf_quote_num.grid(row=1, column=1, padx=10, pady=10, sticky=None)
+            # GET PF QUOTE # FROM "selection_list"[11] (old)
+            the_pf_quote_num = str(the_selection_list[11])
+            self.pf_quote_num = tk.StringVar(master=tab_quote_info, value=the_pf_quote_num)
+            new_pf_quote_num_entry_widget = ttk.Entry(master=tab_quote_info, 
+                                     state='active', 
+                                     textvariable=self.pf_quote_num,
+                                     width=40
+                                     ).grid(row=1, column=1, padx=10, pady=10, sticky=None)
             
             # SAP QUOTE NUMBER #
             ttk.Label(master=tab_quote_info,
                       text="SAP Quote #: "
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
-            sap_quote_num = ttk.Entry(master=tab_quote_info, width=40, state='readonly')
-            sap_quote_num.grid(row=2, column=1, padx=10, pady=10, sticky=None)
+            # GET SAP QUOTE # FROM "selection_list"[9] (old)
+            the_sap_quote_num = str(the_selection_list[9])
+            self.sap_quote_num = tk.StringVar(master=tab_quote_info, value=the_sap_quote_num)
+            new_sap_quote_num_entry_widget = ttk.Entry(master=tab_quote_info, 
+                                      state='active', 
+                                      textvariable=self.sap_quote_num,
+                                      width=40).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             
             # SENT OR NOT? #
             ttk.Label(master=tab_quote_info,
                       text='Sent: '
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
-            radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=False)
+            # GET RADIO TYPE FROM "selection_list"[10] (old)
+            the_radio_sent_var = str(the_selection_list[10])
+            self.radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=the_radio_sent_var)
+            # CREATE VAR TO HOLD (new) VALUE
+            new_radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=bool(self.radio_sent_var))
             radio_sent_1 = ttk.Radiobutton(master=tab_quote_info, 
-                                           variable=radio_sent_var,
+                                           variable=new_radio_sent_var,
                                            value=True, text="Yes", width=20)
             radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
             radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
-                                           variable=radio_sent_var,
+                                           variable=new_radio_sent_var,
                                            value=False, text="No", width=20)
             radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             
@@ -1399,12 +1448,21 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=tab_notes_section,
                       text="Notes: "
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
-            notes_var = tk.StringVar(master=tab_notes_section)
-            notes = tk.Text(master=tab_notes_section, height=10, width=36)
+            # GET NOTES FROM "selection_list"[5] (old)
+            the_notes_var = str(the_selection_list[5])
+            self.notes_var = tk.StringVar(master=tab_notes_section, value=the_notes_var)
+            # [2020-01-06]\\new_notes_text_widget = tk.Text(master=tab_notes_section, height=10, width=36)
+            new_notes_entry_widget = tk.Entry(master=tab_notes_section, 
+                                               state=tk.NORMAL,
+                                               textvariable=self.notes_var,
+                                               width=20
+                                               ).grid(row=0, column=1, columnspan=4,
+                                                      rowspan=2, padx=10, pady=10, sticky='e')
             # FILL NOTES SECTION
-            notes.insert(tk.INSERT, str("<old notes here>"))
-            notes.grid(row=0, column=1, columnspan=4,
-                       rowspan=2, padx=10, pady=10, sticky='e')
+            # [2020-01-06]\\notes.insert(tk.INSERT, str("<old notes here>"))
+            # [2020-01-06]\\new_notes_text_widget.insert(tk.INSERT, str(the_notes_var))
+            # [2020-01-06]\\new_notes_text_widget.grid(row=0, column=1, columnspan=4,
+                       #rowspan=2, padx=10, pady=10, sticky='e')
             
             # <><><><><><><<><><><><><><><><><><><><><><><<><><>
             # TAB-5 // HELP TAB # 
@@ -1424,124 +1482,26 @@ class AgilentQuotesTracker():  # {
             # button_frame = ttk.Frame(master=root).pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
             
             # SUBMIT BUTTON
-            submit_button = ttk.Button(self.transient, text="SUBMIT")
+            submit_button = ttk.Button(self.transient, text="SUBMIT", command=lambda: self.update_record(
+                newname=str(self.contact_person.get()), # old_contact_name
+                newemail=str(self.email_address.get()), # old_email_address=
+                the_type=str(the_selection_list[7]), #
+                newcompanyname=str(self.company_name.get()), # old_company_name
+                newsent=str(new_radio_sent_var.get()), old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
+                open_time=str(self.tree.item(selected_item)['values'][0]),
+                newnotes=str(self.notes_var.get()), #old_notes=str(the_selection_list[5]),
+                newinitials=str(self.initials.get()), #old_initials=str(the_selection_list[1]),
+                newaccountid=str(self.account_id.get()), #old_account_id=str(the_selection_list[3]),
+                newproductnum=str(self.product_number.get()), #old_product_num=str(the_selection_list[4]),
+                newpfnum=str(self.pf_quote_num.get()), #old_pf_num=str(the_selection_list[11]),
+                newsapnum=str(self.sap_quote_num.get()), # old_sap_num=str(the_selection_list[9]),
+                tracking_number=str(the_selection_list[0])))
             submit_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             
             # CANCEL BUTTON
             cancel_button = ttk.Button(self.transient, text="CANCEL", command=self.transient.destroy)
             cancel_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
             
-            """
-            # TRACKING #
-            ttk.Label(master=self.transient, text='Tracking #:').grid(row=0, column=0)
-            tk.Entry(master=self.transient, font=("Calibri", 12), textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[0])), state='readonly').grid(row=0, column=1)
-            test_name = str(self.tree.item(selected_item)['values'][0])
-            # OLD-NAME
-            ttk.Label(master=self.transient, text="OLD Name:").grid(row=1, column=0)
-            tk.Entry(self.transient, textvariable=tk.StringVar(
-                self.transient, value=test_name), state='readonly').grid(row=1, column=1)
-            # NEW-NAME
-            ttk.Label(master=self.transient, text="NEW Name:").grid(row=1, column=2)
-            new_name_entry_widget = ttk.Entry(self.transient)
-            new_name_entry_widget.grid(row=1, column=3)
-            # OLD-EMAIL
-            ttk.Label(master=self.transient, text="OLD Email:").grid(row=2, column=0)
-            tk.Entry(self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[1])), state='readonly').grid(row=2, column=1)
-            # NEW-EMAIL
-            ttk.Label(master=self.transient, text="NEW Email:").grid(row=2, column=2)
-            new_email_entry_widget = ttk.Entry(self.transient)
-            new_email_entry_widget.grid(row=2, column=3)
-            # THE TYPE #
-            ttk.Label(master=self.transient, text="Type:").grid(row=3, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[2])), state='readonly').grid(row=3, column=1)
-            # OLD-SENT #
-            ttk.Label(master=self.transient, text="OLD Sent:").grid(row=4, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[4])), state='readonly').grid(row=4, column=1)
-            # NEW-SENT #
-            ttk.Label(master=self.transient, text="NEW Sent:").grid(row=4, column=2)
-            new_sent_radio_var = tk.BooleanVar(master=self.transient, value=False)  # bool(the_selection_list[4]))
-            ####### VARIABLE FOR RADIO_SENT BOOLEAN
-            sent_bool = bool(new_sent_radio_var.get())
-            print("NEW_SENT_RADIO_VAR.get() // sent_bool // == " + str(sent_bool))
-            print("NEW_SENT_RADIO_VAR.get() == " + str(new_sent_radio_var.get()))
-            new_sent_radio_widget_1 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
-                                                      value=True, text="Yes", width=12).grid(row=4, column=3,
-                                                                                             padx=5, sticky='w')
-            new_sent_radio_widget_2 = ttk.Radiobutton(master=self.transient, variable=new_sent_radio_var,
-                                                      value=False, text="No", width=12).grid(row=4, column=3,
-                                                                                             padx=65, sticky='e')
-            # TIMESTAMP (open_time) #
-            ttk.Label(master=self.transient, text="Timetamp:").grid(row=5, column=0)
-            open_time_entry_widget = tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[3])), state='readonly').grid(row=5, column=1)
-            # OLD-INITIALS #
-            ttk.Label(master=self.transient, text="OLD Initials:").grid(row=6, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[6])), state='readonly').grid(row=6, column=1)
-            # NEW-INITIALS #
-            ttk.Label(master=self.transient, text="NEW Initials:").grid(row=6, column=2)
-            new_initials_entry_widget = tk.Entry(master=self.transient)
-            new_initials_entry_widget.grid(row=6, column=3)
-            # OLD-ACCOUNT-ID #
-            ttk.Label(master=self.transient, text="OLD Account ID:").grid(row=7, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[7])), state='readonly').grid(row=7, column=1)
-            # NEW-ACCOUNT-ID #
-            ttk.Label(master=self.transient, text="NEW Account ID:").grid(row=7, column=2)
-            new_account_id_entry_widget = tk.Entry(master=self.transient)
-            new_account_id_entry_widget.grid(row=7, column=3)
-            # THE PRODFLOW QUOTE NUMBER #
-            ttk.Label(master=self.transient, text='Prodflow Quote #:').grid(row=8, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[8])), state='readonly').grid(row=8, column=1)
-            # THE SAP QUOTE NUMBER #
-            ttk.Label(master=self.transient, text='SAP Quote #:').grid(row=9, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[9])), state='readonly').grid(row=9, column=1)
-            # OLD-PRICE #
-            ttk.Label(master=self.transient, text='OLD Price:').grid(row=10, column=0)
-            tk.Entry(master=self.transient, textvariable=tk.StringVar(
-                self.transient, value=str(the_selection_list[10])), state='readonly').grid(row=10, column=1)
-            # NEW-PRICE #
-            ttk.Label(master=self.transient, text='NEW Price:').grid(row=10, column=2)
-            new_price_entry_widget = tk.Entry(master=self.transient)
-            new_price_entry_widget.grid(row=10, column=3)
-            # NOTES #
-            # [2019-12-27]\\ttk.Label(master=self.transient, text="Notes:").grid(row=6, column=0)
-            ttk.Label(master=self.transient, text="Notes:").grid(row=11, column=0)
-            new_notes_text_widget = tk.Text(master=self.transient, height=10, width=24)  # .grid(row=6, column=1)
-            new_notes_text_widget.insert(tk.INSERT, str(the_selection_list[5]))
-            # [2019-12-27]\\new_notes_text_widget.grid(row=6, column=1, columnspan=3, padx=5, pady=5, sticky='nesw')
-            new_notes_text_widget.grid(row=11, column=1, columnspan=3, padx=5, pady=5, sticky='nesw')
-            ##################
-            # CONFIRM BUTTON #
-            ttk.Button(master=self.transient, text='UPDATE', width=15, command=lambda: self.update_record(
-                newname=new_name_entry_widget.get(), old_name=test_name,
-                newemail=new_email_entry_widget.get(), old_email=str(the_selection_list[1]),
-                the_type=str(the_selection_list[2]),
-                # newsent=str(new_sent_radio_var.get())
-                newsent=str(sent_bool), old_sent=str(the_selection_list[4]),
-                open_time=str(the_selection_list[3]),
-                newnotes=str(new_notes_text_widget.get(index1="1.0", index2=tk.END)),
-                old_notes=str(the_selection_list[5]),
-                newinitials=new_initials_entry_widget.get(), old_initials=str(the_selection_list[6]),
-                newaccountid=str(new_account_id_entry_widget.get()),
-                old_account_id=str(the_selection_list[7]),
-                the_prodflow_quote_num=str(the_selection_list[8]),
-                the_sap_quote_num=str(the_selection_list[9]),
-                newprice=str(new_price_entry_widget.get()), old_price=str(the_selection_list[10]),
-                tracking_number=str(the_selection_list[0]))).grid(row=12, column=1, padx=5, pady=5)
-            #################
-            # CANCEL BUTTON #
-            ttk.Button(master=self.transient, text='CANCEL', width=15, command=self.transient.destroy).grid(row=12,
-                                                                                                            column=2,
-                                                                                                            padx=5,
-                                                                                                            pady=5)
-            """
             self.transient.mainloop()
         # }
         except:  # {
@@ -1570,20 +1530,20 @@ class AgilentQuotesTracker():  # {
 
     # }
 
-    def update_record(self, newname, old_name, newemail,
-                      old_email, the_type, newsent,
-                      old_sent, open_time, newnotes,
-                      old_notes, newinitials,
-                      old_initials, newaccountid,
-                      old_account_id, the_prodflow_quote_num,
-                      the_sap_quote_num, newprice,
-                      old_price, tracking_number):  # {
-        """
-        CALL THE "check_quote_progress() FUNCTION HERE
-        [ 2019-12-27 ] == addition of "initials" into METHOD
-        [ 2019-12-30 ] == addition of "account_id" and "prodflow quote #"
-        [ 2019-12-30 ] == addition of "sap quote #" and "price"
-        """
+    def update_record(self, newname,
+                      newemail, the_type,
+                      newcompanyname,
+                      newsent, old_sent, open_time,
+                      newnotes,
+                      newinitials,
+                      newaccountid,
+                      newproductnum,
+                      newpfnum,
+                      newsapnum, tracking_number):  # {
+        # CALL THE "check_quote_progress() FUNCTION HERE
+        # [ 2019-12-27 ] == addition of "initials" into METHOD
+        # [ 2019-12-30 ] == addition of "account_id" and "prodflow quote #"
+        # [ 2019-12-30 ] == addition of "sap quote #" and "price"
         """
         # TRY THE FOLLOWING
         try: # {
@@ -1601,21 +1561,15 @@ class AgilentQuotesTracker():  # {
             print("FAILLLLLL")
         # }
         """
-        """
-        if self.updated_records_validated(new_name=newname,
-                                          new_email=newemail,
-                                          new_initials=newinitials,
-                                          new_account_id=newaccountid,
-                                          new_price=newprice): # {
-            print("filled out fcomplete!")
-        # }
-        """
-
         # IF NONE OF THE **IMPORTANT** ENTRY BOXES ARE LEFT EMPTY
-        if len(str(newname)) != 0 and len(newemail) != 0 and len(newaccountid) != 0 and len(newprice) != 0:  # {
+        if len(str(newinitials)) != 0 and len(newproductnum) != 0 and len(newaccountid) != 0 and len(newpfnum) != 0:  # {
             logging.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
+            # SETUP STR TO HOLD THE VALUES THE USER WISHES TO CHANGE
+            display_str = "YOU ENTERED:\n" 
+            display_str += str(newname)
+            display_str += str(newemail)
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
-            confirm_box = messagebox.askyesno(title="Confirm Update", message="are you sure?")
+            confirm_box = messagebox.askokcancel(title="Confirm Update", message=str("are you sure?\n" + display_str))
             if str(confirm_box) == "yes":  # {
                 # TRY THE FOLLOWING
                 try:  # {
@@ -1637,11 +1591,11 @@ class AgilentQuotesTracker():  # {
                         run_time = time_meow - time_start
                         print("RUN TIME == " + str(run_time))
                         query = 'UPDATE quotes ' \
-                                'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, price=?' \
+                                'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=?'
                         parameters = (newname, newemail, the_type, newsent, str(time_meow),
                                       str(run_time), newnotes, newinitials, newaccountid,
-                                      the_prodflow_quote_num, the_sap_quote_num, newprice,
+                                      newpfnum, newsapnum, newcompanyname, newproductnum,
                                       tracking_number)
                         # EXECUTE
                         self.execute_db_query(query, parameters)
@@ -1655,11 +1609,11 @@ class AgilentQuotesTracker():  # {
                     # [2019-12-30]... ACCOUNT_ID, PRODFLOW QUOTE #, SAP QUOTE #, PRICE
                     else:  # {
                         print("\n\t\t\t>>>>>>> NOPE")
-                        query = 'UPDATE quotes SET name=?, email=?, type=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, price=?' \
+                        query = 'UPDATE quotes SET name=?, email=?, type=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=? '
                         parameters = (newname, newemail, the_type, newnotes, newinitials,
-                                      newaccountid, the_prodflow_quote_num, the_sap_quote_num,
-                                      newprice, tracking_number)
+                                      newaccountid, newpfnum, newsapnum, newcompanyname, newproductnum,
+                                      tracking_number)
                         print("QUERY:\n" + str(query) + "\nPARAMS:\n" + str(parameters))
                         # EXECUTE
                         self.execute_db_query(query, parameters)
