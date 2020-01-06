@@ -1570,7 +1570,8 @@ class AgilentQuotesTracker():  # {
             display_str += str(newemail)
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askokcancel(title="Confirm Update", message=str("are you sure?\n" + display_str))
-            if str(confirm_box) == "yes":  # {
+            print(confirm_box)
+            if str(confirm_box) == "True":  # {
                 # TRY THE FOLLOWING
                 try:  # {
                     print("UPDATING RECORD...")
