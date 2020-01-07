@@ -48,16 +48,23 @@ class AgilentQuotesTracker():  # {
     t_count_filename = "E:/_Quotes_Tracker/config/quotes_t_number.pkl"
     #t_count_filename = "C:/Temp/E/config/quotes_t_number.pkl"
     time1 = ""
+    # REGEX STRINGS FOR FILE NAMING CONVENTIONS
+    account_id_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+    pf_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][-][!0-9][!0-9][!0-9]"
+    sap_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+    
 
     def __init__(self, root):  # {
         self.root = root
         self.root.title("Agilent Quotes Tracker")
         self.root.resizable(width=True, height=True)
         # [2019-12-12]\\self.root.minsize(height=1250)
-        self.root.minsize(width=1175, height=750)
+        # [2020-01-07]\\self.root.minsize(width=1175, height=750)
+        self.root.minsize(width=1175, height=600)
         # [2019-12-26]\\self.root.maxsize(width=1500, height=1250)
         # [2019-12-30]\\self.root.maxsize(width=1750, height=1250)
-        self.root.maxsize(width=2050, height=1050) # was 787
+        # [2020-01-07]\\self.root.maxsize(width=2050, height=1050) # was 787
+        self.root.maxsize(width=1800, height=750)  # was (width=1920, height=1050)
         # CREATE DATAFRAME-DATABASE FROM FILE
         # [2019-12-11]\\self.quotes_db = self.create_database(db_csv=self.db_filename)
         # [2019-12-11]\\print(self.quotes_db)
@@ -283,13 +290,18 @@ class AgilentQuotesTracker():  # {
         self.filemenu.add_separator()
 
         self.filemenu.add_command(label="Exit", command=self.root.destroy)
-        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.menubar.add_cascade(foreground="#000000", 
+                                 label="File", 
+                                 menu=self.filemenu, 
+                                 activebackground="#d9d9d9", 
+                                 activeforeground="#111111",
+                                 background="#d9d9d9")
         self.editmenu = tk.Menu(master=self.root,
                                 borderwidth=4,
                                 background="#9e0ccf",
                                 font=("Impact", 24),
                                 tearoff=0)
-        self.editmenu.add_command(label="Preferences", command="")
+        self.editmenu.add_command(label="Search", command="")
 
         self.editmenu.add_separator()
 
@@ -321,17 +333,19 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
             self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 12, 'bold'))
+            """
             # REMOVE THE BORDERS
             self.style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
             # BUTTON STYLE
             self.button_style = ttk.Style().configure("TButton", padding=4,
                                                       relief="groove", background="#96A853",
                                                       font=('Calibri', 8, 'bold'), foreground="#600080")
+            """
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -531,7 +545,7 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=self.lblframe_create,
                       text='Contact Person: ').grid(row=2, column=0, padx=10, pady=10, sticky='nw')
             self.name = tk.StringVar(master=self.lblframe_create)
-            self.name.set(value="hot-stuff")
+            # [2020-01-07]\\self.name.set(value="Hot-Stuff")
             ttk.Entry(master=self.lblframe_create,
                                        textvariable=self.name,
                                        state='active',
@@ -559,25 +573,12 @@ class AgilentQuotesTracker():  # {
             ##################################################################################
             
             self.sep_1 = ttk.Separator(master=self.lblframe_create, orient=tk.HORIZONTAL)
-            self.sep_1.place(x=10, y=160, width=260, height=1)
+            self.sep_1.place(x=10, y=120, width=275, height=1)  # WAS y=160
             
             ####################################################################################
             
-            ########
-            # TYPE #
-            ttk.Label(master=self.lblframe_create,
-                      text='Type: '
-                      ).grid(row=5, column=0, padx=10, pady=10, sticky='w')
-            
-            self.type_var = tk.StringVar(master=self.lblframe_create, value="email")
-            ttk.OptionMenu(self.lblframe_create, 
-                           self.type_var, 
-                           "Select: ", 
-                           "web", 
-                           "email", 
-                           direction="left"
-                           ).grid(row=5, column=1, padx=10, pady=10, sticky='w')
-            
+            # [2020-01-07]
+            """
             # PROFLOW QUOTE NUMBER #
             ttk.Label(master=self.lblframe_create,
                       text='PF Quote #: ').grid(row=6, column=0, padx=10, pady=10, sticky='w')
@@ -607,45 +608,75 @@ class AgilentQuotesTracker():  # {
                                        state='active',
                                        width=20,
                                        ).grid(row=8, column=1, padx=10, pady=10, sticky='w')
-            
-            #########################################################################
-            
-            self.sep_2 = ttk.Separator(master=self.lblframe_create, orient=tk.HORIZONTAL)
-            self.sep_2.place(x=10, y=330, width=260, height=1)
-            
-            ##########################################################################
+            """
             
             # INITIALS #
             ttk.Label(master=self.lblframe_create,
-                      text='Initials: ').grid(row=9, column=0, padx=10, pady=10, sticky='w')
+                      text='Initials: ').grid(row=5, column=0, padx=10, pady=10, sticky='w')
             self.initials = tk.StringVar(master=self.lblframe_create)
             ttk.Entry(master=self.lblframe_create,
                                  textvariable=self.initials,
                                  state='active',
                                  width=20,
-                                 ).grid(row=9, column=1, padx=10, pady=10, sticky='w')
+                                 ).grid(row=5, column=1, padx=10, pady=10, sticky='w')
+            
+            ########
+            # TYPE #
+            ttk.Label(master=self.lblframe_create,
+                      text='Type: '
+                      ).grid(row=6, column=0, padx=10, pady=10, sticky='w')
+            
+            self.type_var = tk.StringVar(master=self.lblframe_create, value="email")
+            """
+            ttk.Radiobutton(master=self.lblframe_create,
+                            variable=self.type_var,
+                            value="web", text="web", 
+                            state=tk.ACTIVE, 
+                            width=20
+                            ).grid(row=5, column=1, columnspan=2, sticky='w', padx=10, pady=10)
+            ttk.Radiobutton(master=self.lblframe_create,
+                            variable=self.type_var,
+                            value="email", text="email", 
+                            state=tk.ACTIVE,
+                            width=20
+                            ).grid(row=5, column=1, columnspan=3, sticky='e', padx=10, pady=10)
+            """
+            ttk.OptionMenu(self.lblframe_create, 
+                           self.type_var, 
+                           "Select: ", 
+                           "web", 
+                           "email", 
+                           direction="right"
+                           ).grid(row=6, column=1, padx=10, pady=10, sticky='w')
+            
+            #########################################################################
+            
+            self.sep_2 = ttk.Separator(master=self.lblframe_create, orient=tk.HORIZONTAL)
+            self.sep_2.place(x=10, y=250, width=275, height=1)  # WAS y=330
+            
+            ##########################################################################
             
             # NOTES #
             ttk.Label(master=self.lblframe_create,
-                      text='Notes: ').grid(row=10, column=0, padx=10, pady=10, sticky='nw')
+                      text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='nw')
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
             self.notes = tk.Text(master=self.lblframe_create, 
                             height=10,
                             width=20,
                             # wrap = 
                             # yscrollcommand = 
-                            ).grid(row=10, column=0, columnspan=3, padx=10, pady=10, sticky='e') # WAS :e
+                            ).grid(row=7, column=0, columnspan=3, padx=10, pady=10, sticky='e') # WAS :e
             
             # CREATE BUTTON #
             self.create_button = ttk.Button(master=self.lblframe_create, 
                                        text="CREATE",
                                        command=self.add_new_record
-                                       ).grid(row=11, column=0, padx=10, pady=10, sticky='n')
+                                       ).grid(row=8, column=0, padx=10, pady=10, sticky='n')
             
             # CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
                                       text="CLEAR"
-                                      ).grid(row=11, column=1, padx=10, pady=10, sticky='n')
+                                      ).grid(row=8, column=1, padx=10, pady=10, sticky='n')
             
             """
             # <<< CLOCK (timestamp_test) >>>
@@ -718,7 +749,7 @@ class AgilentQuotesTracker():  # {
         try:  # {
             # TABLE
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
-                                     height=30, columns=13)  # height = 20
+                                     height=30, columns=13, selectmode='browse')  # height = 20
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
             self.tree.column('#0', anchor=tk.W, width=125, minwidth=125, stretch=tk.NO)  # TRACKING #
@@ -837,6 +868,10 @@ class AgilentQuotesTracker():  # {
             self.open_modify_window(selected_item=item, the_selection_list=selection_list)
             # [2019-12-12]\\messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
             # [2019-12-12]\\messagebox.showinfo(title="yupp!", message=str(self.tree.item(item_2, "text")))
+        # }
+        except IndexError: # {
+            messagebox.showwarning(title="ALERT!",
+                                   message=" Future Feature !\n Sorry for the inconvience!")
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1091,8 +1126,9 @@ class AgilentQuotesTracker():  # {
                 # [2019-12-31]\\self.price.delete(0, tk.END)
             # }
             else:  # {
-                self.message['text'] = ' >>>>>>>>>>>>><<<<<<<<<<<<<\n [Initials], [Type], [AccountID],\n [Product #], [PF Quote #], [SAP Quote #]\n CANNOT BE left BLANK! \n >>>>>>>>>>>>><<<<<<<<<<<<<'
-            # }
+                # [2020-01-07]\\self.message['text'] = ' >>>>>>>>>>>>><<<<<<<<<<<<<\n [Initials], [Type], [AccountID],\n [Product #], [PF Quote #], [SAP Quote #]\n CANNOT BE left BLANK! \n >>>>>>>>>>>>><<<<<<<<<<<<<'
+                self.message['text'] = ' >>>>>>>>>>>>>><<<<<<<<<<<<<<\n [Initials], [Type], and/or [AccountID]\n CANNOT  BE  LEFT  BLANK! \n >>>>>>>>>>>>>><<<<<<<<<<<<<<'
+                # }
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
         # }
@@ -1126,14 +1162,12 @@ class AgilentQuotesTracker():  # {
         print("NAME:\n" + str(self.name.get()))
         # TRY THE FOLLOWING
         try:  # {
-            return len(self.name.get()) != 0 \
-                   and len(self.email.get()) != 0 \
-                   and len(self.initials.get()) != 0 \
+            return len(self.initials.get()) != 0 \
                    and str(self.type_var.get()) != "Select:" \
                    and len(self.account_id.get()) != 0 \
-                   and len(self.pf_quote_num.get()) != 0 \
-                   and len(self.sap_quote_num.get()) != 0 \
-                   and len(self.product_number.get()) != 0
+                   # [2020-01-07]\\and len(self.pf_quote_num.get()) != 0 \
+                   # [2020-01-07]\\and len(self.sap_quote_num.get()) != 0 \
+                   # [2020-01-07]\\and len(self.product_number.get()) != 0
             # [2019-12-18]\\and len(self.radio_type_var.get()) != 0 \
             # [2019-12-18]\\and len(self.radio_sent_var.get()) != 0
             # [2019-12-18]\\and len(self.notes.get()) != 0
@@ -1162,6 +1196,17 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         # }
 
+    # }
+    
+    def updated_records_validated(self, a_product_num, a_pf_num, a_sap_num): # {
+        logging.info("Validating FILE NAME conventions...")
+        # TRY THE FOLLOWING
+        try: # {
+            pass
+        # }
+        except: # {
+            pass
+        # }
     # }
 
     def view_records(self):  # {
@@ -1429,12 +1474,14 @@ class AgilentQuotesTracker():  # {
             # CREATE VAR TO HOLD (new) VALUE
             new_radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=bool(self.radio_sent_var))
             radio_sent_1 = ttk.Radiobutton(master=tab_quote_info, 
+                                           state=tk.ACTIVE if len(self.pf_quote_num.get()) != 0 and len(self.sap_quote_num.get()) != 0 and len(self.product_number.get()) != 0 else tk.DISABLED,
                                            variable=new_radio_sent_var,
-                                           value=True, text="Yes", width=20)
+                                           value=False, text="Yes", width=20)
             radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
             radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
+                                           state=tk.ACTIVE if len(self.pf_quote_num.get()) != 0 else tk.DISABLED,
                                            variable=new_radio_sent_var,
-                                           value=False, text="No", width=20)
+                                           value=True, text="No", width=20)
             radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             
             # <><><><><><><><><><><><><<><><><><><><><><><><><><><><><>< #
@@ -1466,6 +1513,7 @@ class AgilentQuotesTracker():  # {
             
             # <><><><><><><<><><><><><><><><><><><><><><><<><><>
             # TAB-5 // HELP TAB # 
+            """
             tab_help_info = ttk.Frame(master=transient_tabs)
             transient_tabs.add(tab_help_info, text='Help ')
             transient_tabs.pack(expand=3, fill=tk.BOTH)
@@ -1476,6 +1524,7 @@ class AgilentQuotesTracker():  # {
             
             lblframe_help_info_2 = ttk.LabelFrame(master=tab_help_info, text="Section 2")
             lblframe_help_info_2.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            """
             
             #####################################################################################
             # BUTTON (FRAME)
@@ -1562,14 +1611,21 @@ class AgilentQuotesTracker():  # {
         # }
         """
         # IF NONE OF THE **IMPORTANT** ENTRY BOXES ARE LEFT EMPTY
-        if len(str(newinitials)) != 0 and len(newproductnum) != 0 and len(newaccountid) != 0 and len(newpfnum) != 0:  # {
+        if len(str(newinitials)) != 0 and len(newaccountid) != 0:  # {
             logging.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
             # SETUP STR TO HOLD THE VALUES THE USER WISHES TO CHANGE
             display_str = "YOU ENTERED:\n" 
-            display_str += str(newname)
-            display_str += str(newemail)
+            display_str += "name:\t" + str(newname)
+            display_str += "email:\t" + str(newemail)
+            display_str += "company name:\t" + str(newcompanyname)
+            display_str += "sent:\t" + str(newsent)
+            display_str += "initials:\t" + str(newinitials)
+            display_str += "account id:\t" + str(newaccountid)
+            display_str += "product #:\t" + str(newproductnum)
+            display_str += "new PF Quote #:\t" + str(newpfnum)
+            display_str += "new SAP Quote #:\t" + str(newsapnum)
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
-            confirm_box = messagebox.askokcancel(title="Confirm Update", message=str("are you sure?\n" + display_str))
+            confirm_box = messagebox.askokcancel(title="Confirm Update", message=str(display_str))
             print(confirm_box)
             if str(confirm_box) == "True":  # {
                 # TRY THE FOLLOWING
@@ -1607,7 +1663,8 @@ class AgilentQuotesTracker():  # {
                     # NOT BEEN SWITCHED OVER YET
                     # ONLY UPDATE: name, email, notes,
                     # [2019-12-29]... initials
-                    # [2019-12-30]... ACCOUNT_ID, PRODFLOW QUOTE #, SAP QUOTE #, PRICE
+                    # [2019-12-30]... ACCOUNT_ID, PRODFLOW QUOTE #, SAP QUOTE #
+                    # [2020-01-07]... COMPANY NAME
                     else:  # {
                         print("\n\t\t\t>>>>>>> NOPE")
                         query = 'UPDATE quotes SET name=?, email=?, type=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
@@ -1652,7 +1709,7 @@ class AgilentQuotesTracker():  # {
             # }
         # }
         else:  # {
-            messagebox.showwarning(parent=self.root, title="WARNING:", message="MISSING REQUIRED FIELD(S)!")
+            messagebox.showwarning(parent=self.root, title="WARNING:", message="MISSING REQUIRED FIELD(S):\n Initials\n AccountID")
             # EXIT OUT OF ADD-ON BOX
             self.transient.destroy()
         # }
