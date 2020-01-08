@@ -24,6 +24,7 @@ EDITS:
 import os, sys, time
 from time import sleep
 from pathlib import Path
+import fnmatch, glob, shutil
 import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -32,6 +33,7 @@ from tkinter import filedialog, messagebox
 import sqlite3, logging, random
 import pickle
 import pyodbc
+import pyautogui
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
@@ -217,7 +219,7 @@ class AgilentQuotesTracker():  # {
     # }
 
     ###############################################################################################
-            
+    
     """
     def tick(self):  # {
         # get the current local time from the PC
@@ -279,6 +281,7 @@ class AgilentQuotesTracker():  # {
 
     def create_menubar(self):  # {
         self.menubar = tk.Menu(self.root)
+        # MENU-BAR ^^
         self.filemenu = tk.Menu(master=self.menubar,
                                 borderwidth=4,
                                 background="#0C85CE",
@@ -286,10 +289,9 @@ class AgilentQuotesTracker():  # {
                                 tearoff=0)
         self.filemenu.add_command(label="Update Log", command="")
         self.filemenu.add_command(label="About", command="")
-
         self.filemenu.add_separator()
-
         self.filemenu.add_command(label="Exit", command=self.root.destroy)
+        # FILE SUB-MENU ^^
         self.menubar.add_cascade(foreground="#000000", 
                                  label="File", 
                                  menu=self.filemenu, 
@@ -302,24 +304,29 @@ class AgilentQuotesTracker():  # {
                                 font=("Impact", 24),
                                 tearoff=0)
         self.editmenu.add_command(label="Search", command="")
-
         self.editmenu.add_separator()
-
         self.editmenu.add_command(label="Copy Cell", command="")
         self.editmenu.add_command(label="Select All", command="")
-
+        # EDIT SUB-MENU ^^
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
-        #self.viewmenu = ttk.OptionMenu(master=self.menubar)
-        #self.viewmenu.add_command(label="Refresh Table", command="")
         self.helpmenu = tk.Menu(master=self.menubar,
                                 background="#ffbf00",
-                                font=("Courier New", 48),
+                                font=("Courier New", 32),
                                 relief=tk.GROOVE,
                                 tearoff=0)
         self.helpmenu.add_command(label="Help Index", command="")
         self.helpmenu.add_command(label="About...", command="")
+        # HELP SUB-MENU ^^ 
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)
-
+        self.adminmenu = tk.Menu(master=self.root,
+                                 borderwidth=5,
+                                 background='#3d4043',
+                                 font=("Sourcecode Pro", 48),
+                                 relief=tk.RIDGE,
+                                 tearoff=1)
+        self.adminmenu.add_command(label="Login", command="")
+        self.menubar.add_cascade(label="Admin Tools", menu=self.adminmenu)
+        # ADMIN SUB-MENU ^^
     # }
 
     def create_ttk_styles(self, the_style):  # {
@@ -333,7 +340,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -817,6 +824,18 @@ class AgilentQuotesTracker():  # {
     def on_double_click(self, event):  # {
         # TRY THE FOLLOWING
         try: # {
+            # GET MOUSE LOCATION
+            self.mouse_location = pyautogui.position()
+            logging.info("MOUSE LOCATION:\n" + str(self.mouse_location))
+            # GET SCREEN RESOLUTION/SIZE
+            self.screen_resolution = pyautogui.size()
+            logging.info("SCREEN SIZE:\n" + str(self.screen_resolution))
+        # }
+        except: # {
+            logging.error("Error determining mouse location & screen size...")
+        # }
+        # TRY THE FOLLOWING
+        try: # {
             # [2019-12-12]\\selected_track_num = self.tree.selection()[0]  # which tracking number you selected
             item = self.tree.selection()[0]  # which row did you click on
             print("ITEM CLICKED ", str(item))  # variable that represents the row you clicked on
@@ -865,7 +884,10 @@ class AgilentQuotesTracker():  # {
                                    )
             logging.info(str(selection_string))
             # SEND SELECTIONS AND OPEN MODIFY WINDOW
-            self.open_modify_window(selected_item=item, the_selection_list=selection_list)
+            self.open_modify_window(selected_item=item, 
+                                    the_selection_list=selection_list, 
+                                    window_location=str(self.mouse_location)
+                                    )
             # [2019-12-12]\\messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
             # [2019-12-12]\\messagebox.showinfo(title="yupp!", message=str(self.tree.item(item_2, "text")))
         # }
@@ -1015,39 +1037,43 @@ class AgilentQuotesTracker():  # {
         # }
 
     # }
-
-    """
-    CREATES NEW QUOTE NUMBER ACCORDING TO NAMING CONVENTION:
-    301 + (YYYYMMDD) + Hour + Minute
-    Example: 301201912121051
-    """
-
-    """
-    def quote_number_convention(self):  # {
-        # TRY THE FOLLOWING:
-        try:  # {
-            pass
+    
+    def check_quote_convention(self, the_event): #{
+        # TRY THE FOLLOWING
+        try: # {
+            # ASSIGN ENTRY INPUT TO STR
+            # [2020-01-07]\\test_regex = str(self.pf_quote_num.get())
+            test_regex = str(self.new_pf_quote_num_entry_widget.get())
+            print("TEST-REGEX:\t" + str(test_regex))
+            # IF THE PF QUOTE # DOESNT MATCH
+            if fnmatch.fnmatch(test_regex, str(self.pf_quote_regex)): # {
+                # set submit button to INACTIVE
+                #the_event['state'] = tk.DISABLED
+                print("PF-QUOTE-#... PASSES")
+            # }
+            else: # {
+                #the_event['state'] = tk.ACTIVE
+                print("PF-QUOTE-#... FAILED")
+            # }
+            # RE-ASSIGN ENTRY INPUT TO STR
+            test_regex = str(self.sap_quote_num.get())
+            if fnmatch.fnmatch(test_regex, str(self.sap_quote_regex)): # {
+                # SET SUBMMIT UTTON TO INACTIVE
+                the_event['state'] = 'inactive'
+                print("SAP-QUOTE-#,,, PASSES")
+            # }
+            else: # {
+                print("SAP-QUOTE-#... FAILED")
+            # }
         # }
-        except:  # {
-            pass
+        except: # {
+            print("POP")
         # }
-        # CREATE TIME STAMP FOR QUOTE NUMBER CONVENTION
-        date_object = datetime.date.today()
-        time_object = str('{0:%Y%m%d%H%M}'.format(datetime.datetime.now()))
-        logging.info(str("QUOTES naming conventino (today's example) : "), time_object)
-        # RETURN STR CONTAINING PROPER NAMING
-        return str("301" + time_object)
-
     # }
-        """
 
     ###################################################################################################
     # ADD / UPDATE / DELETE FUNCTION BELOW #
     ########################################
-
-    """
-    old "INSERT_RECORD"
-    """
 
     def add_new_record(self):  # {
         # TRY THE FOLLOWING
@@ -1060,8 +1086,9 @@ class AgilentQuotesTracker():  # {
                 track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
                 the_name = [str(self.name.get())]
                 the_email = [str(self.email.get())]
-                the_type = [str(self.radio_type_var.get())]
-                the_sent = [str(self.radio_sent_var.get())]
+                the_type = [str(self.type_var.get())]
+                # [2020-01-08]\\the_sent = [str(self.radio_sent_var.get())]
+                the_sent = [str("False")]
                 open_time = [str(pd.Timestamp.now())]
                 close_time = [str("")]
                 turn_around = [str("None")]  # np.Nan?
@@ -1156,6 +1183,31 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         # }
 
+    # }
+            
+    def account_id_validated(self, the_str): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # CHECK FOR PROPER NAMING CONVENTION
+            if fnmatch.fnmatch(the_str, str(self.account_id_regex)): # {
+                return True
+            # }
+            else: # {
+                return False
+            # }
+        # }
+        except: # {
+            pass
+        # }
+        else: # {
+            logging.info("Operation Completed Successfully...")
+        # }
+    # }
+    
+    def turn_red(self, event): # {
+        print("THIS WIDGET's TEXT:\n" + str(event.widget['text']))
+        # [2020-01-08]\\event.widget["activeforeground"] = "red"
+        
     # }
 
     def new_records_validated(self):  # {
@@ -1279,8 +1331,15 @@ class AgilentQuotesTracker():  # {
         # }
 
     # }
+    
+    def is_valid_account_id(self, the_str): # {
+        # the_str - value in %P
+        if fnmatch.fnmatch(the_str, str(self.account_id_regex)): # {
+            return True
+        # }
+    # }
 
-    def open_modify_window(self, selected_item, the_selection_list):  # {
+    def open_modify_window(self, selected_item, the_selection_list, window_location):  # {
         # TRY THE FOLLOWING
         try:  # {
             logging.info("...MODIFYING RECORD...")
@@ -1339,10 +1398,10 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
             # GET INITIALS FROM "selection_list"[1] (old)
             the_initials = str(the_selection_list[1])
-            self.initials = tk.StringVar(master=tab_tracking_info, value=the_initials)
+            self.new_initials = tk.StringVar(master=tab_tracking_info, value=the_initials)
             new_initials_entry_widget = ttk.Entry(master=tab_tracking_info,
                                  state='active',
-                                 textvariable=self.initials,
+                                 textvariable=self.new_initials,
                                  width=40,
                                  ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             # TYPE #
@@ -1350,13 +1409,13 @@ class AgilentQuotesTracker():  # {
                       text='Type: '
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
             # GET RADIO TYPE FROM "selection_list"[7] (old)
-            self.radio_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[7]))
+            self.new_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[7]))
             radio_type_1 = ttk.Radiobutton(master=tab_tracking_info,
-                                  variable=self.radio_type_var,
+                                  variable=self.new_type_var,
                                   value="web", text="web", state=tk.DISABLED, width=20)
             radio_type_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
             radio_type_2 = ttk.Radiobutton(master=tab_tracking_info,
-                                           variable=self.radio_type_var,
+                                           variable=self.new_type_var,
                                            value="email", text="email", state=tk.DISABLED, width=20)
             radio_type_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             
@@ -1374,10 +1433,10 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=0, column=0, padx=10, pady=10)
             # GET COMPANY NAME FROM "selection_list"[8] (old)
             the_company_name = str(the_selection_list[8])
-            self.company_name = tk.StringVar(master=tab_account_info, value=the_company_name)
+            self.new_company_name = tk.StringVar(master=tab_account_info, value=the_company_name)
             new_company_name_entry_widget = ttk.Entry(master=tab_account_info, 
                                                       state='active',
-                                                      textvariable=self.company_name,
+                                                      textvariable=self.new_company_name,
                                                       width=40
                                                       ).grid(row=0, column=1, padx=10, pady=10, sticky=None)
             
@@ -1387,10 +1446,10 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=1, column=0, padx=10, pady=10)
             # GET CONTACT PERSON FROM "selection_list"[12] (old)
             the_contact_person = str(the_selection_list[12])
-            self.contact_person = tk.StringVar(master=tab_account_info, value=the_contact_person)
+            self.new_name = tk.StringVar(master=tab_account_info, value=the_contact_person)
             new_contact_person_entry_widget = ttk.Entry(master=tab_account_info, 
                                                         state='active',
-                                                        textvariable=self.contact_person,
+                                                        textvariable=self.new_name,
                                                         width=40
                                                         ).grid(row=1, column=1, padx=10, pady=10, sticky=None)
             
@@ -1400,10 +1459,10 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=2, column=0, padx=10, pady=10)
             # GET EMAIL ADDRESS FROM "selection_list"[2] (old)
             the_email_address = str(the_selection_list[2])
-            self.email_address = tk.StringVar(master=tab_account_info, value=the_email_address)
+            self.new_email = tk.StringVar(master=tab_account_info, value=the_email_address)
             new_email_address_entry_widget = ttk.Entry(master=tab_account_info, 
                       state='active',
-                      textvariable=self.email_address,
+                      textvariable=self.new_email,
                       width=40
                       ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             
@@ -1413,16 +1472,17 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=3, column=0, padx=10, pady=10)
             # GET ACCOUNT ID FROM "selection_list"[3] (old)
             the_account_id = str(the_selection_list[3])
-            self.account_id = tk.StringVar(master=tab_account_info, value=the_account_id)
+            self.new_account_id = tk.StringVar(master=tab_account_info, value=the_account_id)
             new_account_id_entry_widget = ttk.Entry(master=tab_account_info, 
                                                     state='active',
-                                                    textvariable=self.account_id, 
+                                                    textvariable=self.new_account_id, 
                                                     width=40
                                                     ).grid(row=3, column=1, padx=10, pady=10, sticky=None)
             
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><<><>< #
             # TAB-3 // QUOTE INFO #
             tab_quote_info = ttk.Frame(master=transient_tabs)
+            validation = tab_quote_info.register(self.account_id_validated)
             transient_tabs.add(tab_quote_info, text='Quote Info ')
             transient_tabs.pack(expand=2, fill=tk.BOTH)
             
@@ -1432,25 +1492,43 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=0, column=0, padx=10, pady=10, sticky=None)
             # GET PRODUCT NUMBER FROM "selection_list"[4] (old)
             the_product_number = str(the_selection_list[4])
-            self.product_number = tk.StringVar(master=tab_quote_info, value=the_product_number)
+            self.new_product_number = tk.StringVar(master=tab_quote_info, value=the_product_number)
             new_product_number_entry_widget = ttk.Entry(master=tab_quote_info, 
-                                                        state='active', 
-                                                        textvariable=self.product_number,
-                                                        width=40
+                                                        state='normal', 
+                                                        textvariable=self.new_product_number,
+                                                        width=40,
+                                                        validate='focusout',
+                                                        #validatecommand=(validation, '%P')
                                                         ).grid(row=0, column=1, padx=10, pady=10, sticky=None)
+            # [2020-01-08]\\new_product_number_entry_widget['validatecommand'] = (self.root.register(self.is_valid_account_id), '%P')
             
+            #####################
+            # BIND ENTRY WIDGET #
+            #####################
+            # [2020-01-08]\\new_product_number_entry_widget.bind('<Key>', self.account_id_validated)
             # PRODFLOW QUOTE NUMBER #
             ttk.Label(master=tab_quote_info,
                       text="PF Quote #: "
                       ).grid(row=1, column=0, padx=10, pady=10, sticky=None)
             # GET PF QUOTE # FROM "selection_list"[11] (old)
             the_pf_quote_num = str(the_selection_list[11])
-            self.pf_quote_num = tk.StringVar(master=tab_quote_info, value=the_pf_quote_num)
+            self.new_pf_quote_num = tk.StringVar(master=tab_quote_info, value=the_pf_quote_num)
+            """
+            ############################################################
+            # BIND VALIDATION ???
+            ############################################################
+            """
+            validation = self.root.register(self.account_id_validated)
             new_pf_quote_num_entry_widget = ttk.Entry(master=tab_quote_info, 
-                                     state='active', 
-                                     textvariable=self.pf_quote_num,
-                                     width=40
+                                     state=tk.NORMAL, 
+                                     textvariable=self.new_pf_quote_num,
+                                     width=40,
+                                     #validate='focusout',
+                                     #validatecommand=(validation, '%P')
                                      ).grid(row=1, column=1, padx=10, pady=10, sticky=None)
+            # [2020-01-08]\\new_pf_quote_num_entry_widget.bind('<FocusIn>', self.turn_red)
+            # [2020-01-08]\\new_pf_quote_num_entry_widget['validatecommand'] = (self.root.register(self.is_valid_account_id), '%P')
+            # [2020-01-08]\\new_pf_quote_num_entry_widget.bind('<FocusOut>', self.turn_red)
             
             # SAP QUOTE NUMBER #
             ttk.Label(master=tab_quote_info,
@@ -1458,10 +1536,10 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
             # GET SAP QUOTE # FROM "selection_list"[9] (old)
             the_sap_quote_num = str(the_selection_list[9])
-            self.sap_quote_num = tk.StringVar(master=tab_quote_info, value=the_sap_quote_num)
+            self.new_sap_quote_num = tk.StringVar(master=tab_quote_info, value=the_sap_quote_num)
             new_sap_quote_num_entry_widget = ttk.Entry(master=tab_quote_info, 
                                       state='active', 
-                                      textvariable=self.sap_quote_num,
+                                      textvariable=self.new_sap_quote_num,
                                       width=40).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             
             # SENT OR NOT? #
@@ -1473,16 +1551,16 @@ class AgilentQuotesTracker():  # {
             self.radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=the_radio_sent_var)
             # CREATE VAR TO HOLD (new) VALUE
             new_radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=bool(self.radio_sent_var))
-            radio_sent_1 = ttk.Radiobutton(master=tab_quote_info, 
-                                           state=tk.ACTIVE if len(self.pf_quote_num.get()) != 0 and len(self.sap_quote_num.get()) != 0 and len(self.product_number.get()) != 0 else tk.DISABLED,
+            self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info, 
+                                           state=tk.ACTIVE if len(self.new_pf_quote_num.get()) != 0 and len(self.new_sap_quote_num.get()) != 0 and len(self.new_product_number.get()) != 0 else tk.DISABLED,
                                            variable=new_radio_sent_var,
                                            value=False, text="Yes", width=20)
-            radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
-            radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
-                                           state=tk.ACTIVE if len(self.pf_quote_num.get()) != 0 else tk.DISABLED,
+            self.radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
+            self.radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
+                                           state=tk.ACTIVE if len(self.new_pf_quote_num.get()) != 0 else tk.DISABLED,
                                            variable=new_radio_sent_var,
                                            value=True, text="No", width=20)
-            radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
+            self.radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             
             # <><><><><><><><><><><><><<><><><><><><><><><><><><><><><>< #
             
@@ -1497,11 +1575,11 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
             # GET NOTES FROM "selection_list"[5] (old)
             the_notes_var = str(the_selection_list[5])
-            self.notes_var = tk.StringVar(master=tab_notes_section, value=the_notes_var)
+            self.new_notes_var = tk.StringVar(master=tab_notes_section, value=the_notes_var)
             # [2020-01-06]\\new_notes_text_widget = tk.Text(master=tab_notes_section, height=10, width=36)
             new_notes_entry_widget = tk.Entry(master=tab_notes_section, 
                                                state=tk.NORMAL,
-                                               textvariable=self.notes_var,
+                                               textvariable=self.new_notes_var,
                                                width=20
                                                ).grid(row=0, column=1, columnspan=4,
                                                       rowspan=2, padx=10, pady=10, sticky='e')
@@ -1532,24 +1610,31 @@ class AgilentQuotesTracker():  # {
             
             # SUBMIT BUTTON
             submit_button = ttk.Button(self.transient, text="SUBMIT", command=lambda: self.update_record(
-                newname=str(self.contact_person.get()), # old_contact_name
-                newemail=str(self.email_address.get()), # old_email_address=
+                newname=str(self.new_name.get()), # old_contact_name
+                newemail=str(self.new_email.get()), # old_email_address=
                 the_type=str(the_selection_list[7]), #
-                newcompanyname=str(self.company_name.get()), # old_company_name
+                newcompanyname=str(self.new_company_name.get()), # old_company_name
                 newsent=str(new_radio_sent_var.get()), old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
                 open_time=str(self.tree.item(selected_item)['values'][0]),
-                newnotes=str(self.notes_var.get()), #old_notes=str(the_selection_list[5]),
+                newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
                 newinitials=str(self.initials.get()), #old_initials=str(the_selection_list[1]),
-                newaccountid=str(self.account_id.get()), #old_account_id=str(the_selection_list[3]),
+                newaccountid=str(self.new_account_id.get()), #old_account_id=str(the_selection_list[3]),
                 newproductnum=str(self.product_number.get()), #old_product_num=str(the_selection_list[4]),
                 newpfnum=str(self.pf_quote_num.get()), #old_pf_num=str(the_selection_list[11]),
                 newsapnum=str(self.sap_quote_num.get()), # old_sap_num=str(the_selection_list[9]),
                 tracking_number=str(the_selection_list[0])))
             submit_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            submit_button.bind('<Enter>', self.check_quote_convention)
+            submit_button.bind('<FocusIn>', self.check_quote_convention)
+            submit_button.bind('<Key>', self.check_quote_convention)
             
             # CANCEL BUTTON
             cancel_button = ttk.Button(self.transient, text="CANCEL", command=self.transient.destroy)
             cancel_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+            
+            validate_button = ttk.Button(self.transient, text="VALIDATE")
+            validate_button.bind("<Enter>", self.turn_red)
+            validate_button.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
             
             self.transient.mainloop()
         # }
