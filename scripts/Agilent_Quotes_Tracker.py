@@ -51,8 +51,9 @@ class AgilentQuotesTracker():  # {
     #t_count_filename = "C:/Temp/E/config/quotes_t_number.pkl"
     time1 = ""
     # REGEX STRINGS FOR FILE NAMING CONVENTIONS
-    account_id_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
-    pf_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][-][!0-9][!0-9][!0-9]"
+    account_id_regex = "????????"
+    # [2020-01-09]\\account_id_regex = "[*][*][*][*][*][*][*][*][*]"
+    pf_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9]"
     sap_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
     
 
@@ -60,6 +61,22 @@ class AgilentQuotesTracker():  # {
         self.root = root
         self.root.title("Agilent Quotes Tracker")
         self.root.resizable(width=True, height=True)
+        """
+        # SET WINDOW DIMENSIONS
+        self.width_of_window = 800
+        self.height_of_window = 400
+        # GET SCREEN SIZE(S)
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
+        # SET SCREEN DIMENSION POSITIONS
+        self.x_coordinate = (self.screen_width/2) - (self.width_of_window/2)
+        self.y_coordinate = (self.screen_height/2) - (self.height_of_window/2)
+        # SET LOCATION OF MAIN WINDOW
+        self.root.geometry("%dx%d+%d+%d" % (self.width_of_window, 
+                                            self.height_of_window, 
+                                            self.x_coordinate,
+                                            self.y_coordinate))
+        """
         # [2019-12-12]\\self.root.minsize(height=1250)
         # [2020-01-07]\\self.root.minsize(width=1175, height=750)
         self.root.minsize(width=1175, height=600)
@@ -340,11 +357,11 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
-            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
+            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 9))
             # Modify the font of the headings
-            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 12, 'bold'))
+            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 11, 'bold'))
             """
             # REMOVE THE BORDERS
             self.style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
@@ -633,7 +650,7 @@ class AgilentQuotesTracker():  # {
                       text='Type: '
                       ).grid(row=6, column=0, padx=10, pady=10, sticky='w')
             
-            self.type_var = tk.StringVar(master=self.lblframe_create, value="email")
+            self.type_var = tk.StringVar(master=self.lblframe_create) #, value="email")
             """
             ttk.Radiobutton(master=self.lblframe_create,
                             variable=self.type_var,
@@ -748,7 +765,8 @@ class AgilentQuotesTracker():  # {
         # Create a Frame Container
         self.rightframe = ttk.Frame(master=self.root)
         self.rightframe.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
+        # BIND FUNCTIONS TO FRAME
+        self.rightframe.bind('<Enter>', self.clear_message_area)
     # }
 
     def create_tree_view(self):  # {
@@ -819,6 +837,11 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         # }
 
+    # }
+    
+    def clear_message_area(self, event): # {
+        # clear message area
+        self.message['text'] = ''
     # }
 
     def on_double_click(self, event):  # {
@@ -893,7 +916,7 @@ class AgilentQuotesTracker():  # {
         # }
         except IndexError: # {
             messagebox.showwarning(title="ALERT!",
-                                   message=" Future Feature !\n Sorry for the inconvience!")
+                                   message=" Future Feature !\n Sorry for any inconvience(s)!")
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1038,36 +1061,87 @@ class AgilentQuotesTracker():  # {
 
     # }
     
-    def check_quote_convention(self, the_event): #{
+    def check_quote_convention(self, event): #{
         # TRY THE FOLLOWING
         try: # {
             # ASSIGN ENTRY INPUT TO STR
             # [2020-01-07]\\test_regex = str(self.pf_quote_num.get())
-            test_regex = str(self.new_pf_quote_num_entry_widget.get())
+            # [2020-01-09]\\test_regex = str(self.new_pf_quote_num_entry_widget.get())
+            test_regex = str(self.new_pf_quote_num.get())
             print("TEST-REGEX:\t" + str(test_regex))
-            # IF THE PF QUOTE # DOESNT MATCH
+            print("\n" + str(self.pf_quote_regex))
+            # display message
+            self.message['text'] = ' ===== EDIT QUOTE [!] ===== '
+            # CHECK IF THE PF QUOTE # DOESNT MATCH
             if fnmatch.fnmatch(test_regex, str(self.pf_quote_regex)): # {
-                # set submit button to INACTIVE
-                #the_event['state'] = tk.DISABLED
+                # keep submit button ACTIVE
                 print("PF-QUOTE-#... PASSES")
+                event.widget['state'] = tk.ACTIVE
+                # display message
+                self.message['text'] += '\n <<< PF-QUOTE-#... correct >>>'
+                # NoW CHECK IF SAP QUOTE # DOESNT MATCH
+                test_regex = str(self.new_sap_quote_num.get())
+                if fnmatch.fnmatch(test_regex, str(self.sap_quote_regex)): # {
+                    # keep submit button ACTIVE
+                    print("SAP-QUOTE-#... PASSES")
+                    event.widget['state'] = tk.ACTIVE
+                    # display message
+                    self.message['text'] += '\n <<< SAP-QUOTE-#... correct >>>'
+                    # NOW CHECK IF ACCOUNT ID DOESNT MATCH
+                    test_regex = str(self.new_account_id.get())
+                    if fnmatch.fnmatch(test_regex, str(self.account_id_regex)): # {
+                        # keep submit button ACTIVE
+                        print("ACCOUNT ID... PASSES")
+                        event.widget['state'] = tk.ACTIVE
+                        # display message
+                        self.message['text'] += '\n <<< ACCOUNT-ID... correct >>>'
+                    # }
+                    else: # {
+                        # keep submit button DISABLED
+                        print("ACCOUNT ID... FAILED")
+                        event.widget['state'] = tk.DISABLED
+                        # display message
+                        self.message['text'] = " <<< ACCOUNT ID... incorrect >>>"
+                        self.message['text'] += "\n === 8-digit-alphanumeric"
+                    # }
+                # }
+                else: # {
+                    # keep submit button DISABED
+                    print("SAP-QUOTE-#... FAILED")
+                    event.widget['state'] = tk.DISABLED
+                    # display message
+                    self.message['text'] += "\n <<< SAP-QUOTE-#... incorrect >>> "
+                    self.message['text'] += "\n === 7-digit-numeric"
+                # } 
             # }
             else: # {
-                #the_event['state'] = tk.ACTIVE
+                # keep submit button DISABLED
                 print("PF-QUOTE-#... FAILED")
-            # }
-            # RE-ASSIGN ENTRY INPUT TO STR
-            test_regex = str(self.sap_quote_num.get())
-            if fnmatch.fnmatch(test_regex, str(self.sap_quote_regex)): # {
-                # SET SUBMMIT UTTON TO INACTIVE
-                the_event['state'] = 'inactive'
-                print("SAP-QUOTE-#,,, PASSES")
-            # }
-            else: # {
-                print("SAP-QUOTE-#... FAILED")
+                event.widget['state'] = tk.DISABLED
+                # display message
+                self.message['text'] += '\n <<< PF-QUOTE-#... incorrect >>>'
+                self.message['text'] += '\n === MMDDYY-XXX'
             # }
         # }
         except: # {
-            print("POP")
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
     # }
 
@@ -1150,6 +1224,7 @@ class AgilentQuotesTracker():  # {
                 self.sap_quote_num.delete(0, tk.END)
                 self.product_num.delete(0, tk.END)
                 self.company_name.delete(0, tk.END)
+                self.type_var.set("Select: ")
                 # [2019-12-31]\\self.price.delete(0, tk.END)
             # }
             else:  # {
@@ -1201,6 +1276,26 @@ class AgilentQuotesTracker():  # {
         # }
         else: # {
             logging.info("Operation Completed Successfully...")
+        # }
+    # }
+    
+    def pf_quote_num_validated(self, the_str): # {
+        # TRY THE FOLLOWING
+        try: # {
+            pass
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    def sap_quote_num_validated(self, the_str): # {
+        # TRY THE FOLLOWING
+        try: # {
+            pass
+        # }
+        except: # {
+            pass
         # }
     # }
     
@@ -1349,10 +1444,21 @@ class AgilentQuotesTracker():  # {
             # track_num = self.tree.item(self.tree.selection()['text'])
             # old_name = self.tree.item(self.tree.selection())['values'][0]
             self.transient = tk.Toplevel(master=self.root)
+            self.transient.title("EDIT QUOTE - Agilent Quotes Tracker")
+            ######################################################
+            # GET WINDOW GEOMETRY
+            xindex = str(window_location).find("x=", 0, len(str(window_location)))
+            xend = str(window_location).find(",", 0, len(str(window_location)))
+            yindex = str(window_location).find("y=", 0, len(str(window_location)))
+            yend = str(window_location).rfind(')', 0, len(str(window_location)))
+            x_val = int(str(window_location)[xindex+2:xend])
+            y_val = int(str(window_location)[yindex+2:yend])
+            print("X == " + str(x_val))
+            print("Y == " + str(y_val))
+            # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
+            location_str = str('' + str(x_val) + "+" + str(y_val) + '')
+            self.transient.geometry(str('385x255+' + location_str))
             self.transient.resizable(width=False, height=False)
-            """
-            << insert modify window code here >>
-            """
             ##################################################################################
             # NOTEBOOK WIDGET
             transient_tabs = ttk.Notebook(self.transient)
@@ -1526,6 +1632,7 @@ class AgilentQuotesTracker():  # {
                                      #validate='focusout',
                                      #validatecommand=(validation, '%P')
                                      ).grid(row=1, column=1, padx=10, pady=10, sticky=None)
+            # new_pf_quote_num_entry_widget.bind('<FocusOut>', self.check_quote_convention)
             # [2020-01-08]\\new_pf_quote_num_entry_widget.bind('<FocusIn>', self.turn_red)
             # [2020-01-08]\\new_pf_quote_num_entry_widget['validatecommand'] = (self.root.register(self.is_valid_account_id), '%P')
             # [2020-01-08]\\new_pf_quote_num_entry_widget.bind('<FocusOut>', self.turn_red)
@@ -1535,7 +1642,7 @@ class AgilentQuotesTracker():  # {
                       text="SAP Quote #: "
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
             # GET SAP QUOTE # FROM "selection_list"[9] (old)
-            the_sap_quote_num = str(the_selection_list[9])
+            the_sap_quote_num = str(the_selection_list[9]).zfill(7)
             self.new_sap_quote_num = tk.StringVar(master=tab_quote_info, value=the_sap_quote_num)
             new_sap_quote_num_entry_widget = ttk.Entry(master=tab_quote_info, 
                                       state='active', 
@@ -1548,19 +1655,73 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
             # GET RADIO TYPE FROM "selection_list"[10] (old)
             the_radio_sent_var = str(the_selection_list[10])
+            print("\n\t>>>> SENT? <<<< " + str(the_radio_sent_var))
             self.radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=the_radio_sent_var)
+            print("\n\t>>> STILL? <<<< " + str(self.radio_sent_var.get()))
             # CREATE VAR TO HOLD (new) VALUE
             new_radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=bool(self.radio_sent_var))
+            # CREATE RADIO BUTTON ** BASED ON CONDITIONS **
+            if bool(self.radio_sent_var.get()) is True: # {
+                print(">>>>>>>>>> IS TRUE!")
+                self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info,
+                                                    state=tk.DISABLED,
+                                                    value=True,
+                                                    variable=new_radio_sent_var,
+                                                    text="Yes", width=20)
+                self.radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
+                self.radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
+                                                    state=tk.DISABLED,
+                                                    value=False,
+                                                    variable=new_radio_sent_var,
+                                                    text="No", width=20)
+                self.radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
+            # }
+            elif bool(self.radio_sent_var.get()) is False: # {
+                print(">>>>>>>>> IS FALSE!")
+                self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info,
+                                                    state=tk.ACTIVE,
+                                                    value=False,
+                                                    variable=new_radio_sent_var,
+                                                    text="Yes", width=20)
+                self.radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
+                self.radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
+                                                    state=tk.ACTIVE,
+                                                    value=True,
+                                                    variabl=new_radio_sent_var,
+                                                    text="No", width=20)
+                self.radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
+            # }
+            """
             self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info, 
-                                           state=tk.ACTIVE if len(self.new_pf_quote_num.get()) != 0 and len(self.new_sap_quote_num.get()) != 0 and len(self.new_product_number.get()) != 0 else tk.DISABLED,
+                                           # [2020-01-09]\\state=tk.ACTIVE if len(self.new_pf_quote_num.get()) != 0 and len(self.new_sap_quote_num.get()) != 0 and len(self.new_product_number.get()) != 0 else tk.DISABLED,
+                                           # [2020-01-09]\\state = tk.DISABLED if bool(the_radio_sent_var) is True else tk.ACTIVE,
+                                           state = tk.ACTIVE if bool(the_radio_sent_var) is False else tk.DISABLED,
                                            variable=new_radio_sent_var,
-                                           value=False, text="Yes", width=20)
+                                           #value=True if bool(the_radio_sent_var) is True else False, 
+                                           text="Yes", width=20)
             self.radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
             self.radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
-                                           state=tk.ACTIVE if len(self.new_pf_quote_num.get()) != 0 else tk.DISABLED,
+                                           # [2020-01-09]\\state=tk.ACTIVE if len(self.new_pf_quote_num.get()) != 0 else tk.DISABLED,
+                                           # [2020-01-09]\\state = tk.ACTIVE if bool(the_radio_sent_var) is False else tk.DISABLED,
+                                           # [2020-01-09]\\state = tk.DISABLED if bool(the_radio_sent_var) is True else tk.ACTIVE,
+                                           state = tk.ACTIVE, 
                                            variable=new_radio_sent_var,
-                                           value=True, text="No", width=20)
+                                           #value=True if bool(the_radio_sent_var) is False else False, 
+                                           text="No", width=20)
             self.radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
+            if bool(the_selection_list[10]) is True: # {
+                self.radio_sent_1['state'] = tk.DISABLED
+                self.radio_sent_1['value'] = True
+                self.radio_sent_2['state'] = tk.DISABLED
+                self.radio_sent_2['value'] = False
+            # }
+            elif bool(the_selection_list[10]) is False: # {
+                self.radio_sent_1['state'] = tk.ACTIVE
+                self.radio_sent_1['value'] = False
+                self.radio_sent_2['state'] = tk.ACTIVE
+                self.radio_sent_2['value'] = True
+            # }
+            """
             
             # <><><><><><><><><><><><><<><><><><><><><><><><><><><><><>< #
             
@@ -1619,23 +1780,25 @@ class AgilentQuotesTracker():  # {
                 newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
                 newinitials=str(self.initials.get()), #old_initials=str(the_selection_list[1]),
                 newaccountid=str(self.new_account_id.get()), #old_account_id=str(the_selection_list[3]),
-                newproductnum=str(self.product_number.get()), #old_product_num=str(the_selection_list[4]),
-                newpfnum=str(self.pf_quote_num.get()), #old_pf_num=str(the_selection_list[11]),
-                newsapnum=str(self.sap_quote_num.get()), # old_sap_num=str(the_selection_list[9]),
+                newproductnum=str(self.new_product_number.get()), #old_product_num=str(the_selection_list[4]),
+                newpfnum=str(self.new_pf_quote_num.get()), #old_pf_num=str(the_selection_list[11]),
+                newsapnum=str(self.new_sap_quote_num.get()), # old_sap_num=str(the_selection_list[9]),
                 tracking_number=str(the_selection_list[0])))
             submit_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             submit_button.bind('<Enter>', self.check_quote_convention)
-            submit_button.bind('<FocusIn>', self.check_quote_convention)
-            submit_button.bind('<Key>', self.check_quote_convention)
+            submit_button.bind('<Leave>', self.check_quote_convention)
+            # [2020-01-08]\\submit_button.bind('<FocusOut>', self.check_quote_convention)
+            # [2020-01-08]\\submit_button.bind('<Key>', self.check_quote_convention)
             
             # CANCEL BUTTON
             cancel_button = ttk.Button(self.transient, text="CANCEL", command=self.transient.destroy)
             cancel_button.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
             
+            """
             validate_button = ttk.Button(self.transient, text="VALIDATE")
             validate_button.bind("<Enter>", self.turn_red)
             validate_button.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-            
+            """
             self.transient.mainloop()
         # }
         except:  # {
