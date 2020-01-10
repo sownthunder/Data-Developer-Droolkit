@@ -84,7 +84,7 @@ class AgilentQuotesTracker():  # {
         # [2019-12-26]\\self.root.maxsize(width=1500, height=1250)
         # [2019-12-30]\\self.root.maxsize(width=1750, height=1250)
         # [2020-01-07]\\self.root.maxsize(width=2050, height=1050) # was 787
-        self.root.maxsize(width=1800, height=750)  # was (width=1920, height=1050)
+        # [2020-01-10]\\self.root.maxsize(width=1800, height=750)  # was (width=1920, height=1050)
         # CREATE DATAFRAME-DATABASE FROM FILE
         # [2019-12-11]\\self.quotes_db = self.create_database(db_csv=self.db_filename)
         # [2019-12-11]\\print(self.quotes_db)
@@ -364,7 +364,7 @@ class AgilentQuotesTracker():  # {
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 9))
             # Modify the font of the headings
-            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 11, 'bold'))
+            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 12, 'bold'))
             """
             # REMOVE THE BORDERS
             self.style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
@@ -793,20 +793,20 @@ class AgilentQuotesTracker():  # {
                                      height=30, columns=13, selectmode='browse')  # height = 20
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
-            self.tree.column('#0', anchor=tk.W, width=125, minwidth=125, stretch=tk.NO)  # TRACKING #
-            self.tree.column("one", anchor=tk.W, width=175, minwidth=150, stretch=tk.NO)  # TIME REC. // NAME
+            self.tree.column('#0', anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # TRACKING #
+            self.tree.column("one", anchor=tk.W, width=150, minwidth=150, stretch=tk.NO)  # TIME REC. // NAME
             self.tree.column("two", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # INITIALS // EMAIL
             self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
-            self.tree.column("four", anchor=tk.CENTER, width=75, minwidth=75, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
-            self.tree.column("five", anchor=tk.W, width=100, minwidth=75, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
-            self.tree.column("six", anchor=tk.CENTER, width=175, minwidth=125, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
-            self.tree.column("seven", anchor=tk.CENTER, width=100, minwidth=100, stretch=tk.NO)  # ACCOUNT ID // NOTES
-            self.tree.column("eight", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
+            self.tree.column("four", anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
+            self.tree.column("five", anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
+            self.tree.column("six", anchor=tk.W, width=160, minwidth=150, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
+            self.tree.column("seven", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
+            self.tree.column("eight", anchor=tk.CENTER, width=100, minwidth=80, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
             self.tree.column("nine", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PF QUOTE #//  ACCOUNT ID
             self.tree.column("ten", anchor=tk.CENTER, width=100, minwidth=75, stretch=tk.NO)  # SAP QUOTE # // PRODFLOW QUOTE #
             self.tree.column("eleven", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # SENT
             self.tree.column("twelve", anchor=tk.CENTER, width=125, minwidth=100, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
-            self.tree.column("thirteen", anchor=tk.E, width=75, minwidth=75, stretch=tk.YES)  # NOTES // PRICE
+            self.tree.column("thirteen", anchor=tk.CENTER, width=75, minwidth=75, stretch=tk.YES)  # NOTES // PRICE
 
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
@@ -1391,7 +1391,7 @@ class AgilentQuotesTracker():  # {
     def view_records(self):  # {
         logging.info("Begin Populating TreeView...")
         # display message
-        self.message['text'] = " Updating\n \tAND/OR \n Refreshing table... "
+        self.message['text'] = " <<< Updating / Refreshing Table >>> "
         # TRY THE FOLLOWING
         try:  # {
             items = self.tree.get_children()
@@ -1478,6 +1478,7 @@ class AgilentQuotesTracker():  # {
             # track_num = self.tree.item(self.tree.selection()['text'])
             # old_name = self.tree.item(self.tree.selection())['values'][0]
             self.transient = tk.Toplevel(master=self.root)
+            self.transient.wm_transient(master=self.root)
             self.transient.title("EDIT QUOTE - Agilent Quotes Tracker")
             """
             ######################################################
@@ -1493,7 +1494,7 @@ class AgilentQuotesTracker():  # {
             print("X == " + str(x_val))
             print("Y == " + str(y_val))
             # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
-            location_str = str('' + str(x_val) + "+" + str(y_val) + '')
+            location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
             self.transient.geometry(str('385x255+' + location_str))
             self.transient.resizable(width=False, height=False)
             ##################################################################################
@@ -1901,16 +1902,16 @@ class AgilentQuotesTracker():  # {
         if len(str(newinitials)) != 0 and len(str(newaccountid)) != 0:  # {
             logging.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
             # SETUP STR TO HOLD THE VALUES THE USER WISHES TO CHANGE
-            display_str = "YOU ENTERED:\n" 
-            display_str += "name:\t" + str(newname)
-            display_str += "email:\t" + str(newemail)
-            display_str += "company name:\t" + str(newcompanyname)
-            display_str += "sent:\t" + str(newsent)
-            display_str += "initials:\t" + str(newinitials)
-            display_str += "account id:\t" + str(newaccountid)
-            display_str += "product #:\t" + str(newproductnum)
-            display_str += "new PF Quote #:\t" + str(newpfnum)
-            display_str += "new SAP Quote #:\t" + str(newsapnum)
+            display_str = "YOU ENTERED:\n\n" 
+            display_str += "contact name:\t\t" + str(newname) + "\n"
+            display_str += "email address:\t\t" + str(newemail) + "\n"
+            display_str += "company name:\t\t" + str(newcompanyname) + "\n"
+            display_str += "sent:\t\t\t" + str(newsent) + "\n"
+            display_str += "initials:\t\t\t" + str(newinitials) + "\n"
+            display_str += "account id:\t\t" + str(newaccountid) + "\n"
+            display_str += "new product #:\t\t" + str(newproductnum) + "\n"
+            display_str += "new PF Quote #:\t\t" + str(newpfnum) + "\n"
+            display_str += "new SAP Quote #:\t\t" + str(newsapnum) + "\n"
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askokcancel(title="Confirm Update", message=str(display_str))
             print(confirm_box)
