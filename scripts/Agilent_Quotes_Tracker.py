@@ -1090,7 +1090,7 @@ class AgilentQuotesTracker():  # {
                     self.message['text'] += '\n <<< SAP-QUOTE-#... correct >>>'
                     # NOW CHECK IF ACCOUNT ID DOESNT MATCH
                     test_regex = str(self.new_account_id.get())
-                    if fnmatch.fnmatch(test_regex, str(self.account_id_regex)) or fnmatch.fnmatch(test_regex, str('')): # {
+                    if fnmatch.fnmatch(test_regex, str(self.account_id_regex)): # {
                         # keep submit button ACTIVE
                         print("ACCOUNT ID... PASSES")
                         event.widget['state'] = tk.ACTIVE
@@ -1310,9 +1310,9 @@ class AgilentQuotesTracker():  # {
         print("NAME:\n" + str(self.name.get()))
         # TRY THE FOLLOWING
         try:  # {
-            return len(self.initials.get()) != 0 \
+            return len(str(self.initials.get())) != 0 \
                    and str(self.type_var.get()) != "Select:" \
-                   and len(self.account_id.get()) != 0 \
+                   and len(str(self.account_id.get())) != 0 \
                    # [2020-01-07]\\and len(self.pf_quote_num.get()) != 0 \
                    # [2020-01-07]\\and len(self.sap_quote_num.get()) != 0 \
                    # [2020-01-07]\\and len(self.product_number.get()) != 0
@@ -1782,7 +1782,7 @@ class AgilentQuotesTracker():  # {
                 newsent=str(new_radio_sent_var.get()), old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
                 open_time=str(self.tree.item(selected_item)['values'][0]),
                 newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
-                newinitials=str(self.initials.get()), #old_initials=str(the_selection_list[1]),
+                newinitials=str(self.new_initials.get()), #old_initials=str(the_selection_list[1]),
                 newaccountid=str(self.new_account_id.get()), #old_account_id=str(the_selection_list[3]),
                 newproductnum=str(self.new_product_number.get()), #old_product_num=str(the_selection_list[4]),
                 newpfnum=str(self.new_pf_quote_num.get()), #old_pf_num=str(the_selection_list[11]),
@@ -1863,7 +1863,7 @@ class AgilentQuotesTracker():  # {
         # }
         """
         # IF NONE OF THE **IMPORTANT** ENTRY BOXES ARE LEFT EMPTY
-        if len(str(newinitials)) != 0 and len(newaccountid) != 0:  # {
+        if len(str(newinitials)) != 0 and len(str(newaccountid)) != 0:  # {
             logging.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
             # SETUP STR TO HOLD THE VALUES THE USER WISHES TO CHANGE
             display_str = "YOU ENTERED:\n" 
@@ -1958,10 +1958,12 @@ class AgilentQuotesTracker():  # {
             # }
             else:  # {
                 logging.info("USER SELECTED NOT READY !...")
+                self.transient.destroy()
             # }
         # }
         else:  # {
-            messagebox.showwarning(parent=self.root, title="WARNING:", message="MISSING REQUIRED FIELD(S):\n Initials\n AccountID")
+            # [2020-01-10]\\self.message['text'] = 'MISSING REQUIRED FIELDS(S):\n Initals\n AccountID'
+            messagebox.showwarning(parent=self.root, title="WARNING:", message="MISSING REQUIRED FIELD(S):\n\n\tInitials\n\nPlease re-open quote to edit")
             # EXIT OUT OF ADD-ON BOX
             self.transient.destroy()
         # }
