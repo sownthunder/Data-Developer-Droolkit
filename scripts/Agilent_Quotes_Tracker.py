@@ -1660,7 +1660,7 @@ class AgilentQuotesTracker():  # {
             # GET RADIO TYPE FROM "selection_list"[10] (old)
             the_radio_sent_var = str(the_selection_list[10])
             print("\n\t>>>> SENT? <<<< " + str(the_radio_sent_var))
-            self.radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=the_radio_sent_var)
+            self.radio_sent_var = tk.BooleanVar(master=self.root, value=the_radio_sent_var)
             print("\n\t>>> STILL? <<<< " + str(self.radio_sent_var.get()))
             # CREATE VAR TO HOLD (new) VALUE
             new_radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=bool(self.radio_sent_var))
@@ -1684,14 +1684,14 @@ class AgilentQuotesTracker():  # {
                 print(">>>>>>>>> IS FALSE!")
                 self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info,
                                                     state=tk.ACTIVE,
-                                                    value=False,
-                                                    variable=new_radio_sent_var,
+                                                    value=True,
+                                                    variable=self.radio_sent_var,
                                                     text="Yes", width=20)
                 self.radio_sent_1.grid(row=3, column=1, columnspan=2, sticky='w', padx=10, pady=10)
                 self.radio_sent_2 = ttk.Radiobutton(master=tab_quote_info,
                                                     state=tk.ACTIVE,
-                                                    value=True,
-                                                    variabl=new_radio_sent_var,
+                                                    value=False,
+                                                    variabl=self.radio_sent_var,
                                                     text="No", width=20)
                 self.radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             # }
@@ -1779,7 +1779,8 @@ class AgilentQuotesTracker():  # {
                 newemail=str(self.new_email.get()), # old_email_address=
                 the_type=str(the_selection_list[7]), #
                 newcompanyname=str(self.new_company_name.get()), # old_company_name
-                newsent=str(new_radio_sent_var.get()), old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
+                newsent=str(new_radio_sent_var.get()) if self.radio_sent_var.get() is True else str(self.radio_sent_var.get()), 
+                old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
                 open_time=str(self.tree.item(selected_item)['values'][0]),
                 newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
                 newinitials=str(self.new_initials.get()), #old_initials=str(the_selection_list[1]),
@@ -1841,6 +1842,7 @@ class AgilentQuotesTracker():  # {
                       newproductnum,
                       newpfnum,
                       newsapnum, tracking_number):  # {
+        # [2020-01-10]\\messagebox.showinfo(message="NEW-SENT: \t" + str(newsent))
         # CALL THE "check_quote_progress() FUNCTION HERE
         # [ 2019-12-27 ] == addition of "initials" into METHOD
         # [ 2019-12-30 ] == addition of "account_id" and "prodflow quote #"
@@ -1895,7 +1897,7 @@ class AgilentQuotesTracker():  # {
                         print("open_time == " + str(open_time))
                         print("old_sent == " + str(old_sent))
                         # COMPUTE TURN AROUND TIME
-                        time_start = pd.Timestamp(ts_input=open_time)
+                        time_start = pd.Timestamp(open_time)
                         print("TIME START == " + str(time_start))
                         run_time = time_meow - time_start
                         print("RUN TIME == " + str(run_time))
