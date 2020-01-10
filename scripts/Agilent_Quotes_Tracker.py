@@ -16,6 +16,7 @@ EDITS:
 12/26/19 - quotes naming convention to properly create _QUOTES_T_NUMBER_
          - added COLUMNS [initials], [sap_quote_number], and [product_number]
 01/03/20 - changed CREATE tab to contain proper tk.StringVar variables (ttk)
+01/09/20 - included validation checks for ACCOUNT ID, PF QUOTE #, SAP QUOTE #
 
 @author: derbates
 """
@@ -1073,7 +1074,7 @@ class AgilentQuotesTracker():  # {
             # display message
             self.message['text'] = ' ===== EDIT QUOTE [!] ===== '
             # CHECK IF THE PF QUOTE # DOESNT MATCH
-            if fnmatch.fnmatch(test_regex, str(self.pf_quote_regex)): # {
+            if fnmatch.fnmatch(test_regex, str(self.pf_quote_regex)) or fnmatch.fnmatch(test_regex, str('')): # {
                 # keep submit button ACTIVE
                 print("PF-QUOTE-#... PASSES")
                 event.widget['state'] = tk.ACTIVE
@@ -1081,7 +1082,7 @@ class AgilentQuotesTracker():  # {
                 self.message['text'] += '\n <<< PF-QUOTE-#... correct >>>'
                 # NoW CHECK IF SAP QUOTE # DOESNT MATCH
                 test_regex = str(self.new_sap_quote_num.get())
-                if fnmatch.fnmatch(test_regex, str(self.sap_quote_regex)): # {
+                if fnmatch.fnmatch(test_regex, str(self.sap_quote_regex)) or fnmatch.fnmatch(test_regex, str('')): # {
                     # keep submit button ACTIVE
                     print("SAP-QUOTE-#... PASSES")
                     event.widget['state'] = tk.ACTIVE
@@ -1089,7 +1090,7 @@ class AgilentQuotesTracker():  # {
                     self.message['text'] += '\n <<< SAP-QUOTE-#... correct >>>'
                     # NOW CHECK IF ACCOUNT ID DOESNT MATCH
                     test_regex = str(self.new_account_id.get())
-                    if fnmatch.fnmatch(test_regex, str(self.account_id_regex)): # {
+                    if fnmatch.fnmatch(test_regex, str(self.account_id_regex)) or fnmatch.fnmatch(test_regex, str('')): # {
                         # keep submit button ACTIVE
                         print("ACCOUNT ID... PASSES")
                         event.widget['state'] = tk.ACTIVE
@@ -1445,8 +1446,11 @@ class AgilentQuotesTracker():  # {
             # old_name = self.tree.item(self.tree.selection())['values'][0]
             self.transient = tk.Toplevel(master=self.root)
             self.transient.title("EDIT QUOTE - Agilent Quotes Tracker")
+            """
             ######################################################
             # GET WINDOW GEOMETRY
+            ######################################################
+            """
             xindex = str(window_location).find("x=", 0, len(str(window_location)))
             xend = str(window_location).find(",", 0, len(str(window_location)))
             yindex = str(window_location).find("y=", 0, len(str(window_location)))
