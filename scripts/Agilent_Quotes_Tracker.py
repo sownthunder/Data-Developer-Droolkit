@@ -301,9 +301,9 @@ class AgilentQuotesTracker():  # {
         self.menubar = tk.Menu(self.root)
         # MENU-BAR ^^
         self.filemenu = tk.Menu(master=self.menubar,
-                                borderwidth=4,
+                                borderwidth=3,
                                 background="#0C85CE",
-                                font=("Comfortaa", 12),
+                                font=("Comfortaa", 16),
                                 tearoff=0)
         self.filemenu.add_command(label="Update Log", command="")
         self.filemenu.add_command(label="About", command="")
@@ -317,9 +317,9 @@ class AgilentQuotesTracker():  # {
                                  activeforeground="#111111",
                                  background="#d9d9d9")
         self.editmenu = tk.Menu(master=self.root,
-                                borderwidth=4,
+                                borderwidth=3,
                                 background="#9e0ccf",
-                                font=("Impact", 24),
+                                font=("Impact", 16),
                                 tearoff=0)
         self.editmenu.add_command(label="Search", command="")
         self.editmenu.add_separator()
@@ -328,8 +328,9 @@ class AgilentQuotesTracker():  # {
         # EDIT SUB-MENU ^^
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         self.helpmenu = tk.Menu(master=self.menubar,
+                                borderwidth=3,
                                 background="#ffbf00",
-                                font=("Courier New", 32),
+                                font=("Courier New", 16),
                                 relief=tk.GROOVE,
                                 tearoff=0)
         self.helpmenu.add_command(label="Help Index", command="")
@@ -337,14 +338,14 @@ class AgilentQuotesTracker():  # {
         # HELP SUB-MENU ^^ 
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)
         self.adminmenu = tk.Menu(master=self.root,
-                                 borderwidth=5,
+                                 borderwidth=3,
                                  background='#3d4043',
-                                 font=("Sourcecode Pro", 48),
+                                 font=("Sourcecode Pro", 16),
                                  relief=tk.RIDGE,
                                  tearoff=1)
-        self.adminmenu.add_command(label="Login", command="")
+        self.adminmenu.add_command(label="Login/edit", command="")
         self.adminmenu.add_command(label="RESRESH TABLE", command=self.view_records)
-        self.menubar.add_cascade(label="Admin Tools", menu=self.adminmenu)
+        self.menubar.add_cascade(label="Table Tools", menu=self.adminmenu)
         # ADMIN SUB-MENU ^^
     # }
 
@@ -572,7 +573,7 @@ class AgilentQuotesTracker():  # {
             # CONTACT PERSON (NAME)
             ttk.Label(master=self.lblframe_create,
                       text='Contact Person: ').grid(row=2, column=0, padx=10, pady=10, sticky='nw')
-            self.name = tk.StringVar(master=self.lblframe_create)
+            self.name = tk.StringVar(master=self.root)
             # [2020-01-07]\\self.name.set(value="Hot-Stuff")
             ttk.Entry(master=self.lblframe_create,
                                        textvariable=self.name,
@@ -582,7 +583,7 @@ class AgilentQuotesTracker():  # {
             # EMAIL ADDRESS #
             ttk.Label(master=self.lblframe_create,
                       text='Email Address: ').grid(row=3, column=0, padx=10, pady=10, sticky='w')
-            self.email = tk.StringVar(master=self.lblframe_create)
+            self.email = tk.StringVar(master=self.root)
             ttk.Entry(master=self.lblframe_create,
                                       textvariable=self.email,
                                       state='active',
@@ -591,7 +592,7 @@ class AgilentQuotesTracker():  # {
             # ACCOUNT ID #
             ttk.Label(master=self.lblframe_create,
                       text='Account ID: ').grid(row=4, column=0, padx=10, pady=10, sticky='w')
-            self.account_id = tk.StringVar(master=self.lblframe_create)
+            self.account_id = tk.StringVar(master=self.root)
             ttk.Entry(master=self.lblframe_create,
                                    textvariable=self.account_id,
                                    state='active',
@@ -641,7 +642,7 @@ class AgilentQuotesTracker():  # {
             # INITIALS #
             ttk.Label(master=self.lblframe_create,
                       text='Initials: ').grid(row=5, column=0, padx=10, pady=10, sticky='w')
-            self.initials = tk.StringVar(master=self.lblframe_create)
+            self.initials = tk.StringVar(master=self.root)
             ttk.Entry(master=self.lblframe_create,
                                  textvariable=self.initials,
                                  state='active',
@@ -654,7 +655,7 @@ class AgilentQuotesTracker():  # {
                       text='Type: '
                       ).grid(row=6, column=0, padx=10, pady=10, sticky='w')
             
-            self.type_var = tk.StringVar(master=self.lblframe_create) #, value="email")
+            self.type_var = tk.StringVar(master=self.root) #, value="email")
             """
             ttk.Radiobutton(master=self.lblframe_create,
                             variable=self.type_var,
@@ -688,12 +689,23 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=self.lblframe_create,
                       text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='nw')
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
+            self.notes = tk.StringVar(master=self.root, value="")
+            
+            ttk.Entry(master=self.lblframe_create,
+                                   width=20,
+                                   textvariable=self.notes
+                                   ).grid(row=7, column=1, padx=10, pady=10, sticky='e')
+            
+            """
             self.notes = tk.Text(master=self.lblframe_create, 
                             height=10,
                             width=20,
                             # wrap = 
                             # yscrollcommand = 
                             ).grid(row=7, column=0, columnspan=3, padx=10, pady=10, sticky='e') # WAS :e
+            # INSERT blank STR into NOTES
+            self.notes.insert(index=0, chars="")
+            """
             
             # CREATE BUTTON #
             self.create_button = ttk.Button(master=self.lblframe_create, 
@@ -1168,7 +1180,7 @@ class AgilentQuotesTracker():  # {
                 # [2020-01-08]\\the_sent = [str(self.radio_sent_var.get())]
                 the_sent = [str("False")]
                 open_time = [str(pd.Timestamp.now())]
-                close_time = [str("")]
+                close_time = [str("None")]
                 turn_around = [str("None")]  # np.Nan?
                 # [2019-12-18]\\the_notes = [str(self.notes.get())]
                 # IF NOTES IS LEFT EMPTY ADD IN THAT IT IS SO
@@ -1182,9 +1194,12 @@ class AgilentQuotesTracker():  # {
                 # }
                 the_initials = [str(self.initials.get())]
                 the_account_id_num = [str(self.account_id.get())]
-                the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
-                the_sap_quote_num = [str(self.sap_quote_num.get())]
-                the_product_number = [str(self.product_num.get())]
+                # [2020-01-10]\\the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
+                # [2020-01-10]\\the_sap_quote_num = [str(self.sap_quote_num.get())]
+                # [2020-01-10]\\the_product_number = [str(self.product_num.get())]
+                the_prodflow_quote_num = [str("None")]
+                the_sap_quote_num = [str("None")]
+                the_product_number = [str("None")]
                 the_company_name = [str(self.company_name.get())]
                 # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
                 # DICTIONARY OF LISTS
@@ -1219,6 +1234,8 @@ class AgilentQuotesTracker():  # {
                 # UPDATE DISPLAY MESSAGE
                 self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
                 # CLEAR ENTRY BOXES
+                # [2020-01-10]\\
+                """
                 self.name.delete(0, tk.END)
                 self.email.delete(0, tk.END)
                 self.notes.delete(0, tk.END)
@@ -1230,11 +1247,22 @@ class AgilentQuotesTracker():  # {
                 self.company_name.delete(0, tk.END)
                 self.type_var.set("Select: ")
                 # [2019-12-31]\\self.price.delete(0, tk.END)
+                """
+                self.name.set("")
+                self.email.set("")
+                self.notes.set("")
+                self.initials.set("")
+                self.account_id.set("")
+                # [2020-01-10]\\self.prodflow_quote_num.set("")
+                # [2020-01-10]\\self.sap_quote_num.set("")
+                # [2020-01-10]\\self.product_num.set("")
+                self.company_name.set("")
+                self.type_var.set("Select: ")
             # }
             else:  # {
                 # [2020-01-07]\\self.message['text'] = ' >>>>>>>>>>>>><<<<<<<<<<<<<\n [Initials], [Type], [AccountID],\n [Product #], [PF Quote #], [SAP Quote #]\n CANNOT BE left BLANK! \n >>>>>>>>>>>>><<<<<<<<<<<<<'
                 self.message['text'] = ' >>>>>>>>>>>>>><<<<<<<<<<<<<<\n [Initials], [Type], and/or [AccountID]\n CANNOT  BE  LEFT  BLANK! \n >>>>>>>>>>>>>><<<<<<<<<<<<<<'
-                # }
+            # }
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
         # }
@@ -1363,7 +1391,7 @@ class AgilentQuotesTracker():  # {
     def view_records(self):  # {
         logging.info("Begin Populating TreeView...")
         # display message
-        self.message['text'] = " Updating\n \tAND/OR \n\t\t Refreshing table... "
+        self.message['text'] = " Updating\n \tAND/OR \n Refreshing table... "
         # TRY THE FOLLOWING
         try:  # {
             items = self.tree.get_children()
