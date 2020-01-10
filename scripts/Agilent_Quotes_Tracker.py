@@ -343,6 +343,7 @@ class AgilentQuotesTracker():  # {
                                  relief=tk.RIDGE,
                                  tearoff=1)
         self.adminmenu.add_command(label="Login", command="")
+        self.adminmenu.add_command(label="RESRESH TABLE", command=self.view_records)
         self.menubar.add_cascade(label="Admin Tools", menu=self.adminmenu)
         # ADMIN SUB-MENU ^^
     # }
@@ -414,6 +415,8 @@ class AgilentQuotesTracker():  # {
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
         # [2019-12-26]\\self.leftframe.pack(side=tk.LEFT, fill=tk.X, expand=False)
         self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=False)
+        # BIND FUNCTIONS TO FRAME
+        self.leftframe.bind('<Leave>', self.clear_message_area)
 
     # }
 
@@ -767,7 +770,7 @@ class AgilentQuotesTracker():  # {
         self.rightframe = ttk.Frame(master=self.root)
         self.rightframe.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         # BIND FUNCTIONS TO FRAME
-        self.rightframe.bind('<Enter>', self.clear_message_area)
+        # [2020-01-10]\\self.rightframe.bind('<Enter>', self.clear_message_area)
     # }
 
     def create_tree_view(self):  # {
@@ -1103,7 +1106,7 @@ class AgilentQuotesTracker():  # {
                         event.widget['state'] = tk.DISABLED
                         # display message
                         self.message['text'] = " <<< ACCOUNT ID... incorrect >>>"
-                        self.message['text'] += "\n === 8-digit-alphanumeric"
+                        self.message['text'] += "\n <<< 8-digit-alphanumeric"
                     # }
                 # }
                 else: # {
@@ -1112,7 +1115,7 @@ class AgilentQuotesTracker():  # {
                     event.widget['state'] = tk.DISABLED
                     # display message
                     self.message['text'] += "\n <<< SAP-QUOTE-#... incorrect >>> "
-                    self.message['text'] += "\n === 7-digit-numeric"
+                    self.message['text'] += "\n <<< 7-digit-numeric"
                 # } 
             # }
             else: # {
@@ -1121,7 +1124,7 @@ class AgilentQuotesTracker():  # {
                 event.widget['state'] = tk.DISABLED
                 # display message
                 self.message['text'] += '\n <<< PF-QUOTE-#... incorrect >>>'
-                self.message['text'] += '\n === MMDDYY-XXX'
+                self.message['text'] += '\n <<< Format: MMDDYY-XXX >>>'
             # }
         # }
         except: # {
@@ -1359,6 +1362,8 @@ class AgilentQuotesTracker():  # {
 
     def view_records(self):  # {
         logging.info("Begin Populating TreeView...")
+        # display message
+        self.message['text'] = " Updating\n \tAND/OR \n\t\t Refreshing table... "
         # TRY THE FOLLOWING
         try:  # {
             items = self.tree.get_children()
