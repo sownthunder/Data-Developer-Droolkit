@@ -781,6 +781,15 @@ class AgilentQuotesTracker():  # {
         # Create a Frame Container
         self.rightframe = ttk.Frame(master=self.root)
         self.rightframe.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        """
+        ################
+        # PANED WINDOW #
+        ################
+        """
+        # create PanedWindow
+        pw = ttk.PanedWindow(master=self.root, orient=tk.HORIZONTAL)
+        # pack into the TOP right side and fill whole
+        pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH)
         # BIND FUNCTIONS TO FRAME
         # [2020-01-10]\\self.rightframe.bind('<Enter>', self.clear_message_area)
     # }
@@ -865,6 +874,7 @@ class AgilentQuotesTracker():  # {
         try: #{
             # GET NUMBER OF CHILDREN (of ROOT)
             self.children_num = self.root.winfo_children()
+            logging.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
         # }
         except: # {
             logging.erro("failed getting the children...")
@@ -965,7 +975,7 @@ class AgilentQuotesTracker():  # {
         else: # {
             logging.info("Operation Completed Successfully...")
         # }
-        print("============================>" + str(self.children_num))
+        logging.info("\t CHILDREN AFTER \n\t\t========>" + str(len(self.children_num)))
     # }
 
     ######################################################################################################
@@ -1501,7 +1511,7 @@ class AgilentQuotesTracker():  # {
             self.pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH) # padx='2m', pady=2
             self.left_transient = ttk.Label(master=self.pw, text='This is the\nLeft side.',
                                             background='gold', anchor=tk.CENTER)
-            self.right_transient = ttk.Frame(master=self.pw)
+            self.right_transient = ttk.Frame(master=self.pw) # MAIN FRAME
             self.pw.add(self.left_transient)
             self.pw.add(self.right_transient)
             """
