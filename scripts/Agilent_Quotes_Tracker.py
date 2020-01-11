@@ -862,6 +862,14 @@ class AgilentQuotesTracker():  # {
 
     def on_double_click(self, event):  # {
         # TRY THE FOLLOWING
+        try: #{
+            # GET NUMBER OF CHILDREN (of ROOT)
+            self.children_num = self.root.winfo_children()
+        # }
+        except: # {
+            logging.erro("failed getting the children...")
+        # }
+        # TRY THE FOLLOWING
         try: # {
             # GET MOUSE LOCATION
             self.mouse_location = pyautogui.position()
@@ -957,6 +965,7 @@ class AgilentQuotesTracker():  # {
         else: # {
             logging.info("Operation Completed Successfully...")
         # }
+        print("============================>" + str(self.children_num))
     # }
 
     ######################################################################################################
@@ -1093,6 +1102,8 @@ class AgilentQuotesTracker():  # {
                 # keep submit button ACTIVE
                 print("PF-QUOTE-#... PASSES")
                 event.widget['state'] = tk.ACTIVE
+                # test display message?
+                self.left_transient['text'] = ' <<< PF-QUOTE-#... correct >>>'
                 # display message
                 self.message['text'] += '\n <<< PF-QUOTE-#... correct >>>'
                 # NoW CHECK IF SAP QUOTE # DOESNT MATCH
@@ -1478,8 +1489,21 @@ class AgilentQuotesTracker():  # {
             # track_num = self.tree.item(self.tree.selection()['text'])
             # old_name = self.tree.item(self.tree.selection())['values'][0]
             self.transient = tk.Toplevel(master=self.root)
-            self.transient.wm_transient(master=self.root)
+            self.transient.wm_transient(master=self.root)  # MAKE WINDOW TRANS
             self.transient.title("EDIT QUOTE - Agilent Quotes Tracker")
+            #self.transient.withdraw()
+            """
+            ################
+            # PANED WINDOW #
+            ################
+            """
+            self.pw = ttk.PanedWindow(master=self.transient, orient=tk.HORIZONTAL)
+            self.pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH) # padx='2m', pady=2
+            self.left_transient = ttk.Label(master=self.pw, text='This is the\nLeft side.',
+                                            background='gold', anchor=tk.CENTER)
+            self.right_transient = ttk.Frame(master=self.pw)
+            self.pw.add(self.left_transient)
+            self.pw.add(self.right_transient)
             """
             ######################################################
             # GET WINDOW GEOMETRY
@@ -1499,7 +1523,7 @@ class AgilentQuotesTracker():  # {
             self.transient.resizable(width=False, height=False)
             ##################################################################################
             # NOTEBOOK WIDGET
-            transient_tabs = ttk.Notebook(self.transient)
+            transient_tabs = ttk.Notebook(self.right_transient)
             
             # <><><><><><<><<><><<><><><><><><><><><><><><><><><><><><><><> #
             # TAB-1 // OLD TRACKING INFO #
