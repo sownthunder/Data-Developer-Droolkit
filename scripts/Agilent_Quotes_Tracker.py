@@ -24,8 +24,9 @@ EDITS:
 # IMPORT THE GOODS
 import os, sys, time
 from time import sleep
+import pathlib, glob
 from pathlib import Path
-import fnmatch, glob, shutil
+import fnmatch, shutil
 import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -692,7 +693,7 @@ class AgilentQuotesTracker():  # {
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
             self.notes = tk.StringVar(master=self.root, value="")
             
-            ttk.Entry(master=self.lblframe_create,
+            tk.Entry(master=self.lblframe_create,
                                    width=20,
                                    textvariable=self.notes
                                    ).grid(row=7, column=1, padx=10, pady=10, sticky='e')
@@ -791,6 +792,7 @@ class AgilentQuotesTracker():  # {
         pw = ttk.PanedWindow(master=self.root, orient=tk.HORIZONTAL)
         # pack into the TOP right side and fill whole
         pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH)
+        
         # BIND FUNCTIONS TO FRAME
         # [2020-01-10]\\self.rightframe.bind('<Enter>', self.clear_message_area)
     # }
