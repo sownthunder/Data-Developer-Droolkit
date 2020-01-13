@@ -60,7 +60,8 @@ class AgilentQuotesTracker():  # {
 
     def __init__(self, root):  # {
         self.root = root
-        self.root.title("Agilent Quotes Tracker")
+        self.root.title("Agilent Customs Quotes Request Log")
+        logging.info("SCRIPT NAME == " + str(sys.argv[0]))
         self.root.resizable(width=True, height=True)
         """
         # SET WINDOW DIMENSIONS
@@ -1191,6 +1192,21 @@ class AgilentQuotesTracker():  # {
         try:  # {
             # CHECK IF RECORD IS VALIDATED (every box)
             if self.new_records_validated():  # {
+                display_str = "YOU ENTERED:\n\n" 
+                display_str += "contact name:\t\t" + str(self.name.get()) + "\n"
+                display_str += "email address:\t\t" + str(self.email.get()) + "\n"
+                display_str += "company name:\t\t" + str(self.company_name.get()) + "\n"
+                display_str += "initials:\t\t\t" + str(self.initials.get()) + "\n"
+                display_str += "account id:\t\t" + str(self.account_id.get()) + "\n"
+                display_str += "PF Quote #:\t\t NONE \n"
+                display_str += "SAP Quote #:\t\t NONE \n"
+                display_str += "product #:\t\t NONE \n"
+                # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
+                confirm_box = messagebox.askokcancel(title="Confirm Create", message=str(display_str))
+                print(confirm_box)
+                if str(confirm_box) == "True": # {
+                    print("TRRRUEEEEEE")
+                # }
                 logging.info("...ADDING NEW RECORD...")
                 # create ENTRY variables
                 # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
@@ -1218,9 +1234,9 @@ class AgilentQuotesTracker():  # {
                 # [2020-01-10]\\the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
                 # [2020-01-10]\\the_sap_quote_num = [str(self.sap_quote_num.get())]
                 # [2020-01-10]\\the_product_number = [str(self.product_num.get())]
-                the_prodflow_quote_num = [str("None")]
-                the_sap_quote_num = [str("None")]
-                the_product_number = [str("None")]
+                the_prodflow_quote_num = ["None"]
+                the_sap_quote_num = ["None"]
+                the_product_number = ["None"]
                 the_company_name = [str(self.company_name.get())]
                 # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
                 # DICTIONARY OF LISTS
@@ -1500,7 +1516,7 @@ class AgilentQuotesTracker():  # {
             # old_name = self.tree.item(self.tree.selection())['values'][0]
             self.transient = tk.Toplevel(master=self.root)
             self.transient.wm_transient(master=self.root)  # MAKE WINDOW TRANS
-            self.transient.title("EDIT QUOTE - Agilent Quotes Tracker")
+            self.transient.title("EDIT QUOTE - Agilent Custom Quotes Request Log")
             #self.transient.withdraw()
             """
             ################
@@ -1509,8 +1525,8 @@ class AgilentQuotesTracker():  # {
             """
             self.pw = ttk.PanedWindow(master=self.transient, orient=tk.HORIZONTAL)
             self.pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH) # padx='2m', pady=2
-            self.left_transient = ttk.Label(master=self.pw, text='This is the\nLeft side.',
-                                            background='gold', anchor=tk.CENTER)
+            self.left_transient = ttk.Label(master=self.pw, text=' >>> Paned \n >>> Message \n >>> panel',
+                                            background='#3399ff', foreground='#cc0000', anchor=tk.CENTER)
             self.right_transient = ttk.Frame(master=self.pw) # MAIN FRAME
             self.pw.add(self.left_transient)
             self.pw.add(self.right_transient)
