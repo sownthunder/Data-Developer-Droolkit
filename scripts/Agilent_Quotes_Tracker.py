@@ -82,7 +82,8 @@ class AgilentQuotesTracker():  # {
         """
         # [2019-12-12]\\self.root.minsize(height=1250)
         # [2020-01-07]\\self.root.minsize(width=1175, height=750)
-        self.root.minsize(width=1175, height=600)
+        # [2020-01-14]\\self.root.minsize(width=1175, height=600)
+        self.root.minsize(width=1000, height=400)
         # [2019-12-26]\\self.root.maxsize(width=1500, height=1250)
         # [2019-12-30]\\self.root.maxsize(width=1750, height=1250)
         # [2020-01-07]\\self.root.maxsize(width=2050, height=1050) # was 787
@@ -346,7 +347,7 @@ class AgilentQuotesTracker():  # {
                                  relief=tk.RIDGE,
                                  tearoff=1)
         self.adminmenu.add_command(label="Login/edit", command="")
-        self.adminmenu.add_command(label="RESRESH TABLE", command=self.view_records)
+        self.adminmenu.add_command(label="REFRESH TABLE", command=self.view_records)
         self.menubar.add_cascade(label="Table Tools", menu=self.adminmenu)
         # ADMIN SUB-MENU ^^
     # }
@@ -364,7 +365,7 @@ class AgilentQuotesTracker():  # {
             # # STYLE THEME
             self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
-            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 9))
+            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 10))
             # Modify the font of the headings
             self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 12, 'bold'))
             """
@@ -717,7 +718,8 @@ class AgilentQuotesTracker():  # {
             
             # CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
-                                      text="CLEAR"
+                                      text="CLEAR",
+                                      command=self.clear_create_tab
                                       ).grid(row=8, column=1, padx=10, pady=10, sticky='n')
             
             """
@@ -800,6 +802,10 @@ class AgilentQuotesTracker():  # {
     def create_tree_view(self):  # {
         # TRY THE FOLLOWING
         try:  # {
+            # CREATE SCROLLBAR?
+            self.scrollbar = ttk.Scrollbar(master=self.rightframe, orient = tk.HORIZONTAL)
+            self.scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+            
             # TABLE
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
                                      height=30, columns=13, selectmode='browse')  # height = 20
@@ -837,7 +843,13 @@ class AgilentQuotesTracker():  # {
             self.tree.heading('#11', text='Sent', anchor=tk.CENTER)
             self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER)       # CLOSE TIME IN BACKEND
             self.tree.heading('#13', text='Notes', anchor=tk.CENTER)
-
+            
+            # CONFIG SCROLLBAR
+            self.scrollbar.config(command = self.tree.xview)
+            
+            # CONFIG TREEVIEW
+            self.tree.config(xscrollcommand=self.scrollbar.set)
+            
             # BIND CLICK ACTIONS/EVENTS
             self.tree.bind("<Double-1>", self.on_double_click)
         # }
@@ -867,6 +879,46 @@ class AgilentQuotesTracker():  # {
 
     # }
     
+    def clear_create_tab(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # ALL entry boxes in CREATE-TAB
+            self.company_name.set("")       # company name
+            self.name.set("")               # contact person's name
+            self.email.set("")              # email address
+            self.account_id.set("")         # account id
+            self.initials.set("")           # initials
+            self.type_var.set("Select: ")   # quote type
+            self.notes.set("")              # notes
+        # }
+        except: # { 
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            # display message in the message area
+            self.message['text'] = ' <<< Cleared CREATE TAB >>>'
+            logging.info("Operation Completed Successfully...")
+        # }
+        
+    # }
+    
     def clear_message_area(self, event): # {
         # clear message area
         self.message['text'] = ''
@@ -880,7 +932,7 @@ class AgilentQuotesTracker():  # {
             logging.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
         # }
         except: # {
-            logging.erro("failed getting the children...")
+            logging.error("failed getting the children...")
         # }
         # TRY THE FOLLOWING
         try: # {
@@ -1257,10 +1309,10 @@ class AgilentQuotesTracker():  # {
                                   'turn_around': turn_around,
                                   'notes': the_notes,
                                   'initials': the_initials,
-                                  'account_id': str(the_account_id_num),
-                                  'prodflow_quote_number': str(the_prodflow_quote_num),
-                                  'sap_quote_number': str(the_sap_quote_num),
-                                  'product_number': str(the_product_number),
+                                  'account_id': the_account_id_num,
+                                  'prodflow_quote_number': the_prodflow_quote_num,
+                                  'sap_quote_number': the_sap_quote_num,
+                                  'product_number': the_product_number,
                                   'company_name': the_company_name
                                   # [2019-12-31]\\'price': the_price
                                   }
@@ -1525,6 +1577,8 @@ class AgilentQuotesTracker():  # {
             # PANED WINDOW #
             ################
             """
+            # [2020-01-14]\\THE BELOW WAS 
+            """
             self.pw = ttk.PanedWindow(master=self.transient, orient=tk.HORIZONTAL)
             self.pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH) # padx='2m', pady=2
             self.left_transient = ttk.Label(master=self.pw, text=' >>> Paned \n >>> Message \n >>> panel',
@@ -1532,6 +1586,7 @@ class AgilentQuotesTracker():  # {
             self.right_transient = ttk.Frame(master=self.pw) # MAIN FRAME
             self.pw.add(self.left_transient)
             self.pw.add(self.right_transient)
+            """
             """
             ######################################################
             # GET WINDOW GEOMETRY
@@ -1551,7 +1606,8 @@ class AgilentQuotesTracker():  # {
             self.transient.resizable(width=False, height=False)
             ##################################################################################
             # NOTEBOOK WIDGET
-            transient_tabs = ttk.Notebook(self.right_transient)
+            # [2020-01-14]\\transient_tabs = ttk.Notebook(self.right_transient)
+            transient_tabs = ttk.Notebook(self.transient)
             
             # <><><><><><<><<><><<><><><><><><><><><><><><><><><><><><><><> #
             # TAB-1 // OLD TRACKING INFO #
@@ -1827,13 +1883,23 @@ class AgilentQuotesTracker():  # {
             # GET NOTES FROM "selection_list"[5] (old)
             the_notes_var = str(the_selection_list[5])
             self.new_notes_var = tk.StringVar(master=tab_notes_section, value=the_notes_var)
+            new_notes_entry_widget = tk.Text(master=tab_notes_section, 
+                                             height=10, 
+                                             width=36
+                                             )
+            # insert text into box
+            new_notes_entry_widget.insert(tk.INSERT, the_notes_var)
+            new_notes_entry_widget.grid(row=0, column=1, padx=10, pady=10, sticky='e')
+            
             # [2020-01-06]\\new_notes_text_widget = tk.Text(master=tab_notes_section, height=10, width=36)
+            """
             new_notes_entry_widget = tk.Entry(master=tab_notes_section, 
                                                state=tk.NORMAL,
                                                textvariable=self.new_notes_var,
-                                               width=20
+                                               width=20,
                                                ).grid(row=0, column=1, columnspan=4,
                                                       rowspan=2, padx=10, pady=10, sticky='e')
+            """
             # FILL NOTES SECTION
             # [2020-01-06]\\notes.insert(tk.INSERT, str("<old notes here>"))
             # [2020-01-06]\\new_notes_text_widget.insert(tk.INSERT, str(the_notes_var))
@@ -1868,7 +1934,8 @@ class AgilentQuotesTracker():  # {
                 newsent=str(new_radio_sent_var.get()) if self.radio_sent_var.get() is True else str(self.radio_sent_var.get()), 
                 old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
                 open_time=str(self.tree.item(selected_item)['values'][0]),
-                newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
+                # [2020-01-14]\\newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
+                newnotes=str(new_notes_enry_widget.get(0, tk.END)),
                 newinitials=str(self.new_initials.get()), #old_initials=str(the_selection_list[1]),
                 newaccountid=str(self.new_account_id.get()), #old_account_id=str(the_selection_list[3]),
                 newproductnum=str(self.new_product_number.get()), #old_product_num=str(the_selection_list[4]),
