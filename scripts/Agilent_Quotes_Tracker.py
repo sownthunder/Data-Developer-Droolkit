@@ -1942,7 +1942,7 @@ class AgilentQuotesTracker():  # {
                 old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
                 open_time=str(self.tree.item(selected_item)['values'][0]),
                 # [2020-01-14]\\newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
-                newnotes=str(new_notes_entry_widget.get(0, tk.END)),
+                newnotes=str(new_notes_entry_widget.get("1.0", tk.END)),
                 newinitials=str(self.new_initials.get()), #old_initials=str(the_selection_list[1]),
                 newaccountid=str(self.new_account_id.get()), #old_account_id=str(the_selection_list[3]),
                 newproductnum=str(self.new_product_number.get()), #old_product_num=str(the_selection_list[4]),
@@ -2038,6 +2038,7 @@ class AgilentQuotesTracker():  # {
             display_str += "new product #:\t\t" + str(newproductnum) + "\n"
             display_str += "new PF Quote #:\t\t" + str(newpfnum) + "\n"
             display_str += "new SAP Quote #:\t\t" + str(newsapnum) + "\n"
+            display_str += "new notes:\n\n" + str(newnotes) + "\n"
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askokcancel(title="Confirm Update", message=str(display_str))
             print(confirm_box)
