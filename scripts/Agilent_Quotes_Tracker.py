@@ -17,6 +17,7 @@ EDITS:
          - added COLUMNS [initials], [sap_quote_number], and [product_number]
 01/03/20 - changed CREATE tab to contain proper tk.StringVar variables (ttk)
 01/09/20 - included validation checks for ACCOUNT ID, PF QUOTE #, SAP QUOTE #
+01/14/20 - horizontal scroll bar on treeview, fixed STR conversion (CREATE TAB)
 
 @author: derbates
 """
@@ -1935,7 +1936,7 @@ class AgilentQuotesTracker():  # {
                 old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
                 open_time=str(self.tree.item(selected_item)['values'][0]),
                 # [2020-01-14]\\newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
-                newnotes=str(new_notes_enry_widget.get(0, tk.END)),
+                newnotes=str(new_notes_entry_widget.get(0, tk.END)),
                 newinitials=str(self.new_initials.get()), #old_initials=str(the_selection_list[1]),
                 newaccountid=str(self.new_account_id.get()), #old_account_id=str(the_selection_list[3]),
                 newproductnum=str(self.new_product_number.get()), #old_product_num=str(the_selection_list[4]),
