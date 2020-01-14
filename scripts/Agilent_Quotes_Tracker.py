@@ -307,10 +307,10 @@ class AgilentQuotesTracker():  # {
         self.filemenu = tk.Menu(master=self.menubar,
                                 borderwidth=3,
                                 background="#0C85CE",
-                                font=("Comfortaa", 16),
+                                font=("Calibri", 16),
                                 tearoff=0)
-        self.filemenu.add_command(label="Update Log", command="")
-        self.filemenu.add_command(label="About", command="")
+        self.filemenu.add_command(label="Import Settings...", command="")
+        self.filemenu.add_command(label="Export Settings...", command="")
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.root.destroy)
         # FILE SUB-MENU ^^
@@ -323,7 +323,7 @@ class AgilentQuotesTracker():  # {
         self.editmenu = tk.Menu(master=self.root,
                                 borderwidth=3,
                                 background="#9e0ccf",
-                                font=("Impact", 16),
+                                font=("Calibri", 16),
                                 tearoff=0)
         self.editmenu.add_command(label="Search", command="")
         self.editmenu.add_separator()
@@ -331,26 +331,26 @@ class AgilentQuotesTracker():  # {
         self.editmenu.add_command(label="Select All", command="")
         # EDIT SUB-MENU ^^
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
-        self.helpmenu = tk.Menu(master=self.menubar,
+        self.viewmenu = tk.Menu(master=self.menubar,
                                 borderwidth=3,
                                 background="#ffbf00",
-                                font=("Courier New", 16),
-                                relief=tk.GROOVE,
-                                tearoff=0)
-        self.helpmenu.add_command(label="Help Index", command="")
-        self.helpmenu.add_command(label="About...", command="")
-        # HELP SUB-MENU ^^ 
-        self.menubar.add_cascade(label="Help", menu=self.helpmenu)
-        self.adminmenu = tk.Menu(master=self.root,
+                                font=("Calibri", 16),
+                                relief=tk.RIDGE,
+                                tearoff=1)
+        self.viewmenu.add_command(label="Filter Table", command="") # Help index
+        self.viewmenu.add_command(label="REFRESH Table", command=self.view_records) # About...
+        # VIEW SUB-MENU ^^
+        self.menubar.add_cascade(label="View", menu=self.viewmenu)
+        self.helpmenu = tk.Menu(master=self.root,
                                  borderwidth=3,
                                  background='#3d4043',
-                                 font=("Sourcecode Pro", 16),
+                                 font=("Calibri", 16),
                                  relief=tk.RIDGE,
-                                 tearoff=1)
-        self.adminmenu.add_command(label="Login/edit", command="")
-        self.adminmenu.add_command(label="REFRESH TABLE", command=self.view_records)
-        self.menubar.add_cascade(label="Table Tools", menu=self.adminmenu)
-        # ADMIN SUB-MENU ^^
+                                 tearoff=0)
+        self.helpmenu.add_command(label="Help", command="")  # Login/edit
+        self.helpmenu.add_command(label="About", command=self.view_records)  # REFRESH TABLE
+        self.menubar.add_cascade(label="Help", menu=self.helpmenu)  # TABLE TOOLS
+        # HELP SUB-MENU ^^
     # }
 
     def create_ttk_styles(self, the_style):  # {
@@ -694,12 +694,17 @@ class AgilentQuotesTracker():  # {
                       text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='nw')
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
             self.notes = tk.StringVar(master=self.root, value="")
+            """
+            self.notes = tk.Text(master=self.lblframe_create, 
+                                 height=10,
+                                 width=36
+                                 )
+            """
             
             tk.Entry(master=self.lblframe_create,
                                    width=20,
                                    textvariable=self.notes
                                    ).grid(row=7, column=1, padx=10, pady=10, sticky='e')
-            
             """
             self.notes = tk.Text(master=self.lblframe_create, 
                             height=10,
@@ -812,12 +817,12 @@ class AgilentQuotesTracker():  # {
                                      height=30, columns=13, selectmode='browse')  # height = 20
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
-            self.tree.column('#0', anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # TRACKING #
-            self.tree.column("one", anchor=tk.W, width=150, minwidth=150, stretch=tk.NO)  # TIME REC. // NAME
+            self.tree.column('#0', anchor=tk.CENTER, width=100, minwidth=100, stretch=tk.NO)  # TRACKING #
+            self.tree.column("one", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # TIME REC. // NAME
             self.tree.column("two", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # INITIALS // EMAIL
             self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
             self.tree.column("four", anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
-            self.tree.column("five", anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
+            self.tree.column("five", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
             self.tree.column("six", anchor=tk.W, width=160, minwidth=150, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
             self.tree.column("seven", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
             self.tree.column("eight", anchor=tk.CENTER, width=100, minwidth=80, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
@@ -1169,7 +1174,7 @@ class AgilentQuotesTracker():  # {
                 print("PF-QUOTE-#... PASSES")
                 event.widget['state'] = tk.ACTIVE
                 # test display message?
-                self.left_transient['text'] = ' <<< PF-QUOTE-#... correct >>>'
+                # [2020-01-14]\\self.left_transient['text'] = ' <<< PF-QUOTE-#... correct >>>'
                 # display message
                 self.message['text'] += '\n <<< PF-QUOTE-#... correct >>>'
                 # NoW CHECK IF SAP QUOTE # DOESNT MATCH
@@ -1289,9 +1294,9 @@ class AgilentQuotesTracker():  # {
                 # [2020-01-10]\\the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
                 # [2020-01-10]\\the_sap_quote_num = [str(self.sap_quote_num.get())]
                 # [2020-01-10]\\the_product_number = [str(self.product_num.get())]
-                the_prodflow_quote_num = ["None"]
-                the_sap_quote_num = ["None"]
-                the_product_number = ["None"]
+                the_prodflow_quote_num = [""]
+                the_sap_quote_num = [""]
+                the_product_number = [""]
                 the_company_name = [str(self.company_name.get())]
                 # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
                 # DICTIONARY OF LISTS
@@ -1886,7 +1891,8 @@ class AgilentQuotesTracker():  # {
             self.new_notes_var = tk.StringVar(master=tab_notes_section, value=the_notes_var)
             new_notes_entry_widget = tk.Text(master=tab_notes_section, 
                                              height=10, 
-                                             width=36
+                                             width=36,
+                                             font=("Times New Roman", 10)
                                              )
             # insert text into box
             new_notes_entry_widget.insert(tk.INSERT, the_notes_var)
