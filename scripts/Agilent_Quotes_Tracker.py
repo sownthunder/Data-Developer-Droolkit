@@ -366,9 +366,9 @@ class AgilentQuotesTracker():  # {
             # # STYLE THEME
             self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
-            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 10))
+            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
-            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 12, 'bold'))
+            self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 13, 'bold'))
             """
             # REMOVE THE BORDERS
             self.style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
@@ -659,7 +659,7 @@ class AgilentQuotesTracker():  # {
                       text='Type: '
                       ).grid(row=6, column=0, padx=10, pady=10, sticky='w')
             
-            self.type_var = tk.StringVar(master=self.root) #, value="email")
+            self.type_var = tk.StringVar(master=self.root, value="Select: ") #, value="email")
             """
             ttk.Radiobutton(master=self.lblframe_create,
                             variable=self.type_var,
@@ -693,15 +693,15 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=self.lblframe_create,
                       text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='nw')
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
-            self.notes = tk.StringVar(master=self.root, value="")
+            self.notes = tk.StringVar(master=self.root, value="None")
             """
             self.notes = tk.Text(master=self.lblframe_create, 
-                                 height=10,
-                                 width=36
-                                 )
+                                 height=6,
+                                 width=30,
+                                 font=("Calibri", 12)
+                                 ).grid(row=8, column=0, columnspan=2, padx=10, pady=10, sticky='w')
             """
-            
-            tk.Entry(master=self.lblframe_create,
+            ttk.Entry(master=self.lblframe_create,
                                    width=20,
                                    textvariable=self.notes
                                    ).grid(row=7, column=1, padx=10, pady=10, sticky='e')
@@ -817,19 +817,19 @@ class AgilentQuotesTracker():  # {
                                      height=30, columns=13, selectmode='browse')  # height = 20
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
-            self.tree.column('#0', anchor=tk.CENTER, width=100, minwidth=100, stretch=tk.NO)  # TRACKING #
-            self.tree.column("one", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # TIME REC. // NAME
-            self.tree.column("two", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # INITIALS // EMAIL
-            self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
+            self.tree.column('#0', anchor=tk.CENTER, width=120, minwidth=120, stretch=tk.NO)  # TRACKING #
+            self.tree.column("one", anchor=tk.CENTER, width=120, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
+            self.tree.column("two", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
+            self.tree.column("three", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # TYPE
             self.tree.column("four", anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
-            self.tree.column("five", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
+            self.tree.column("five", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
             self.tree.column("six", anchor=tk.W, width=160, minwidth=150, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
             self.tree.column("seven", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
             self.tree.column("eight", anchor=tk.CENTER, width=100, minwidth=80, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
             self.tree.column("nine", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PF QUOTE #//  ACCOUNT ID
             self.tree.column("ten", anchor=tk.CENTER, width=100, minwidth=75, stretch=tk.NO)  # SAP QUOTE # // PRODFLOW QUOTE #
-            self.tree.column("eleven", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # SENT
-            self.tree.column("twelve", anchor=tk.CENTER, width=125, minwidth=100, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
+            self.tree.column("eleven", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # SENT
+            self.tree.column("twelve", anchor=tk.CENTER, width=125, minwidth=125, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
             self.tree.column("thirteen", anchor=tk.CENTER, width=75, minwidth=75, stretch=tk.YES)  # NOTES // PRICE
 
             # Definitions of Headings
@@ -895,7 +895,8 @@ class AgilentQuotesTracker():  # {
             self.account_id.set("")         # account id
             self.initials.set("")           # initials
             self.type_var.set("Select: ")   # quote type
-            self.notes.set("")              # notes
+            # [2020-01-14]\\self.notes.set("")              
+            self.notes.insert(tk.INSERT, "") # notes
         # }
         except: # { 
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1258,103 +1259,112 @@ class AgilentQuotesTracker():  # {
                 display_str += "company name:\t\t" + str(self.company_name.get()) + "\n"
                 display_str += "initials:\t\t\t" + str(self.initials.get()) + "\n"
                 display_str += "account id:\t\t" + str(self.account_id.get()) + "\n"
-                display_str += "PF Quote #:\t\t NONE \n"
-                display_str += "SAP Quote #:\t\t NONE \n"
-                display_str += "product #:\t\t NONE \n"
+                display_str += "PF Quote #:\t\tNONE\n"
+                display_str += "SAP Quote #:\t\tNONE\n"
+                display_str += "product #:\t\tNONE\n"
+                display_str += "-------------------------------------------\n"
+                display_str += "notes: \n\n"
+                display_str += str(self.notes.get())  # ("1.0", tk.END))
                 # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
                 confirm_box = messagebox.askokcancel(title="Confirm Create", message=str(display_str))
                 print(confirm_box)
-                if str(confirm_box) == "True": # {
-                    print("TRRRUEEEEEE")
+                if str(confirm_box) == "True":  # {
+                    # IF THE USER SAID YES.... ADD NEW RECORD!
+                    logging.info("...ADDING NEW RECORD...")
+                    # create ENTRY variables
+                    # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
+                    track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
+                    the_name = [str(self.name.get())]
+                    the_email = [str(self.email.get())]
+                    the_type = [str(self.type_var.get())]
+                    # [2020-01-08]\\the_sent = [str(self.radio_sent_var.get())]
+                    the_sent = [str("False")]
+                    open_time = [str(pd.Timestamp.now())]
+                    close_time = [str("None")]
+                    turn_around = [str("None")]  # np.Nan?
+                    # [2019-12-18]\\the_notes = [str(self.notes.get())]
+                    # IF NOTES IS LEFT EMPTY ADD IN THAT IT IS SO
+                    if str(self.notes.get()) == "":  # {
+                        # SET NOTES TO STRING OF "none"
+                        the_notes = ["None"]
+                    # }
+                    # ELSE ITS NOT EMPTY SO ASSIGN TO DATAFRAME
+                    else:  # {
+                        # [2020-01-14]\\the_notes = [str(self.notes.get("1.0", tk.END))]
+                        the_notes = [str(self.notes.get())]
+                    # }
+                    the_initials = [str(self.initials.get())]
+                    the_account_id_num = [str(self.account_id.get())]
+                    # [2020-01-10]\\the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
+                    # [2020-01-10]\\the_sap_quote_num = [str(self.sap_quote_num.get())]
+                    # [2020-01-10]\\the_product_number = [str(self.product_num.get())]
+                    the_prodflow_quote_num = [""]
+                    the_sap_quote_num = [""]
+                    the_product_number = [""]
+                    the_company_name = [str(self.company_name.get())]
+                    # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
+                    # DICTIONARY OF LISTS
+                    """
+                    *************************
+                    MUST BE THE SAME AS THE SQLite COLUMN NAMES
+                    ****************************
+                    """
+                    new_entry_dict = {'tracking_number': track_num,
+                                      'name': the_name,
+                                      'email': the_email,
+                                      'type': the_type,
+                                      'sent': the_sent,
+                                      'open_time': open_time,
+                                      'close_time': close_time,
+                                      'turn_around': turn_around,
+                                      'notes': the_notes,
+                                      'initials': the_initials,
+                                      'account_id': the_account_id_num,
+                                      'prodflow_quote_number': the_prodflow_quote_num,
+                                      'sap_quote_number': the_sap_quote_num,
+                                      'product_number': the_product_number,
+                                      'company_name': the_company_name
+                                      # [2019-12-31]\\'price': the_price
+                                      }
+                    # CREATE EMPTY DATAFRAME
+                    new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
+                    # CREATE ENGINE (for sending to Database)
+                    engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                    # SEND DATAFRAME TO DATABASE
+                    new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+                    # UPDATE DISPLAY MESSAGE
+                    self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
+                    # CLEAR ENTRY BOXES
+                    # [2020-01-10]\\
+                    """
+                    self.name.delete(0, tk.END)
+                    self.email.delete(0, tk.END)
+                    self.notes.delete(0, tk.END)
+                    self.initials.delete(0, tk.END)
+                    self.account_id.delete(0, tk.END)
+                    self.prodflow_quote_num.delete(0, tk.END)
+                    self.sap_quote_num.delete(0, tk.END)
+                    self.product_num.delete(0, tk.END)
+                    self.company_name.delete(0, tk.END)
+                    self.type_var.set("Select: ")
+                    # [2019-12-31]\\self.price.delete(0, tk.END)
+                    """
+                    self.name.set("")
+                    self.email.set("")
+                    self.notes.set("")
+                    # [2020-01-14]\\self.notes.insert(tk.INSERT, "")
+                    self.initials.set("")
+                    self.account_id.set("")
+                    # [2020-01-10]\\self.prodflow_quote_num.set("")
+                    # [2020-01-10]\\self.sap_quote_num.set("")
+                    # [2020-01-10]\\self.product_num.set("")
+                    self.company_name.set("")
+                    self.type_var.set("Select: ")
                 # }
-                logging.info("...ADDING NEW RECORD...")
-                # create ENTRY variables
-                # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
-                track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
-                the_name = [str(self.name.get())]
-                the_email = [str(self.email.get())]
-                the_type = [str(self.type_var.get())]
-                # [2020-01-08]\\the_sent = [str(self.radio_sent_var.get())]
-                the_sent = [str("False")]
-                open_time = [str(pd.Timestamp.now())]
-                close_time = [str("None")]
-                turn_around = [str("None")]  # np.Nan?
-                # [2019-12-18]\\the_notes = [str(self.notes.get())]
-                # IF NOTES IS LEFT EMPTY ADD IN THAT IT IS SO
-                if str(self.notes.get()) == "":  # {
-                    # SET NOTES TO STRING OF "none"
-                    the_notes = ["None"]
-                # }
-                # ELSE ITS NOT EMPTY SO ASSIGN TO DATAFRAME
                 else:  # {
-                    the_notes = [str(self.notes.get())]
+                    # SHOW WARNING BOX
+                    messagebox.showwarning(title="WARNING!", message='dont be a cowboys fan')
                 # }
-                the_initials = [str(self.initials.get())]
-                the_account_id_num = [str(self.account_id.get())]
-                # [2020-01-10]\\the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
-                # [2020-01-10]\\the_sap_quote_num = [str(self.sap_quote_num.get())]
-                # [2020-01-10]\\the_product_number = [str(self.product_num.get())]
-                the_prodflow_quote_num = [""]
-                the_sap_quote_num = [""]
-                the_product_number = [""]
-                the_company_name = [str(self.company_name.get())]
-                # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
-                # DICTIONARY OF LISTS
-                """
-                *************************
-                MUST BE THE SAME AS THE SQLite COLUMN NAMES
-                ****************************
-                """
-                new_entry_dict = {'tracking_number': track_num,
-                                  'name': the_name,
-                                  'email': the_email,
-                                  'type': the_type,
-                                  'sent': the_sent,
-                                  'open_time': open_time,
-                                  'close_time': close_time,
-                                  'turn_around': turn_around,
-                                  'notes': the_notes,
-                                  'initials': the_initials,
-                                  'account_id': the_account_id_num,
-                                  'prodflow_quote_number': the_prodflow_quote_num,
-                                  'sap_quote_number': the_sap_quote_num,
-                                  'product_number': the_product_number,
-                                  'company_name': the_company_name
-                                  # [2019-12-31]\\'price': the_price
-                                  }
-                # CREATE EMPTY DATAFRAME
-                new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
-                # CREATE ENGINE (for sending to Database)
-                engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
-                # SEND DATAFRAME TO DATABASE
-                new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
-                # UPDATE DISPLAY MESSAGE
-                self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
-                # CLEAR ENTRY BOXES
-                # [2020-01-10]\\
-                """
-                self.name.delete(0, tk.END)
-                self.email.delete(0, tk.END)
-                self.notes.delete(0, tk.END)
-                self.initials.delete(0, tk.END)
-                self.account_id.delete(0, tk.END)
-                self.prodflow_quote_num.delete(0, tk.END)
-                self.sap_quote_num.delete(0, tk.END)
-                self.product_num.delete(0, tk.END)
-                self.company_name.delete(0, tk.END)
-                self.type_var.set("Select: ")
-                # [2019-12-31]\\self.price.delete(0, tk.END)
-                """
-                self.name.set("")
-                self.email.set("")
-                self.notes.set("")
-                self.initials.set("")
-                self.account_id.set("")
-                # [2020-01-10]\\self.prodflow_quote_num.set("")
-                # [2020-01-10]\\self.sap_quote_num.set("")
-                # [2020-01-10]\\self.product_num.set("")
-                self.company_name.set("")
-                self.type_var.set("Select: ")
             # }
             else:  # {
                 # [2020-01-07]\\self.message['text'] = ' >>>>>>>>>>>>><<<<<<<<<<<<<\n [Initials], [Type], [AccountID],\n [Product #], [PF Quote #], [SAP Quote #]\n CANNOT BE left BLANK! \n >>>>>>>>>>>>><<<<<<<<<<<<<'
@@ -1435,12 +1445,13 @@ class AgilentQuotesTracker():  # {
     # }
 
     def new_records_validated(self):  # {
-        print("NAME:\n" + str(self.name.get()))
+        print("NAME:\n <" + str(self.name.get()) + ">")
+        print("TYPE:\n <" + str(self.type_var.get()) + ">")
         # TRY THE FOLLOWING
         try:  # {
             return len(str(self.initials.get())) != 0 \
                    and str(self.type_var.get()) != "Select:" \
-                   and len(str(self.account_id.get())) != 0 \
+                   and len(str(self.account_id.get())) != 0
                    # [2020-01-07]\\and len(self.pf_quote_num.get()) != 0 \
                    # [2020-01-07]\\and len(self.sap_quote_num.get()) != 0 \
                    # [2020-01-07]\\and len(self.product_number.get()) != 0
@@ -1499,7 +1510,7 @@ class AgilentQuotesTracker():  # {
             query = 'SELECT * FROM quotes ORDER BY open_time desc'
             quote_tracker_entries = self.execute_db_query(query)
             for row in quote_tracker_entries:  # {
-                print("PRINTING ROW:\n\t" + str(row))
+                # [2020-01-14]\\print("PRINTING ROW:\n\t" + str(row))
                 logging.info("TRACKING # == " + str(row[0]))
                 logging.info("Time REC. === " + str(row[5])) #  WAS NAME [row=1]
                 logging.info("Initials == " + str(row[9]))  # WAS EMAIL [row=2]
@@ -2038,6 +2049,7 @@ class AgilentQuotesTracker():  # {
             display_str += "new product #:\t\t" + str(newproductnum) + "\n"
             display_str += "new PF Quote #:\t\t" + str(newpfnum) + "\n"
             display_str += "new SAP Quote #:\t\t" + str(newsapnum) + "\n"
+            display_str += "-------------------------------------------------------------\n"
             display_str += "new notes:\n\n" + str(newnotes) + "\n"
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askokcancel(title="Confirm Update", message=str(display_str))
