@@ -263,7 +263,7 @@ class AgilentQuotesTracker():  # {
         # TRY THE FOLLOWING
         try:  # {
             # [2019-12-11]\\self.create_menubar()
-            self.create_ttk_styles(the_style="radiance")
+            self.create_ttk_styles(the_style="blue")
             # [2019-12-11]\\self.create_menubar()
             self.create_menubar()
             self.create_left_side()
@@ -421,7 +421,8 @@ class AgilentQuotesTracker():  # {
         # [2019-12-26]\\self.leftframe.pack(side=tk.LEFT, fill=tk.X, expand=False)
         self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=False)
         # BIND FUNCTIONS TO FRAME
-        self.leftframe.bind('<Leave>', self.clear_message_area)
+        # [2020-01-14\\self.leftframe.bind('<Leave>', self.clear_message_area)
+        self.leftframe.bind('<Enter>', self.clear_message_area)
 
     # }
 
@@ -858,6 +859,7 @@ class AgilentQuotesTracker():  # {
             
             # BIND CLICK ACTIONS/EVENTS
             self.tree.bind("<Double-1>", self.on_double_click)
+            self.tree.bind("<Enter>", self.clear_message_area)
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1596,13 +1598,14 @@ class AgilentQuotesTracker():  # {
             """
             # [2020-01-14]\\THE BELOW WAS 
             """
-            self.pw = ttk.PanedWindow(master=self.transient, orient=tk.HORIZONTAL)
+            self.pw = tk.PanedWindow(master=self.transient, orient=tk.VERTICAL)
             self.pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH) # padx='2m', pady=2
-            self.left_transient = ttk.Label(master=self.pw, text=' >>> Paned \n >>> Message \n >>> panel',
-                                            background='#3399ff', foreground='#cc0000', anchor=tk.CENTER)
-            self.right_transient = ttk.Frame(master=self.pw) # MAIN FRAME
-            self.pw.add(self.left_transient)
-            self.pw.add(self.right_transient)
+            self.top_transient = ttk.Label(master=self.pw, text=' >>> Paned Message Panel <<<',
+                                            background='#0073e6', foreground='#cc0000', anchor=tk.N)
+            self.bottom_transient = ttk.Frame(master=self.pw) # MAIN FRAME
+            self.pw.add(self.top_transient)
+            self.pw.add(self.bottom_transient)
+            self.pw.configure(sashrelief=tk.RAISED)
             """
             """
             ######################################################
@@ -1620,11 +1623,12 @@ class AgilentQuotesTracker():  # {
             # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
             location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
             self.transient.geometry(str('385x255+' + location_str))
-            self.transient.resizable(width=False, height=False)
+            self.transient.resizable(width=False, height=True)
             ##################################################################################
             # NOTEBOOK WIDGET
             # [2020-01-14]\\transient_tabs = ttk.Notebook(self.right_transient)
             transient_tabs = ttk.Notebook(self.transient)
+            # [2020-01-15]\\transient_tabs = ttk.Notebook(self.bottom_transient)
             
             # <><><><><><<><<><><<><><><><><><><><><><><><><><><><><><><><> #
             # TAB-1 // OLD TRACKING INFO #
@@ -1645,7 +1649,7 @@ class AgilentQuotesTracker():  # {
             ttk.Entry(master=tab_tracking_info, 
                                      state='readonly',
                                      textvariable=self.tracking_num,
-                                     width=40,
+                                     width=36,
                                      ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
             # TIME RECEIVED (open_time) #
             ttk.Label(master=tab_tracking_info,
@@ -1659,7 +1663,7 @@ class AgilentQuotesTracker():  # {
             ttk.Entry(master=tab_tracking_info,
                                  state='readonly',
                                  textvariable=self.open_time,
-                                 width=40,
+                                 width=36,
                                  ).grid(row=1, column=1, padx=10, pady=10, sticky='w')
             # INITIALS #
             ttk.Label(master=tab_tracking_info,
@@ -1671,7 +1675,7 @@ class AgilentQuotesTracker():  # {
             new_initials_entry_widget = ttk.Entry(master=tab_tracking_info,
                                  state='active',
                                  textvariable=self.new_initials,
-                                 width=40,
+                                 width=36,
                                  ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             # TYPE #
             ttk.Label(master=tab_tracking_info,
@@ -1706,7 +1710,7 @@ class AgilentQuotesTracker():  # {
             new_company_name_entry_widget = ttk.Entry(master=tab_account_info, 
                                                       state='active',
                                                       textvariable=self.new_company_name,
-                                                      width=40
+                                                      width=36
                                                       ).grid(row=0, column=1, padx=10, pady=10, sticky=None)
             
             # CONTACT PERSON #
@@ -1719,7 +1723,7 @@ class AgilentQuotesTracker():  # {
             new_contact_person_entry_widget = ttk.Entry(master=tab_account_info, 
                                                         state='active',
                                                         textvariable=self.new_name,
-                                                        width=40
+                                                        width=36
                                                         ).grid(row=1, column=1, padx=10, pady=10, sticky=None)
             
             # EMAIL ADDRESS #
@@ -1732,7 +1736,7 @@ class AgilentQuotesTracker():  # {
             new_email_address_entry_widget = ttk.Entry(master=tab_account_info, 
                       state='active',
                       textvariable=self.new_email,
-                      width=40
+                      width=36
                       ).grid(row=2, column=1, padx=10, pady=10, sticky=None)
             
             # ACCOUNT ID #
@@ -1745,7 +1749,7 @@ class AgilentQuotesTracker():  # {
             new_account_id_entry_widget = ttk.Entry(master=tab_account_info, 
                                                     state='active',
                                                     textvariable=self.new_account_id, 
-                                                    width=40
+                                                    width=36
                                                     ).grid(row=3, column=1, padx=10, pady=10, sticky=None)
             
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><<><>< #
@@ -1903,7 +1907,7 @@ class AgilentQuotesTracker():  # {
             new_notes_entry_widget = tk.Text(master=tab_notes_section, 
                                              height=10, 
                                              width=36,
-                                             font=("Times New Roman", 10)
+                                             font=("Calibri", 10)
                                              )
             # insert text into box
             new_notes_entry_widget.insert(tk.INSERT, the_notes_var)
