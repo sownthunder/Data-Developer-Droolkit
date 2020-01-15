@@ -18,6 +18,7 @@ EDITS:
 01/03/20 - changed CREATE tab to contain proper tk.StringVar variables (ttk)
 01/09/20 - included validation checks for ACCOUNT ID, PF QUOTE #, SAP QUOTE #
 01/14/20 - horizontal scroll bar on treeview, fixed STR conversion (CREATE TAB)
+01/15/20 - added fixings/ability to change height of OPEN_MODIFY_WINDOW
 
 @author: derbates
 """
@@ -337,6 +338,8 @@ class AgilentQuotesTracker():  # {
                                 font=("Calibri", 16),
                                 relief=tk.RIDGE,
                                 tearoff=1)
+        self.viewmenu.add_command(label="T-pickle (admin)", command=self.open_admin_window)
+        self.viewmenu.add_separator()
         self.viewmenu.add_command(label="Filter Table", command="") # Help index
         self.viewmenu.add_command(label="REFRESH Table", command=self.view_records) # About...
         # VIEW SUB-MENU ^^
@@ -448,7 +451,9 @@ class AgilentQuotesTracker():  # {
             self.tab2 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab2, text='FILTER')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
-
+            
+            # [2020-01-15]
+            """
             # TAB-3 // IMPORT TOOLS
             self.tab3 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab3, text='IMPORT')
@@ -459,7 +464,7 @@ class AgilentQuotesTracker():  # {
             self.tab4 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab4, text='EXPORT')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
-            
+            """
             
             # [2020-01-03]
             """
@@ -822,7 +827,7 @@ class AgilentQuotesTracker():  # {
             self.tree.column("one", anchor=tk.CENTER, width=120, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
             self.tree.column("two", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
             self.tree.column("three", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # TYPE
-            self.tree.column("four", anchor=tk.W, width=100, minwidth=100, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
+            self.tree.column("four", anchor=tk.W, width=125, minwidth=120, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
             self.tree.column("five", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
             self.tree.column("six", anchor=tk.W, width=160, minwidth=150, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
             self.tree.column("seven", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
@@ -858,6 +863,7 @@ class AgilentQuotesTracker():  # {
             self.tree.config(xscrollcommand=self.scrollbar.set)
             
             # BIND CLICK ACTIONS/EVENTS
+            self.tree.bind("<<TreeviewSelect>>", self.on_single_click)
             self.tree.bind("<Double-1>", self.on_double_click)
             self.tree.bind("<Enter>", self.clear_message_area)
         # }
@@ -932,6 +938,12 @@ class AgilentQuotesTracker():  # {
         # clear message area
         self.message['text'] = ''
     # }
+    
+    def on_single_click(self, event): # {
+        # edit column?
+        # [2020-01-15]\\event.widget['width'] = 2000
+        print(str(self.tree.column()))
+    # }
 
     def on_double_click(self, event):  # {
         # TRY THE FOLLOWING
@@ -1004,11 +1016,18 @@ class AgilentQuotesTracker():  # {
                                    + selected_product_number + "\n" + selected_company_name
                                    )
             logging.info(str(selection_string))
-            # SEND SELECTIONS AND OPEN MODIFY WINDOW
-            self.open_modify_window(selected_item=item, 
-                                    the_selection_list=selection_list, 
-                                    window_location=str(self.mouse_location)
-                                    )
+            ############################################## 
+            # CHECK IF ANOTHER WINDOW IS ALREADY OPEN (greaater than 6)
+            if len(self.children_num) > 6: # {
+                messagebox.showwarning(title="WARNING:", message="cannot click while other window open!")
+            # }
+            else: # {
+                # SEND SELECTIONS AND OPEN MODIFY WINDOW
+                self.open_modify_window(selected_item=item, 
+                                        the_selection_list=selection_list, 
+                                        window_location=str(self.mouse_location)
+                                        )
+            # }
             # [2019-12-12]\\messagebox.showwarning(title=str(pd.Timestamp.now()), message=str(selection_string))
             # [2019-12-12]\\messagebox.showinfo(title="yupp!", message=str(self.tree.item(item_2, "text")))
         # }
@@ -2005,6 +2024,19 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         # }
 
+    # }
+    
+    def open_admin_window(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            self.admin_transient = tk.Toplevel(master=self.root)
+            self.admin_transient.title("ADMIN TOOLS - Agilent Custom Quotes Request Log")
+            
+            self.admin_transient.mainloop()
+        # }
+        except: # {
+            pass
+        # }
     # }
 
     def update_record(self, newname,
