@@ -208,7 +208,10 @@ class AgilentQuotesTracker():  # {
             return query_result
 
     # }
-
+    
+    """
+    EXECUTES SQL QUERY AND RETURNS DATAFRAME FILLED WITH RESULTS
+    """
     def execute_df_query(self, query, the_conn):  # {
         # TRY THE FOLLOWING
         try:  # {
@@ -238,7 +241,8 @@ class AgilentQuotesTracker():  # {
         else:  # {
             logging.info("Operation Completed Successfully...")
         # }
-
+        
+        return df
     # }
 
     ###############################################################################################
@@ -328,7 +332,7 @@ class AgilentQuotesTracker():  # {
                                 tearoff=0)
         self.editmenu.add_command(label="Search", command="")
         self.editmenu.add_separator()
-        self.editmenu.add_command(label="Copy Cell", command="")
+        self.editmenu.add_command(label="Select Regino", command="")
         self.editmenu.add_command(label="Select All", command="")
         # EDIT SUB-MENU ^^
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
@@ -339,8 +343,8 @@ class AgilentQuotesTracker():  # {
                                 relief=tk.RIDGE,
                                 tearoff=1)
         self.viewmenu.add_command(label="T-pickle (admin)", command=self.open_admin_window)
-        self.viewmenu.add_separator()
-        self.viewmenu.add_command(label="Filter Table", command="") # Help index
+        # [2020-01-16]\\self.viewmenu.add_separator()
+        # [2020-01-16]\\self.viewmenu.add_command(label="Filter Table", command="") # Help index
         self.viewmenu.add_command(label="REFRESH Table", command=self.view_records) # About...
         # VIEW SUB-MENU ^^
         self.menubar.add_cascade(label="View", menu=self.viewmenu)
@@ -352,6 +356,7 @@ class AgilentQuotesTracker():  # {
                                  tearoff=0)
         self.helpmenu.add_command(label="Help", command="")  # Login/edit
         self.helpmenu.add_command(label="About", command=self.view_records)  # REFRESH TABLE
+        self.helpmenu.add_command(label="Check for Updates...", command="")
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)  # TABLE TOOLS
         # HELP SUB-MENU ^^
     # }
@@ -367,7 +372,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -447,9 +452,9 @@ class AgilentQuotesTracker():  # {
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             
             
-            # TAB-2 // FILTER TOOLS
+            # TAB-2 // COPY TOOLS
             self.tab2 = ttk.Frame(master=self.tab_control)
-            self.tab_control.add(self.tab2, text='FILTER')
+            self.tab_control.add(self.tab2, text='COPY')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             
             # [2020-01-15]
@@ -727,7 +732,6 @@ class AgilentQuotesTracker():  # {
                                        text="CREATE",
                                        command=self.add_new_record
                                        ).grid(row=8, column=0, padx=10, pady=10, sticky='n')
-            
             # CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
                                       text="CLEAR",
@@ -939,10 +943,50 @@ class AgilentQuotesTracker():  # {
         self.message['text'] = ''
     # }
     
+    """
+    def on_create_click(self, event): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # SHRINK DOWN FIRST 3 COLUMNS
+            event.widget.column(column="#0", widht=50)
+            event.widget.column(column="#1", width=50)
+            event.widget.column(column="#2", width=50)
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            logging.info("Operation Completed Successfully...")
+        # }
+    # }
+    """
+    
     def on_single_click(self, event): # {
         # edit column?
         # [2020-01-15]\\event.widget['width'] = 2000
-        print(str(self.tree.column()))
+        # CHANGE THE WIDTH OF SELECT ROW
+        print(str(self.tree.column(column="#1", width=200)))
+        test_column = self.tree.column(column="#0")
+        # CHANGE ORDER OF DISPLAY COLUNS???
+        print(test_column)
+        self.tree.set_children()
     # }
 
     def on_double_click(self, event):  # {
@@ -1060,12 +1104,22 @@ class AgilentQuotesTracker():  # {
         # }
         logging.info("\t CHILDREN AFTER \n\t\t========>" + str(len(self.children_num)))
     # }
+    
+    def copy_create_record(self, the_treeview_row): # {
+        pass
+    # }
 
     ######################################################################################################
     # QUOTE NUMBER CONVENTION AND PROGRESS CHECKS #
     ###############################################
 
     def check_quote_completion(self, the_df):  # {
+        # CREATE ENGINE (for pulling from Database)
+        engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+        # USE ENGINE TO CONNECT TO DATABASE
+        cnxn = pyodbc.connect(engine)
+        # SEND DATAFRAME TO DATABASE
+        # [2020-01-16]\\new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
         # TRY THE FOLLOWING
         try:  # {
             # LIST TO HOLD RESULTS
@@ -1549,6 +1603,7 @@ class AgilentQuotesTracker():  # {
                 # [2019-12-31]\\logging.info("SENT  == " + str(row[4]))  # WAS SAP QUOTE # [row=12]
                 # [2019-12-31]\\logging.info("Time Sent. == " + str(row[6])) # WAS PRICE [row=13]
                 logging.info("NOTES == " + str(row[8]))  # WAS PRODFLOW QUOTE # [row=11]
+                logging.info("TURN AROUND TIME (if any) == " + str(row[7]))
                 # CREATE LIST TO HOLD RECORD ENTRY
                 # [Tracking #] [Name] [Email] [Type] [Timestamp/open_time]
                 # [2019-12-31]
@@ -2029,13 +2084,62 @@ class AgilentQuotesTracker():  # {
     def open_admin_window(self): # {
         # TRY THE FOLLOWING
         try: # {
+            # self.admin_transient = tk.Toplevel(master=self.root)
             self.admin_transient = tk.Toplevel(master=self.root)
             self.admin_transient.title("ADMIN TOOLS - Agilent Custom Quotes Request Log")
+            self.admin_transient.geometry('500x60+250+250')
+            self.admin_transient.resizable(width=False, height=False)
+            # LABEL 
+            ttk.Label(master=self.admin_transient, 
+                      text="Current T-#: "
+                      ).grid(row=0, column=0, padx=10, pady=10, sticky='e')
+            
+            # PULL T-NUMBER FROM PICKLE
+            with open(Path(self.t_count_filename), 'rb') as f: # {
+                # load value from file
+                quotes_t_number = pickle.load(f)
+            # }
+            
+            t_pickle_var = tk.IntVar(master=self.admin_transient, 
+                                        value=str(quotes_t_number)
+                                        )
+            # SPINBOX FOR ADMIN
+            ttk.Spinbox(master=self.admin_transient,
+                        from_=0,
+                        to=999999,
+                        textvariable=t_pickle_var
+                        ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
+            # [2020-01-16]]\\
+            """
+            ttk.Entry(master=self.admin_transient,
+                      textvariable=t_pickle_var
+                      ).grid(row=0, column=1, padx=10, pady=10, sticky='e')
+            """
             
             self.admin_transient.mainloop()
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            logging.info("Operation Completed Successfully...")
         # }
     # }
 
@@ -2096,6 +2200,14 @@ class AgilentQuotesTracker():  # {
                     print("UPDATING RECORD...")
                     print("NEW_SENT RADIO VAR [passed_thru_function] == " + str(newsent))
                     # CHECK IF SENT HAS BEEN SWITCHED!
+                    """
+                    [2020-01-16]
+                    << edited so that it updates:
+                        name, email, type, notes, initials, account_id, 
+                        prodflow_quote_number, sap_quote_number, company_name, product_number
+                        THEN call FUNCTION or pull entire database as DATAFRAME 
+                    """
+                    ###########################################################################
                     # IF SO UPDATE: sent, close_time, turn_around AND ALSO name, email, notes
                     # [2019-12-27]\\if bool(newsent) is True:  # {
                     if newsent == "True":  # {
@@ -2142,6 +2254,7 @@ class AgilentQuotesTracker():  # {
                         self.message['text'] = 'Quote Record of {} modified'.format(tracking_number)
                         self.view_records()
                     # }
+                    ##############################################################################
                 # }
                 except:  # {
                     errorMessage = str(sys.exc_info()[0]) + "\n"
