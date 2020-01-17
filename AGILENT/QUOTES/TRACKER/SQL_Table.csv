@@ -1,0 +1,128 @@
+tracking_number,name,email,type,sent,open_time,close_time,turn_around,notes,initials,account_id,prodflow_quote_number,sap_quote_number,price,company_name,product_number
+T00000000001,Raffaella,ultra@ultrasci.it,email,True,2020-01-14 09:06:26.827094,2020-01-14 09:52:12.998358,0 days 00:45:46.171264,None,clr/cb,70599064,011420-787,3118922,,ULTRA Italia,CUS-00002438
+T00000000002,Rune Jorgenson,rmj@analytech.dk,email,True,2020-01-14 11:30:10.220050,2020-01-14 15:54:31.648525,0 days 04:24:21.428475,"*Quote to be sent to Agilent rep. Susanne K.
+
+**Previous quote # 3119136 (011420-789) void due to pricing error. Replaced with quote #3119213.
+",RF/cb/KSR,70209452,011420-793,3119213,,Analytech,CUS-00002441
+T00000000003,Raffaella,ultra@ultrasci.it,email,True,2020-01-14 11:31:59.582988,2020-01-14 11:55:00.000000,,None,clr/SI,70599064,011420-790,3119120,,ULTRA Italia,CUS-00002440
+T00000000004,Glen Arrieta,garrieta@ocwd.com,email ,True,2020-01-14 11:46:15.654761,2020-01-14 12:48:00.000000,,None,clr/SI,70339639,011420-791,3119191,,Orange County Water District,CUS-00002442
+T00000000005,Raffaella,ultra@ultrasci.it,email,True,2020-01-14 12:03:37.168555,2020-01-16 11:39:33.472533,1 days 23:35:56.303978,"None
+
+",clr/SI,70599064,011420-792,3119216,,ULTRA Italia,CUS-00002443
+T00000000006,Veronica,ultra@ultrasci.it,email,True,2020-01-14 12:04:56.341828,2020-01-15 10:13:00,1 days 23:30:36.614300,"Incomplete info. Waiting for the customer to get back to us.
+
+",clr/SI,70599064,011520-797,3120101,,ULTRA Italia,CUS-00002445
+T00000000007,Derek Mukai,Derek.mukai@navy.mil,web,True,2020-01-14 13:50:42.911722,2020-01-14 15:47:59.722873,0 days 01:57:16.811151,None,RF/SI,70338849,011420-794,3119412,,Pearl Harbor Naval Shipyard and IMF,CUS-00002444
+T00000000008,,,email,True,2020-01-14 16:13:29.117333,2020-01-15 10:40:19.435122,0 days 18:26:50.317789,"Waiting for more info from customer
+
+",clr/cb,70002990,011420-795,3120059,,US EPA,ICUS-0000973
+T00000000009,Raffaella,ultra@ultrasci.it,email,True,2020-01-15 09:20:54.715894,2020-01-16 11:35:50.183474,1 days 02:14:55.467580,"None
+
+",clr/SI,70599064,011520-800,3120256,,ULTRA Italia,CUS-00002446
+T00000000010,Johanna Gilbertsson,johannagilbertsson@eurofins.se,email,True,2020-01-15 10:15:19.348966,2020-01-15 14:45:16.625580,0 days 04:29:57.276614,"None
+
+",clr/cb,70271152,011520-798,3120526,,Eurofins Sweden,CUS-00002447
+T00000000011,Raffaella,ultra@ultrasci.it,email,True,2020-01-15 11:21:52.493088,2020-01-16 11:34:41.932694,1 days 00:12:49.439606,"No bid
+
+",clr,70599064,,0000000,,ULTRA Italia,
+T00000000012,Raffaella,ultra@ultrasci.it,email,True,2020-01-15 11:26:42.722685,2020-01-15 14:23:00,1 days 00:08:14.812411,"1 of 4
+
+
+
+",clr/SI,70599064,011520-805,3120534,,ULTRA Italia,CUS-00002448
+T00000000013,Raffaella,ultra@ultrasci.it,email,True,2020-01-15 14:25:25.439746,2020-01-15 14:23:00,0 days 21:09:48.726725,"2 of 4
+
+
+
+",clr/SI,70599064,011520-806,3120536,,ULTRA Italia,CUS-00002449
+T00000000014,Raffaella,ultra@ultrasci.it,email,True,2020-01-15 14:25:53.304974,2020-01-15 14:23:00,0 days 21:10:16.381748,"3 of 4
+
+
+",clr/CB,70599064,011520-807,3120614,,ULTRA Italia,CUS-00002451
+T00000000015,Raffaella,ultra@ultrasci.it,email,True,2020-01-15 14:26:25.067765,2020-01-15 14:23:00,0 days 23:41:54.943383,"4 of 4
+
+
+
+
+",clr/SI,70599064,011520-808,3120579,,ULTRA Italia,CUS-00002450
+T00000000016,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 09:23:41.153844,2020-01-16 11:36:41.658931,0 days 02:13:00.505087,"None
+
+",clr/SI,70599064,011620-817,3122153,,ULTRA Italia,CUS-00002453
+T00000000017,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 09:24:24.239609,2020-01-16 11:36:56.156037,0 days 02:12:31.916428,"None
+
+",clr/SI,70599064,011620-818,3122160,,ULTRA Italia,CUS-00002454
+T00000000018,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 09:25:03.257293,2020-01-16 11:37:09.497712,0 days 02:12:06.240419,"None
+
+",clr/SI,70599064,011620-819,3122165,,ULTRA Italia,CUS-00002455
+T00000000019,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 09:25:36.370729,2020-01-16 11:39:01.148189,0 days 02:13:24.777460,"None
+
+
+",clr/SI,70599064,011620-820,3122171,,ULTRA Italia,CUS-00002456
+T00000000020,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 09:26:12.420230,2020-01-16 11:37:37.372966,0 days 02:11:24.952736,"FOC
+
+",clr,70599064,,0000000,,ULTRA Italia,
+T00000000021,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 10:43:46.572362,2020-01-16 12:19:56.866605,0 days 01:36:10.294243,"None
+
+
+",clr/ CB,70599064,011620-823,3122415,,ULTRA Italia,ICUS-0000975
+T00000000022,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 10:44:21.313264,2020-01-16 12:20:07.895680,0 days 01:35:46.582416,"None
+
+
+",clr/CB,70599064,011620-824,3122425,,ULTRA Italia,ICUS-0000976
+T00000000023,Jean Paul,jeanpaul.viranian@unitech.com.lb,email,True,2020-01-16 10:45:42.327022,2020-01-16 12:15:20.363965,0 days 01:29:38.036943,"Email to be sent to CSR Deepak James.
+
+",KSR/ CB,70565657,011620-822,3122378,,Unitech International Offshore,ICUS-0000920
+T00000000024,Dr. Oliver Busse,oliver.busse@tu-dresden.de,email,False,2020-01-16 10:55:49.436422,None,None,"Several components are unavailable.  Awaiting customer response to quote with/without the missing analytes.  (RF 1/16/20)
+",RF,70264551,011620-834,0000000,,Technische Universität Dresden,QTE-113755
+T00000000025,,,email,False,2020-01-16 10:56:02.671194,None,None,None,RF,70264551,,,,,
+T00000000026,,,email,False,2020-01-16 10:56:13.381732,None,None,None,RF,70264551,,,,,
+T00000000027,,,email,False,2020-01-16 10:56:28.636567,None,None,None,RF,70264551,,,,,
+T00000000028,,,email,False,2020-01-16 10:56:38.570104,None,None,None,RF,70264551,,,,,
+T00000000029,,,email,False,2020-01-16 10:57:31.496166,None,None,None,RF,70264551,,,,,
+T00000000030,,,email,False,2020-01-16 10:57:41.371731,None,None,None,RF,70264551,,,,,
+T00000000031,,,email,False,2020-01-16 10:57:49.785136,None,None,None,RF,70264551,,,,,
+T00000000032,,,email,False,2020-01-16 10:57:57.920957,None,None,None,RF,70264551,,,,,
+T00000000033,,,email,False,2020-01-16 10:58:06.334712,None,None,None,RF,70264551,,,,,
+T00000000034,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 11:12:55.773629,2020-01-16 11:45:14.728323,0 days 00:32:18.954694,"None
+
+
+",clr/SI,70599064,011620-821,3122399,,ULTRA Italia,ICUS-0000974
+T00000000035,Glen Arrieta,garrieta@ocwd.com,email,True,2020-01-16 11:21:43.384340,2020-01-16 12:21:21.804813,0 days 00:59:38.420473,"None
+",clr/CB,70339639,011620-831,3122444,,OCWD,CUS-00002458
+T00000000036,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 11:33:45.970727,2020-01-16 12:47:00.081554,0 days 01:13:14.110827,"None
+",clr/SI,70599064,011620-832,3122532,,ULTRA Italia,ICUS-0000977
+T00000000037,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 11:43:55.895810,2020-01-16 12:45:51.608728,0 days 01:01:55.712918,"None
+",clr/CB,70599064,011620-833,3122531,,ULTRA Italia,CUS-00002460
+T00000000038,Johanna Gilbertsson,,email,True,2020-01-16 12:15:06.356899,2020-01-16 13:08:55.974665,0 days 00:53:49.617766,"None
+
+
+",RF/CB,70271152,011620-835,3122596,,Eurofins Sweden,CUS-00002461
+T00000000039,Raffaella,ultra@ultrasci.it,email,True,2020-01-16 12:20:50.188028,2020-01-16 14:21:47.428005,0 days 02:00:57.239977,"None
+
+",clr/SI,70599064,011520-802,3122528,,ULTRA Italia,CUS-00002459
+T00000000040,David Erett,Derett@coca-cola.com,email,True,2020-01-16 13:00:58.843605,2020-01-16 15:21:19.998108,0 days 02:20:21.154503,"Request initally recieved 1/10. Quote generation delayed due to unavailable sale unit/fill size bottle. New sale unit/Fill size updated and added to PFII on 1/16.
+
+Kit Header:  LK-000000323 / 3122867
+011620-825 = LK-000000324
+011620-826 = LK-000000325
+011620-827 = LK-000000326
+011620-828 = LK-000000327
+011620-829 = LK-000000328
+011620-830 = LK-000000329
+
+",KSR/CB,70018382,011620-825,3122867,,Coca-Cola Co,LK-000000323
+T00000000041,Veronica,ultra@ultrasci.it,email,True,2020-01-16 13:16:33.653971,2020-01-16 14:11:57.427313,0 days 00:55:23.773342,"None
+",clr/SI,70599064,011620-780,3122700,,ULTRA Italia,CUS-00002462
+T00000000042,Veronica,ultra@ultrasci.it,email,True,2020-01-16 13:17:09.143209,2020-01-16 14:12:56.009230,0 days 00:55:46.866021,"None
+",clr/SI,70599064,011620-781,3122709,,ULTRA Italia,CUS-00000060
+T00000000043,Ashlee Williams,purchasing@govsci.com,email,True,2020-01-16 13:40:24.059809,2020-01-16 14:29:23.682689,0 days 00:48:59.622880,"Use 70473811 for 'ship-to' account number.
+(RF 1/16/20)
+
+",RF/CB,60003987,011620-782,3122814,,"Government Scientific Source, Inc",CUS-00001899
+T00000000044,Dolores Montgomery,demo461@ecy.wa.gov,email,True,2020-01-17 09:13:38.025081,2020-01-17 10:12:37.070464,0 days 00:58:59.045383,"None
+",clr/SI,70036998,011720-790,3123950,,State of WA - Dept of Ecology,CUS-00002463
+T00000000045,Raffaella,ultra@ultrasci.it,email,True,2020-01-17 09:14:17.100101,2020-01-17 10:30:57.072167,0 days 01:16:39.972066,"None
+",clr/cb,70599064,011720-792,3124018,,ULTRA Italia,CUS-00002464
+T00000000046,Jonas Halvarsson,jonashalvarsson@eurofins.se,email,False,2020-01-17 09:16:33.606357,None,None,None,clr,70271152,,,,Eurofins Sweden,
+T00000000047,Johanna Gilbertsson,johannagilbertsson@eurofins.se,email,False,2020-01-17 09:24:03.778443,None,None,None,clr,70271152,,,,Eurofins Sweden,
+T00000000048,Johanna Gilbertsson,johannagilbertsson@eurofins.se,email,False,2020-01-17 09:25:01.178159,None,None,None,clr,70271152,,,,Eurofins Sweden,

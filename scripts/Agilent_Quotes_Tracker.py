@@ -7,8 +7,13 @@
 Created on Mon Dec 9 12:05:28 2019
 
 TO-DO:
-( ) - clear entry boxes when new QUOTE is created/submitted
+(X) - clear entry boxes when new QUOTE is created/submitted
 ( ) - import/export from and to .xlsx
+( ) - reshape/resize table cells/cols depending on user input
+( ) - EDITABLE type in OPEN_MODIFY_WINDOW
+( ) - drop decimal places on the creation/completion timestamps
+( ) - copy cell tab/feature
+( ) - create button triggers virtual event hiding first 3 columns
 
 EDITS:
 12/18/19 - made database accessible via anywhere by file_path to E_DRIVE
@@ -19,6 +24,9 @@ EDITS:
 01/09/20 - included validation checks for ACCOUNT ID, PF QUOTE #, SAP QUOTE #
 01/14/20 - horizontal scroll bar on treeview, fixed STR conversion (CREATE TAB)
 01/15/20 - added fixings/ability to change height of OPEN_MODIFY_WINDOW
+01/16/20 - changed TRACKING_NUMBER naming convention to drop leading 3 zeros
+01/17/20 - corrected decimal place formatting from timestamp strings
+01/17/20 - 
 
 @author: derbates
 """
@@ -1117,7 +1125,9 @@ class AgilentQuotesTracker():  # {
         # CREATE ENGINE (for pulling from Database)
         engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
         # USE ENGINE TO CONNECT TO DATABASE
-        cnxn = pyodbc.connect(engine)
+        # [2020-01-17]\\cnxn = pyodbc.connect(engine)
+        conn = sqlite3.connect("E:/_Quotes_Tracker/data/quotes_tracker.db")
+        
         # SEND DATAFRAME TO DATABASE
         # [2020-01-16]\\new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
         # TRY THE FOLLOWING
@@ -1199,7 +1209,7 @@ class AgilentQuotesTracker():  # {
             count_str = str(current_count).zfill(int(number_of_digits))
             print("count_str == " + str(count_str))
             # CREATE STRING
-            file_name_conv = str("T000" + count_str)
+            file_name_conv = str("T" + count_str)
             print("FINAL RESULT == " + str(file_name_conv))
         # }
         except:  # {
@@ -1354,7 +1364,7 @@ class AgilentQuotesTracker():  # {
                     the_type = [str(self.type_var.get())]
                     # [2020-01-08]\\the_sent = [str(self.radio_sent_var.get())]
                     the_sent = [str("False")]
-                    open_time = [str(pd.Timestamp.now())]
+                    open_time = [str(pd.Timestamp.now())[:19]]
                     close_time = [str("None")]
                     turn_around = [str("None")]  # np.Nan?
                     # [2019-12-18]\\the_notes = [str(self.notes.get())]
@@ -2220,7 +2230,7 @@ class AgilentQuotesTracker():  # {
                         # COMPUTE TURN AROUND TIME
                         time_start = pd.Timestamp(open_time)
                         print("TIME START == " + str(time_start))
-                        run_time = time_meow - time_start
+                        run_time = str(time_meow - time_start)[:19]
                         print("RUN TIME == " + str(run_time))
                         query = 'UPDATE quotes ' \
                                 'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
@@ -2287,7 +2297,7 @@ class AgilentQuotesTracker():  # {
         # }
         else:  # {
             # [2020-01-10]\\self.message['text'] = 'MISSING REQUIRED FIELDS(S):\n Initals\n AccountID'
-            messagebox.showwarning(parent=self.root, title="WARNING:", message="MISSING REQUIRED FIELD(S):\n\n\tInitials\n\nPlease re-open quote to edit")
+            messagebox.showwarning(parent=self.root, title="WARNING", message="MISSING REQUIRED FIELD(S):\n\n\tInitials\n\nPlease re-open quote to edit")
             # EXIT OUT OF ADD-ON BOX
             self.transient.destroy()
         # }
