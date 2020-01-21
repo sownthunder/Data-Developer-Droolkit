@@ -522,9 +522,9 @@ class AgilentQuotesTracker():  # {
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
-            # Create the FILTER Tab Container
-            self.lblframe_filter = ttk.Frame(master=self.tab2)
-            self.lblframe_filter.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            # Create the COPY Tab Container
+            self.lblframe_copy = ttk.Frame(master=self.tab2)
+            self.lblframe_copy.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
             # Create the IMPORT Tab Container
             self.lblframe_import = ttk.Frame(master=self.tab3)
@@ -579,11 +579,11 @@ class AgilentQuotesTracker():  # {
     # }
 
     def fill_tab_containers(self):  # {
+        # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
+        # () CREATE TAB CONTENTS () #
+        # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
         # TRY THE FOLLOWING
         try:  # {
-            # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
-            # () CREATE TAB CONTENTS () #
-            # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
             # COMPANY NAME Input
             ttk.Label(master=self.lblframe_create,
                       text='Company Name: ').grid(row=0, column=0, padx=10, pady=10, sticky='nw')
@@ -800,9 +800,59 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            logging.info("[CREATE-TAB] Operation Completed Successfully...")
         # }
-
+        # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
+        # () COPY TAB CONTENTS () 
+        # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
+        # TRY THE FOLLOWING
+        try: # {
+            # SELECTED CELL (label)
+            ttk.Label(master=self.lblframe_copy, 
+                      text="Selected Cell: ").grid(row=0, column=0, padx=10, pady=10)
+            # SELECTED CELL (entry)
+            self.selected_cell = tk.StringVar(master=self.lblframe_copy, value="None")
+            # SELECTED CELL (entry)
+            ttk.Entry(master=self.lblframe_copy,
+                      textvariable=self.selected_cell,
+                      state='active',
+                      width=20
+                      ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
+            # SPINBOX (to copy multiple entries)
+            ttk.Label(master=self.lblframe_copy,
+                      text="# of copies: ").grid(row=5, column=0, padx=10, pady=10)
+            # SPINBOX (int var)
+            self.num_of_copies = tk.IntVar(master=self.lblframe_copy, value="6")
+            # SPINBOX SPINBOX
+            ttk.Spinbox(master=self.lblframe_copy, 
+                               from_=0, 
+                               to=100, 
+                               width=5,
+                               textvariable=self.num_of_copies).grid(row=5, column=1, padx=10, pady=10)
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            logging.info("[COPY-TAB] Operation Completed Successfully...")
+        # }
     # }
 
     def create_right_side(self):  # {
@@ -993,8 +1043,11 @@ class AgilentQuotesTracker():  # {
         print(str(self.tree.column(column="#1", width=200)))
         test_column = self.tree.column(column="#0")
         # CHANGE ORDER OF DISPLAY COLUNS???
-        print(test_column)
+        print("TEST_COLUMN == " + str(test_column))
         self.tree.set_children()
+        """
+        POPULATE THE "COPY" TAB CONTAINER WITH VALUES OF ROW SELECTED!
+        """
     # }
 
     def on_double_click(self, event):  # {
@@ -2203,12 +2256,104 @@ class AgilentQuotesTracker():  # {
             display_str += "new notes:\n\n" + str(newnotes) + "\n"
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askokcancel(title="Confirm Update", message=str(display_str))
-            print(confirm_box)
+            logging.info(confirm_box)
             if str(confirm_box) == "True":  # {
                 # TRY THE FOLLOWING
+                try: # {
+                    # create engine
+                    engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                    # Create connection to DB (from engine)
+                    conn = engine.connect()
+                    # PULL ENTIRE DB INTO A DATAFRAME
+                    # [2020-01-21]\\SQL_Table = pd.read_sql_table(table_name="quotes", con=conn, index_col=["tracking_number"])
+                    # CREATE STR VARIABLE TO HOLD SQL QUERY
+                    sql_query = "SELECT * FROM [quotes] WHERE [tracking_number] = '" + str(tracking_number) + "'"
+                    logging.info("THE QUERY == " + str(sql_query))
+                    self.SQL_Table = pd.read_sql_query(sql=str(sql_query),
+                                                  con=conn)
+                    logging.info(self.SQL_Table.describe())
+                    """
+                    <<<<<<<<<< DETERMINE WHICH ROWS ARE "newly_sent" >>>>>>>>>
+                    """
+                    # [2020-01-21]\\ DETERMINED THAT pd.read_sql_query better!
+                    """
+                    # USING BOOLEAN VALUES
+                    # create variable with TRUE IF sent is TRUE
+                    all_sent = SQL_Table['sent'] =="True"
+                    # create variable with TRUE if turn_around is NOT "None"
+                    already_sent = SQL_Table['turn_around'] != "None"
+                    # create variable with TRUE if turn_around is "None"
+                    recently_sent = SQL_Table['turn_around'] == "None"
+                    # select all cases where SENT IS TRUE and TURN_AROUND is NONE
+                    self.need_timestamps = SQL_Table[all_sent & recently_sent]
+                    # ALSO CREATE DATAFRAME WHERE ALL SENT IS TRUE
+                    self.sent_df = SQL_Table[all_sent]
+                    logging.info(self.need_timestamps.describe())
+                    logging.info(type(self.need_timestamps))
+                    """
+                    """
+                    <<<<<<<<<<<< LOOP THRU DATAFRAME PULLED FROM DB >>>>>>>>>>
+                    """
+                    """
+                    # counter
+                    x = 0
+                    # WHILE WE ARE STILL LOOPING THRU DATAFRAME...
+                    while x < len(self.need_timestamps): # {
+                        logging.info("==========")
+                        name = str(self.need_timestamps.iloc[x, 0])
+                        email = str(self.need_timestamps.iloc[x, 1])
+                        type_ = str(self.need_timestamps.iloc[x, 2])
+                        sent_ = str(self.need_timestamps.iloc[x, 3])
+                        open_time = pd.Timestamp(self.need_timestamps.iloc[x, 4])
+                        close_time = pd.Timestamp(self.need_timestamps.iloc[x, 5])
+                        turn_around = str(self.need_timestamps.iloc[x, 6])
+                        notes  = str(self.need_timestamps.iloc[x, 7])
+                        ##########################################
+                        # CREATE TEMPORARY TIMESTAMP FOR MEOW
+                        meow_ts = pd.Timestamp.now()
+                        # COMPUTE TURN AROUND TIME
+                        time_start = pd.Timestamp(open_time)
+                        logging.info("TIME START == " + str(time_start)[:19])
+                        logging.info("TIME END == " + str(meow_ts)[:19])
+                        # [2020-01-21]\\run_time = str(meow_ts - time_start)[:18]
+                        run_time = str(close_time - time_start)[:18]
+                        logging.info("RUN TIME == " + str(run_time))
+                        # INCREMENT X
+                        x += 1
+                    # }
+                    else: #{
+                        logging.info("Succesfully looped thru " + str(x) + "entries...")
+                    # }
+                    """
+                # }
+                except: # {
+                    logging.info("FAILED PULLING DB into DATAFRAME!")
+                    errorMessage = str(sys.exc_info()[0]) + "\n"
+                    errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+                    errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    typeE = str("TYPE : " + str(exc_type))
+                    fileE = str("FILE : " + str(fname))
+                    lineE = str("LINE : " + str(exc_tb.tb_lineno))
+                    messageE = str("MESG : " + "\n" + str(errorMessage))
+                    logging.error("\n" + typeE +
+                                  "\n" + fileE +
+                                  "\n" + lineE +
+                                  "\n" + messageE)
+                    messagebox.showerror(title="ERROR!",
+                                         message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+                # }
+                else: # {
+                    logging.info("[pull-DB_2_DF] Operation Completed Successfully...")
+                # }
+                # TRY THE FOLLOWING
                 try:  # {
-                    print("UPDATING RECORD...")
-                    print("NEW_SENT RADIO VAR [passed_thru_function] == " + str(newsent))
+                    logging.info("UPDATING RECORD...")
+                    logging.info("NEW_SENT RADIO VAR [passed_thru_function] == " + str(newsent))
                     # CHECK IF SENT HAS BEEN SWITCHED!
                     """
                     [2020-01-16]
@@ -2217,11 +2362,35 @@ class AgilentQuotesTracker():  # {
                         prodflow_quote_number, sap_quote_number, company_name, product_number
                         THEN call FUNCTION or pull entire database as DATAFRAME 
                     """
+                    # DETERMINE IF SENT OR NOT PRIOR TO UPDATE
+                    is_sent = self.SQL_Table["turn_around"].isin(["None"])
+                    logging.info("IS_SENT:\n" + str(is_sent.describe()))
                     ###########################################################################
                     # IF SO UPDATE: sent, close_time, turn_around AND ALSO name, email, notes
                     # [2019-12-27]\\if bool(newsent) is True:  # {
-                    if newsent == "True":  # {
-                        print("\n\t\t\t>>>> SWITCHING OVER!")
+                    if newsent == "True" and bool(is_sent[0]) is False:  # {
+                        # CHECKED IF THERE IS NO TURN AROUND TIME
+                        logging.info("YES THERE IS TURN AROUND! NO NEED TO UPDATE CLOSE TIME")
+                        # set run time to SAME turn_around time as before
+                        run_time = str(self.SQL_Table["turn_around"])
+                        # SET CLOSING TIME TO RIGHT MEOW
+                        # [2020-01-21]\\closing_time = pd.Timestamp.now([:18])
+                        closing_time = str(self.SQL_Table["close_time"])
+                        # [2020-01-21]\\is_sent = self.SQL_Table["turn_around"].isin(["None"])
+                        # [2020-01-21]\\logging.info("IS_SENT:\n" + str(is_sent.describe()))
+                        # CHECK IF THERE IS A TURN_AROUND ALREADY!
+                        # [2020-01-21]\\
+                        """
+                        print("\n\t\t\t>>>> SWITCHING [sent] OVER!")
+                        # REMOVED BECAUSE WE NOW ONLY EDIT "close_time" with that of already in DB
+                        # GET/SET "close_time" to be of already set value(s)
+                        closing_time = pd.Timestamp(self.sent_df["close_time"].loc[self.sent_df.index[x]])
+                        turn_around_time = closing_time - open_time
+                        print("\n\n\n\n==========================\n CLOSING TIME == " + str(closing_time) + "\n\n\n")
+                        print("\n RUN TIME == " + str(turn_around_time))
+                        logging.info("x == " + str(x))
+                        """
+                        """
                         # CREATE TEMPORARY TIMESTAMP
                         time_meow = pd.Timestamp.now()
                         print("TIME MEOW == " + str(time_meow))
@@ -2232,10 +2401,11 @@ class AgilentQuotesTracker():  # {
                         print("TIME START == " + str(time_start))
                         run_time = str(time_meow - time_start)[:19]
                         print("RUN TIME == " + str(run_time))
+                        """
                         query = 'UPDATE quotes ' \
                                 'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=?'
-                        parameters = (newname, newemail, the_type, newsent, str(time_meow),
+                        parameters = (newname, newemail, the_type, newsent, str(closing_time), # WAS: time_meow
                                       str(run_time), newnotes, newinitials, newaccountid,
                                       newpfnum, newsapnum, newcompanyname, newproductnum,
                                       tracking_number)
@@ -2251,13 +2421,14 @@ class AgilentQuotesTracker():  # {
                     # [2019-12-30]... ACCOUNT_ID, PRODFLOW QUOTE #, SAP QUOTE #
                     # [2020-01-07]... COMPANY NAME
                     else:  # {
-                        print("\n\t\t\t>>>>>>> NOPE")
+                        logging.info("\n\t\t\t>>>>>>> NOT SWITCH [sent] OVER!")
+                        # CLOSING TIME == OLD CLOSING TIME
                         query = 'UPDATE quotes SET name=?, email=?, type=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=? '
                         parameters = (newname, newemail, the_type, newnotes, newinitials,
                                       newaccountid, newpfnum, newsapnum, newcompanyname, newproductnum,
                                       tracking_number)
-                        print("QUERY:\n" + str(query) + "\nPARAMS:\n" + str(parameters))
+                        logging.info("QUERY:\n" + str(query) + "\nPARAMS:\n" + str(parameters))
                         # EXECUTE
                         self.execute_db_query(query, parameters)
                         self.transient.destroy()
