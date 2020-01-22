@@ -380,7 +380,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -1048,6 +1048,7 @@ class AgilentQuotesTracker():  # {
         """
         POPULATE THE "COPY" TAB CONTAINER WITH VALUES OF ROW SELECTED!
         """
+        self.selected_cell.set(str)
     # }
 
     def on_double_click(self, event):  # {
@@ -2404,8 +2405,10 @@ class AgilentQuotesTracker():  # {
                             # set close time to the current time
                             closing_time = str(time_meow)[:19]
                             # [2020-01-22]\\message_str = "\nclose time: " + str(closing_time) + "\nTurn around: " + str(run_time)
+                            """
                             messagebox.showinfo(title="NEWLY CLOSED ! (this submit)", 
                                                 message="SHOWING INFO:\nTURN AROUND TIME: " + str(self.SQL_Table["turn_around"][0]) + message_str)
+                            """
                         # }
                         # CHECKED IF THERE IS NO TURN AROUND TIME
                         logging.info("YES THERE IS TURN AROUND! NO NEED TO UPDATE CLOSE TIME")
