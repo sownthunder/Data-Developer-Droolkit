@@ -26,7 +26,7 @@ EDITS:
 01/15/20 - added fixings/ability to change height of OPEN_MODIFY_WINDOW
 01/16/20 - changed TRACKING_NUMBER naming convention to drop leading 3 zeros
 01/17/20 - corrected decimal place formatting from timestamp strings
-01/17/20 - 
+01/22/20 - whenever quotes are edited/updated... no long changes TS after sent
 
 @author: derbates
 """
@@ -2268,10 +2268,10 @@ class AgilentQuotesTracker():  # {
                     # [2020-01-21]\\SQL_Table = pd.read_sql_table(table_name="quotes", con=conn, index_col=["tracking_number"])
                     # CREATE STR VARIABLE TO HOLD SQL QUERY
                     sql_query = "SELECT * FROM [quotes] WHERE [tracking_number] = '" + str(tracking_number) + "'"
-                    logging.info("THE QUERY == " + str(sql_query))
+                    print("THE_QUERY == " + str(sql_query))
                     self.SQL_Table = pd.read_sql_query(sql=str(sql_query),
                                                   con=conn)
-                    logging.info(self.SQL_Table.describe())
+                    print(self.SQL_Table.describe())
                     """
                     <<<<<<<<<< DETERMINE WHICH ROWS ARE "newly_sent" >>>>>>>>>
                     """
@@ -2349,6 +2349,8 @@ class AgilentQuotesTracker():  # {
                 # }
                 else: # {
                     logging.info("[pull-DB_2_DF] Operation Completed Successfully...")
+                    # CLOSE CONNECTION?
+                    conn.close()
                 # }
                 # TRY THE FOLLOWING
                 try:  # {
@@ -2363,45 +2365,51 @@ class AgilentQuotesTracker():  # {
                         THEN call FUNCTION or pull entire database as DATAFRAME 
                     """
                     # DETERMINE IF SENT OR NOT PRIOR TO UPDATE
-                    is_sent = self.SQL_Table["turn_around"].isin(["None"])
-                    logging.info("IS_SENT:\n" + str(is_sent.describe()))
+                    # [2020-01-22]\\is_sent = self.SQL_Table["turn_around"].isin(["None"])
+                    # [2020-01-22]\\logging.info("IS_SENT:\n" + str(is_sent.describe()))
+                    # newly_sent = self.SQL_Table["turn_around"].isin(["None"]) # boolean value
+                    # IF THERE IS ALREADY A TIMESTAMP (aready closed)
                     ###########################################################################
                     # IF SO UPDATE: sent, close_time, turn_around AND ALSO name, email, notes
                     # [2019-12-27]\\if bool(newsent) is True:  # {
-                    if newsent == "True" and bool(is_sent[0]) is False:  # {
+                    if newsent == "True":  # {
+                        # get/check if there are any "NONE" values in turn around column
+                        newly_sent = self.SQL_Table["turn_around"].isin(["None"])
+                        # [2020-01-22]\\
+                        """
+                        messagebox.showinfo(message=str(newly_sent))
+                        messagebox.showinfo(message=str(self.SQL_Table["close_time"][0]))
+                        messagebox.showinfo(message=str(newly_sent[0]))
+                        """
+                        # IF THE QUOTE HAS ALREADY BEEN "sent"
+                        if bool(newly_sent[0]) is False: # {
+                            # reassign closing time to old value
+                            closing_time = str(self.SQL_Table["close_time"][0])
+                            messagebox.showinfo(message="closing_time == " + str(closing_time))
+                            # reassign "run_time" to old turn_around value
+                            run_time = str(self.SQL_Table["turn_around"][0])
+                            messagebox.showwarning(title="ALREADY CLOSED (previous submit)",
+                                                message="There is ALREADY A TIMESTAMP (already closed)")
+                        # }
+                        # ELSE... IT HAS NOT BEEN SENT YET (no turn around / close time)
+                        else: # {
+                            # GET START TIME
+                            start_time = pd.Timestamp(ts_input=str(self.SQL_Table["open_time"][0]))
+                            logging.info("START-TIME == " + str(start_time))
+                            # CREATE TEMPORARY TIMESTAMP
+                            time_meow = pd.Timestamp.now()
+                            # DETERMINE TURN_AROUND TIME
+                            run_time = str(time_meow - start_time)[:19]
+                            logging.info("RUN-TIME == " + str(run_time))
+                            # set close time to the current time
+                            closing_time = str(time_meow)[:19]
+                            # [2020-01-22]\\message_str = "\nclose time: " + str(closing_time) + "\nTurn around: " + str(run_time)
+                            messagebox.showinfo(title="NEWLY CLOSED ! (this submit)", 
+                                                message="SHOWING INFO:\nTURN AROUND TIME: " + str(self.SQL_Table["turn_around"][0]) + message_str)
+                        # }
                         # CHECKED IF THERE IS NO TURN AROUND TIME
                         logging.info("YES THERE IS TURN AROUND! NO NEED TO UPDATE CLOSE TIME")
-                        # set run time to SAME turn_around time as before
-                        run_time = str(self.SQL_Table["turn_around"])
-                        # SET CLOSING TIME TO RIGHT MEOW
-                        # [2020-01-21]\\closing_time = pd.Timestamp.now([:18])
-                        closing_time = str(self.SQL_Table["close_time"])
-                        # [2020-01-21]\\is_sent = self.SQL_Table["turn_around"].isin(["None"])
-                        # [2020-01-21]\\logging.info("IS_SENT:\n" + str(is_sent.describe()))
-                        # CHECK IF THERE IS A TURN_AROUND ALREADY!
-                        # [2020-01-21]\\
-                        """
-                        print("\n\t\t\t>>>> SWITCHING [sent] OVER!")
-                        # REMOVED BECAUSE WE NOW ONLY EDIT "close_time" with that of already in DB
-                        # GET/SET "close_time" to be of already set value(s)
-                        closing_time = pd.Timestamp(self.sent_df["close_time"].loc[self.sent_df.index[x]])
-                        turn_around_time = closing_time - open_time
-                        print("\n\n\n\n==========================\n CLOSING TIME == " + str(closing_time) + "\n\n\n")
-                        print("\n RUN TIME == " + str(turn_around_time))
-                        logging.info("x == " + str(x))
-                        """
-                        """
-                        # CREATE TEMPORARY TIMESTAMP
-                        time_meow = pd.Timestamp.now()
-                        print("TIME MEOW == " + str(time_meow))
-                        print("open_time == " + str(open_time))
-                        print("old_sent == " + str(old_sent))
-                        # COMPUTE TURN AROUND TIME
-                        time_start = pd.Timestamp(open_time)
-                        print("TIME START == " + str(time_start))
-                        run_time = str(time_meow - time_start)[:19]
-                        print("RUN TIME == " + str(run_time))
-                        """
+                        logging.info(self.SQL_Table["close_time"][0])
                         query = 'UPDATE quotes ' \
                                 'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=?'
