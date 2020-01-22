@@ -1037,18 +1037,26 @@ class AgilentQuotesTracker():  # {
     """
     
     def on_single_click(self, event): # {
-        # edit column?
-        # [2020-01-15]\\event.widget['width'] = 2000
-        # CHANGE THE WIDTH OF SELECT ROW
-        print(str(self.tree.column(column="#1", width=200)))
-        test_column = self.tree.column(column="#0")
-        # CHANGE ORDER OF DISPLAY COLUNS???
-        print("TEST_COLUMN == " + str(test_column))
-        self.tree.set_children()
-        """
-        POPULATE THE "COPY" TAB CONTAINER WITH VALUES OF ROW SELECTED!
-        """
-        self.selected_cell.set(str)
+        # TRY THE FOLLOWING
+        try: # {
+            # edit column?
+            print(str(event.widget.displaycolumns()))
+            # [2020-01-15]\\event.widget['width'] = 2000
+            # CHANGE THE WIDTH OF SELECT ROW
+            print(str(self.tree.column(column="#1", width=200)))
+            test_column = self.tree.column(column="#0")
+            # CHANGE ORDER OF DISPLAY COLUNS???
+            print("TEST_COLUMN == " + str(test_column))
+            self.tree.set_children()
+            """
+            POPULATE THE "COPY" TAB CONTAINER WITH VALUES OF ROW SELECTED!
+            """
+            self.selected_cell.set(str(event.widget.get_children()))
+        # }
+        except: # {
+            print("FAILLED NOOB! ")
+        # }
+        
     # }
 
     def on_double_click(self, event):  # {
