@@ -84,7 +84,6 @@ class AgilentQuotesTracker():  # {
         self.correct_ver = str(ver_txt["version"].iloc[0])
         print("CORRECT (current) VERSION NO. == " + str(self.correct_ver))
         print("current (actual) VERSION NO. == " + str(self.version_number))
-        sleep(5)
         # CHECK IF RUNNING MOST RECENT VERSION OF APPLICATION
         if str(self.correct_ver) != str(self.version_number): # {
             print("FAILLLLLLL! qutting in 5...")
@@ -401,7 +400,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -923,20 +922,20 @@ class AgilentQuotesTracker():  # {
                                      height=30, columns=13, selectmode='browse')  # height = 20
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
-            self.tree.column('#0', anchor=tk.CENTER, width=100, minwidth=85, stretch=tk.NO)  # TRACKING #
-            self.tree.column("one", anchor=tk.CENTER, width=105, minwidth=105, stretch=tk.NO)  # TIME REC. // NAME
-            self.tree.column("two", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
-            self.tree.column("three", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # TYPE
+            self.tree.column('#0', anchor=tk.CENTER, width=90, minwidth=85, stretch=tk.NO)  # TRACKING #
+            self.tree.column("one", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
+            self.tree.column("two", anchor=tk.CENTER, width=75, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
+            self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
             self.tree.column("four", anchor=tk.W, width=125, minwidth=120, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
             self.tree.column("five", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
-            self.tree.column("six", anchor=tk.W, width=160, minwidth=150, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
+            self.tree.column("six", anchor=tk.W, width=175, minwidth=160, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
             self.tree.column("seven", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
             self.tree.column("eight", anchor=tk.CENTER, width=100, minwidth=80, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
             self.tree.column("nine", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PF QUOTE #//  ACCOUNT ID
             self.tree.column("ten", anchor=tk.CENTER, width=100, minwidth=75, stretch=tk.NO)  # SAP QUOTE # // PRODFLOW QUOTE #
             self.tree.column("eleven", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # SENT
-            self.tree.column("twelve", anchor=tk.CENTER, width=125, minwidth=125, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
-            self.tree.column("thirteen", anchor=tk.CENTER, width=75, minwidth=75, stretch=tk.YES)  # NOTES // PRICE
+            self.tree.column("twelve", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
+            self.tree.column("thirteen", anchor=tk.CENTER, width=175, minwidth=50, stretch=tk.YES)  # NOTES // PRICE
 
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
@@ -1083,14 +1082,21 @@ class AgilentQuotesTracker():  # {
             # gets all values of the select row
             test_str_library = self.tree.item(self.tree.selection())
             # prints dictionary of selected row
-            logging.info("the test_str = ", type(test_str_library), test_str_library, '\n')
+            print ("the test_str = \n", type(test_str_library), test_str_library, '\n')
             # WHICH ROW USER CLICKED ON
             item = self.tree.selection()[0]
-            logging.info("item clicked ", item)
+            print ("item clicked ", item)
             # PRINTS THE FIRST VALUE OF THE VALUES (the id value)
-            logging.info ("Time Rec: " + str(self.tree.item(item)['values'][0]))
-            logging.info ("Initials: " + str(self.tree.item(item)['values'][1]))
-            logging.info (self.tree.item(item)['text'])
+            # [2020-01-23]\\logging.info ("Time Rec: " + str(self.tree.item(item)['values'][0]))
+            self.time_rec_2copy = str(self.tree.item(item)['values'][0])
+            print ("Time Rec: " + self.time_rec_2copy)
+            self.initials_2copy = str(self.tree.item(item)['values'][1])
+            print ("Initials: " + self.initials_2copy)
+            self.type_2copy = str(self.tree.item(item)['values'][2])
+            print ("Type: " + self.type_2copy)
+            self.email_2copy = str(self.tree.item(item)['values'[3]])
+            print ("Email? " + self.email_2copy)
+            print (self.tree.item(item)['text'])
             # CHANGE THE COPY FILL TAB CONTAINER TO SHOW THE ABOVE VAL
             self.selected_cell.set(self.tree.item(item)['text'])
         # }
@@ -1117,13 +1123,13 @@ class AgilentQuotesTracker():  # {
         # TRY THE FOLLOWING
         try: # {
             # edit column?
-            print(str(event.widget.displaycolumns()))
+            logging.info(str(event.widget.displaycolumns()))
             # [2020-01-15]\\event.widget['width'] = 2000
             # CHANGE THE WIDTH OF SELECT ROW
-            print(str(self.tree.column(column="#1", width=200)))
+            logging.info(str(self.tree.column(column="#1", width=200)))
             test_column = self.tree.column(column="#0")
             # CHANGE ORDER OF DISPLAY COLUNS???
-            print("TEST_COLUMN == " + str(test_column))
+            logging.info("TEST_COLUMN == " + str(test_column))
             self.tree.set_children()
             """
             POPULATE THE "COPY" TAB CONTAINER WITH VALUES OF ROW SELECTED!
@@ -1280,6 +1286,12 @@ class AgilentQuotesTracker():  # {
             else: # {
                 logging.info("fin...")
             # }
+            # gets all values of the select row
+            test_str_library = self.tree.item(self.tree.selection())
+            # WHICH ROW USER CLICKED ON
+            item = self.tree.selection()[0] 
+            print("TIME REC == " + str(item))
+            test_time_rec = self.selected_cell.set(self.tree.item(item)['text'])
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1304,6 +1316,8 @@ class AgilentQuotesTracker():  # {
         else: # {
             logging.info("Operation Completed Successfully...")
         # }
+        # [2020-01-23]\\
+        """
         # TRY THE FOLLOWING
         try: # {
             # CHANGE THE WIDTH OF THE FIRST 3 COLUMNS
@@ -1335,6 +1349,7 @@ class AgilentQuotesTracker():  # {
         else: # {
             logging.info("Operation Completed Successfully...")
         # }
+        """
     # }
 
     ######################################################################################################
@@ -1677,6 +1692,8 @@ class AgilentQuotesTracker():  # {
             # }
             # CALL FUNCTION TO UDPATE TABlE DISPLAY
             self.view_records()
+            # [2020-01-23]\\
+            """
             #############################################################
             # MINIMIZE THE FIRST 3 COLUMNS 
             # TRY THE FOLLOWING
@@ -1711,6 +1728,7 @@ class AgilentQuotesTracker():  # {
                 logging.info("Operation Completed Successfully...")
             # }
             ##############################################################
+            """
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
