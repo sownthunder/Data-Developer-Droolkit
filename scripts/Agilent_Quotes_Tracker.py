@@ -28,7 +28,10 @@ EDITS:
 01/17/20 - corrected decimal place formatting from timestamp strings
 01/22/20 - whenever quotes are edited/updated... no long changes TS after sent
 01/23/20 - version update check & set (if not most recent, quits out of app)
-01/23/20 - CREATE button to shrink first 3 cols
+01/24/20 - almost finished with COPY function (working properly too)
+
+LATER:
+    - CREATE button to shrink first 3 cols
 
 @author: derbates
 """
@@ -400,7 +403,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -829,27 +832,38 @@ class AgilentQuotesTracker():  # {
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
         # TRY THE FOLLOWING
         try: # {
-            # SELECTED CELL (label)
+            # SELECTED TRACKING # (label)
             ttk.Label(master=self.lblframe_copy, 
                       text="Selected Tracking #: "
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
-            # SELECTED CELL (entry)
-            self.selected_cell = tk.StringVar(master=self.lblframe_copy, value="None")
-            # SELECTED CELL (entry)
+            # SELECTED TRACKING # (stringVar)
+            self.selected_tracking_num = tk.StringVar(master=self.lblframe_copy, value="None")
+            # SELECTED TRACKING # (entry)
             ttk.Entry(master=self.lblframe_copy,
-                      textvariable=self.selected_cell,
-                      state='active',
+                      textvariable=self.selected_tracking_num,
+                      state=tk.DISABLED,
                       width=20
                       ).grid(row=0, column=1, padx=10, pady=10, sticky='e')
-            # SELECTED CELL 2
-            # SELECTED CELL 3
-            # SELECTED CELL 4
-            # SELECTED CELL 5
-            # SELECTED CELL 6
+            # SELECTED TIME RECEIVED (label)
+            ttk.Label(master=self.lblframe_copy,
+                      text="Selected (Time rec): "
+                      ).grid(row=1, column=0, padx=10, pady=10, sticky='w')
+            # SELECTED TIME RECEIVED (stringVar)
+            self.selected_time_rec = tk.StringVar(master=self.lblframe_copy, value="None")
+            # SELECTED TIME RECEIVED (entry)
+            ttk.Entry(master=self.lblframe_copy,
+                      textvariable=self.selected_time_rec,
+                      state=tk.DISABLED,
+                      width=20
+                      ).grid(row=1, column=1, padx=10, pady=10, sticky='e')
+            # SELECTED CELL 3 (INITIALS)
+            # SELECTED CELL 4 (TYPE)
+            # SELECTED CELL 5 (COMPANY)
+            # SELECTED CELL 6 (CONTACT PERSON)
             # SPINBOX (to copy multiple entries)
             ttk.Label(master=self.lblframe_copy,
                       text="Number of Copies: "
-                      ).grid(row=1, column=0, padx=10, pady=10, sticky='w')
+                      ).grid(row=2, column=0, padx=10, pady=10, sticky='w')
             # SPINBOX (int var)
             self.num_of_copies = tk.IntVar(master=self.lblframe_copy, value="1")
             # SPINBOX SPINBOX
@@ -858,12 +872,13 @@ class AgilentQuotesTracker():  # {
                                to=100, 
                                width=18,
                                textvariable=self.num_of_copies
-                               ).grid(row=1, column=1, padx=10, pady=10, sticky='e')
+                               ).grid(row=2, column=1, padx=10, pady=10, sticky='e')
             # COPY BUTTON
             self.copy_button = ttk.Button(master=self.lblframe_copy,
                                           text='COPY',
-                                          command=self.copy_create_record
-                                          ).grid(row=2, column=0, padx=10, pady=10, sticky='n')
+                                          command=self.copy_create_record,
+                                          width=25
+                                          ).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='n')
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -924,7 +939,7 @@ class AgilentQuotesTracker():  # {
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
             self.tree.column('#0', anchor=tk.CENTER, width=90, minwidth=85, stretch=tk.NO)  # TRACKING #
             self.tree.column("one", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
-            self.tree.column("two", anchor=tk.CENTER, width=75, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
+            self.tree.column("two", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
             self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
             self.tree.column("four", anchor=tk.W, width=125, minwidth=120, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
             self.tree.column("five", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
@@ -1094,11 +1109,35 @@ class AgilentQuotesTracker():  # {
             print ("Initials: " + self.initials_2copy)
             self.type_2copy = str(self.tree.item(item)['values'][2])
             print ("Type: " + self.type_2copy)
-            self.email_2copy = str(self.tree.item(item)['values'[3]])
-            print ("Email? " + self.email_2copy)
+            self.company_2copy = str(self.tree.item(item)['values'][3])
+            print("Company: " + self.company_2copy)
+            self.name_2copy = str(self.tree.item(item)['values'][4])
+            print("Contact Person: " + self.name_2copy)
+            self.email_2copy = str(self.tree.item(item)['values'][5])
+            print ("Email: " + self.email_2copy)
+            self.accountid_2copy = str(self.tree.item(item)['values'][6])
+            print("Account ID: " + self.accountid_2copy)
+            # PRODUCT #
+            self.productnum_2copy = str(self.tree.item(item)['values'][7])
+            print("Product #: " + self.productnum_2copy)
+            # PF QUOTE #
+            self.pf_quotenum_2copy = str(self.tree.item(item)['values'][8])
+            print("Prodflow Quote #: " + self.pf_quotenum_2copy)
+            # SAP QUOTE #
+            self.sap_quotenum_2copy = str(self.tree.item(item)['values'][9])
+            # SENT ?
+            self.sent_2copy = str(self.tree.item(item)['values'][10])
+            print("SENT == " + self.sent_2copy)
+            # TIME SENT / close_time
+            self.close_time_2copy = str(self.tree.item(item)['values'][11])
+            print("TIME SENT / Close time == " + self.close_time_2copy)
+            # Notes
+            self.notes_2copy = str(self.tree.item(item)['values'][12])
+            print("NOTES == " + str(self.notes_2copy))
             print (self.tree.item(item)['text'])
-            # CHANGE THE COPY FILL TAB CONTAINER TO SHOW THE ABOVE VAL
-            self.selected_cell.set(self.tree.item(item)['text'])
+            # CHANGE THE COPY FILL TAB CONTAINER TO SHOW THE ABOVE VALUES
+            self.selected_tracking_num.set(self.tree.item(item)['text'])
+            self.selected_time_rec.set(self.tree.item(item)['values'][0])
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1273,13 +1312,82 @@ class AgilentQuotesTracker():  # {
     def copy_create_record(self): # {
         # TRY THE FOLLOWING
         try: # {
+            confirm_box = messagebox.askokcancel(title="CONFIRM COPY", 
+                                                 message="these what  you subbmited:\n"
+                                                 )
+            # IF THE USER CONFIRMS!
+            if str(confirm_box) == "True": # {
+                print(">>>>>>>>>> selected YES!!!")
+            # }
+            else: # {
+                print(">>>>>>>>>> selected NO!!!")
+            # }
+        # }
+        except: # {
+            print("FAILLLLLLL !")
+        # }
+        # TRY THE FOLLOWING
+        try: # {
             logging.info("COPY " + str(self.num_of_copies.get()) + " ENTRIES !!")
             # GET number to copy and set as INT
             copy_num = int(self.num_of_copies.get())
             # set counter
             counter = 0
             while copy_num > counter: # {
-                logging.info("le copy")
+                # BEGIN POPULATING FIELDS THAT WILL BE USED TO CREATE "copy"
+                track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
+                the_name = self.name_2copy
+                the_email = self.email_2copy
+                the_type = self.type_2copy
+                the_sent = self.sent_2copy
+                open_time = self.time_rec_2copy
+                close_time = self.close_time_2copy
+                logging.info("le copy # " + str(counter + 1) + ":\n")
+                copy_str = str("time REC: " + self.time_rec_2copy + "\n" 
+                               + "initials: " + self.initials_2copy + "\n"
+                               + "type: " + self.type_2copy + "\n"
+                               + "time rec: " + self.time_rec_2copy + "\n"
+                               + "company: " + self.company_2copy + "\n"
+                               + "contact name: " + self.name_2copy + "\n"
+                               + "email address: " + self.email_2copy + "\n"
+                               + "accountid: " + self.accountid_2copy + "\n"
+                               + "product #: " + self.productnum_2copy + "\n"
+                               + "sent?: " + self.sent_2copy + "\n"
+                               )
+                """
+                *************************
+                MUST BE THE SAME AS THE SQLite COLUMN NAMES
+                ****************************
+                """
+                copy_entry_dict = {'tracking_number': track_num,
+                                     'name': the_name,
+                                     'email': the_email,
+                                     'type': the_type,
+                                     'sent': the_sent,
+                                     'open_time': open_time,
+                                     'close_time': close_time,
+                                     'turn_around': turn_around,
+                                     'notes': the_notes,
+                                     'initials': the_initials,
+                                     'account_id': the_account_id_num,
+                                      'prodflow_quote_number': the_prodflow_quote_num,
+                                      'sap_quote_number': the_sap_quote_num,
+                                      'product_number': the_product_number,
+                                      'company_name': the_company_name
+                                      # [2019-12-31]\\'price': the_price
+                                      }
+                # CREATE EMPTY DATAFRAME
+                copy_entry_df = pd.DataFrame(data=copy_entry_dict, index=None, dtype=np.str)
+                # CREATE ENGINE (for sending to Database)
+                engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                # SEND DATAFRAME TO DATABASE
+                new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+                # UPDATE DISPLAY MESSAGE
+                self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
+                """
+                messagebox.showinfo(title="le copy # " + str(counter + 1), 
+                                    message=">>>>>>>>>>>>>>>\n" + str(copy_str))
+                """
                 # increment counter
                 counter += 1
             # }
@@ -1291,7 +1399,8 @@ class AgilentQuotesTracker():  # {
             # WHICH ROW USER CLICKED ON
             item = self.tree.selection()[0] 
             print("TIME REC == " + str(item))
-            test_time_rec = self.selected_cell.set(self.tree.item(item)['text'])
+            # [2020-01-24]\\test_time_rec = self.selected_cell.set(self.tree.item(item)['text'])
+            print("copied TIME REC == " + str(self.time_rec_2copy))
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
