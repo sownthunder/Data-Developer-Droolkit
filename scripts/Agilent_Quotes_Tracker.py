@@ -403,7 +403,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -1133,6 +1133,7 @@ class AgilentQuotesTracker():  # {
             print("TIME SENT / Close time == " + self.close_time_2copy)
             # Notes
             self.notes_2copy = str(self.tree.item(item)['values'][12])
+            #### TURN AROUND TIME ????
             print("NOTES == " + str(self.notes_2copy))
             print (self.tree.item(item)['text'])
             # CHANGE THE COPY FILL TAB CONTAINER TO SHOW THE ABOVE VALUES
@@ -1342,15 +1343,26 @@ class AgilentQuotesTracker():  # {
                 the_sent = self.sent_2copy
                 open_time = self.time_rec_2copy
                 close_time = self.close_time_2copy
+                # [2020-01-26]\\turn_around = self.
+                turn_around = "None"
+                the_notes = self.notes_2copy
+                the_initials = self.initials_2copy
+                the_account_id_num = self.accountid_2copy
+                the_prodflow_quote_num = self.pf_quotenum_2copy
+                the_sap_quote_num = self.sap_quotenum_2copy
+                the_product_number = self.productnum_2copy
+                the_company_name = self.company_2copy
                 logging.info("le copy # " + str(counter + 1) + ":\n")
                 copy_str = str("time REC: " + self.time_rec_2copy + "\n" 
                                + "initials: " + self.initials_2copy + "\n"
                                + "type: " + self.type_2copy + "\n"
                                + "time rec: " + self.time_rec_2copy + "\n"
-                               + "company: " + self.company_2copy + "\n"
+                               + "company name: " + self.company_2copy + "\n"
                                + "contact name: " + self.name_2copy + "\n"
                                + "email address: " + self.email_2copy + "\n"
                                + "accountid: " + self.accountid_2copy + "\n"
+                               + "prodflow quote # " + self.pf_quotenum_2copy + "\n"
+                               + "sap quote # " + self.sap_quotenum_2copy + "\n"
                                + "product #: " + self.productnum_2copy + "\n"
                                + "sent?: " + self.sent_2copy + "\n"
                                )
@@ -1370,20 +1382,20 @@ class AgilentQuotesTracker():  # {
                                      'notes': the_notes,
                                      'initials': the_initials,
                                      'account_id': the_account_id_num,
-                                      'prodflow_quote_number': the_prodflow_quote_num,
-                                      'sap_quote_number': the_sap_quote_num,
-                                      'product_number': the_product_number,
-                                      'company_name': the_company_name
-                                      # [2019-12-31]\\'price': the_price
-                                      }
+                                     'prodflow_quote_number': the_prodflow_quote_num,
+                                     'sap_quote_number': the_sap_quote_num,
+                                     'product_number': the_product_number,
+                                     'company_name': the_company_name
+                                     # [2019-12-31]\\'price': the_price
+                                     }
                 # CREATE EMPTY DATAFRAME
                 copy_entry_df = pd.DataFrame(data=copy_entry_dict, index=None, dtype=np.str)
                 # CREATE ENGINE (for sending to Database)
                 engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
                 # SEND DATAFRAME TO DATABASE
-                new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+                copy_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
                 # UPDATE DISPLAY MESSAGE
-                self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
+                self.message['text'] = "COPIED QUOTE \n#{}\nCREATED!".format(str(track_num))
                 """
                 messagebox.showinfo(title="le copy # " + str(counter + 1), 
                                     message=">>>>>>>>>>>>>>>\n" + str(copy_str))
