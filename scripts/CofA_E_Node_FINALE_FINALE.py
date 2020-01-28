@@ -72,6 +72,13 @@ class CofA_E_Node(): # {
         pass
     # }
     
+    """
+    TAKES IN:
+    (1) the directory to scan
+    (2) list of sub-directories TO NOT SCAN
+    (3) list of file types that you are searching for
+    (4a) uses self.start
+    """
     def dir_traverse(self, the_directory, ignore_dir_list, file_type_list): # {
         pass
     # }

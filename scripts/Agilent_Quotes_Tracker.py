@@ -403,7 +403,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -1437,6 +1437,7 @@ class AgilentQuotesTracker():  # {
         else: # {
             logging.info("Operation Completed Successfully...")
         # }
+        self.view_records()
         # [2020-01-23]\\
         """
         # TRY THE FOLLOWING
