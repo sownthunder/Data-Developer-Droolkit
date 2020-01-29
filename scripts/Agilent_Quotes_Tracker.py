@@ -31,6 +31,7 @@ EDITS:
 01/24/20 - almost finished with COPY function (working properly too)
 01/28/20 - copy function, version check, and side scrollbar all COMPLETE
 01/29/20 - fixed records that could be created with "Select: " as a type
+01/29/20 - Began THREADING for REFRESH TABLE every few minutes...
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -48,6 +49,7 @@ from pathlib import Path
 import fnmatch, shutil
 import datetime
 import tkinter as tk
+from threading import Thread
 import tkinter.ttk as ttk
 from ttkthemes import ThemedStyle
 from tkinter import filedialog, messagebox
@@ -298,6 +300,14 @@ class AgilentQuotesTracker():  # {
 
     # }
     """
+    
+    def refresh_table(self): # {
+        # BEGIN INFINITE LOOP
+        while 1: # {
+            print("hey")
+            sleep(2)
+        # }
+    # }
 
     def create_gui(self):  # {
         # TRY THE FOLLOWING
@@ -407,7 +417,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -885,18 +895,18 @@ class AgilentQuotesTracker():  # {
             ttk.Radiobutton(master=self.lblframe_copy,
                             text='COPY (old) timestamp',
                             value=1, 
-                            variable=self.select_ts_2copy
+                            variable=self.select_ts_2copy,
                             ).grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky='e')
             ttk.Radiobutton(master=self.lblframe_copy,
                             text='CREATE (new) timestamp',
                             value=2,
-                            variable=self.select_ts_2copy
+                            variable=self.select_ts_2copy,
                             ).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='e')
             # COPY BUTTON
             self.copy_button = ttk.Button(master=self.lblframe_copy,
                                           text='COPY',
                                           command=self.copy_create_record,
-                                          width=25
+                                          width=35
                                           ).grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky='n')
         # }
         except: # {
@@ -1130,7 +1140,7 @@ class AgilentQuotesTracker():  # {
             # IF THE RADIO BUTTON VALUE IS EQUAL TO (new)
             if self.select_ts_2copy.get() == 2: # {
                 # SET THE TIMESTAMP OF COPY TO BE (new) CURRENT TIME
-                self.time_rec_2copy = str(pd.Timestamp.now())[:16]
+                self.time_rec_2copy = str(pd.Timestamp.now())[:19]
             # }
             # ELSE... it is still set to 1?
             else: # {
@@ -1975,8 +1985,7 @@ class AgilentQuotesTracker():  # {
     
     def turn_red(self, event): # {
         print("THIS WIDGET's TEXT:\n" + str(event.widget['text']))
-        # [2020-01-08]\\event.widget["activeforeground"] = "red"
-        
+        # [2020-01-08]\\event.widget["activeforeground"] = "red"  
     # }
 
     def new_records_validated(self):  # {
@@ -2925,6 +2934,27 @@ class AgilentQuotesTracker():  # {
 
 # }
 
+class RefreshTable(AgilentQuotesTracker): # {
+    
+    def __init__(self, root, duration): # {
+        super().__init__(root)
+        """Initialize the Thread"""
+        Thread.__init__(self)
+        self.duration = duration
+    # }
+    
+    def run(self): # {
+        """Run the Thread"""
+        amount = self.duration
+        # BEGIN INFINITE LOOP
+        while 1: # {
+            print("SLEEPING FOR " + str(amount) + " SECONDS...")
+            sleep(amount)
+        # }
+    # }
+    
+# }
+
 def setup_logger():  # {
     # TRY THE FOLLOWING
     try:  # {
@@ -2966,6 +2996,7 @@ if __name__ == "__main__":  # {
     setup_logger()
     window = tk.Tk()
     application = AgilentQuotesTracker(window)
+    # [2020-01-29]\\application.refresh_table()
     # [2020-01-03]\\application.tick()  # BEGIN "COUNTING" TIME(STAMP)
     window.config()
     window.mainloop()

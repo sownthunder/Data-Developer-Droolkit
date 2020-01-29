@@ -44,10 +44,13 @@ class CofA_E_Node(): # {
     f_drive_convention = "*[@]*.pdf"
     g_drive_convention = "[part]*[CofA]*[Lot]*[#]*.pdf"
     
-    def __init__(self, in_directory, out_directory, ignore_list): # {
+    def __init__(self, in_directory, out_directory, ignore_list,
+                 check_start, check_end): # {
         self.in_directory = in_directory
         self.out_directory = out_directory
         self.ignore_list = ignore_list
+        self.check_start = check_start
+        self.check_end = check_end
         # <<< CALL MAIN FUNCTION >>>
         self.main()
     # }
@@ -79,7 +82,8 @@ class CofA_E_Node(): # {
     (3) list of file types that you are searching for
     (4a) uses self.start
     """
-    def dir_traverse(self, the_directory, ignore_dir_list, file_type_list): # {
+    def dir_traverse(self, the_directory, ignore_dir_list, 
+                     file_type_list, check_start, check_end): # {
         pass
     # }
     
@@ -127,12 +131,34 @@ def setup_logger(): # {
 if __name__ == "__main__": # {
     # SETUP LOGGER
     setup_logger()
-    e_node = CofA_E_Node(in_directory="F:/APPS/CofA/",
-                         out_directory="G:/C of A's/#Email Node/",
-                         ignore_list=['Archive ERR',
-                                      'Archive - For all archived CofA, see G Cofa Folder',
-                                      'Instruction Sheets',
-                                      'EXPORT ERRORS']
-                         )
+    ################################
+    # INSTANTIATE GLOBAL VARIABLES #
+    in_directory_1 = ""
+    in_directory_2 = ""
+    og_wd = os.getcwd() # GET/SET ORIGINAL WORKING DIRECTORY
+    file_list_f = []
+    time_list_f = []
+    file_list_g = []
+    time_list_g = []
+    # CREATE TIMESTAMP FOR RIGHT NOW
+    ts_now = pd.Timestamp(year=2020, day=29, month=1, hour=5) # hard-coded for testing
+    # USED TO DETERMINE THE CORRECT "start_time" (one day and five hours prior)
+    ts_start_delta = pd.Timedelta(days=1, hours=5)
+    # USED TO DETERMINE THE CORRECT "end_time" (five hours prior)
+    ts_end_delta = pd.Timedelta(hours=5)
+    # SUTRACT and determine "start_time"
+    time_start = ts_now - ts_start_delta
+    logging.info("\n\t START OF SCAN-TIME: " + str(time_start))
+    # SUBTRACT and determine "end_time"
+    time_end = ts_now - ts_end_delta
+    logging.info("\n\tEND OF SCAN-TIME == " + str(time_end))
+    F_Drive_node = CofA_E_Node(in_directory="F:/APPS/CofA/",
+                               out_directory="G:/C of A's/#Email Node/",
+                               ignore_list=['Archive ERR',
+                                            'Archive - For all archived CofA, see G Cofa Folder',
+                                            'Instruction Sheets',
+                                            'EXPORT ERRORS'],
+                               check_start=time_start,
+                               check_end=time_end)
 # }
 
