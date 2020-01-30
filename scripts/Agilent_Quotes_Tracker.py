@@ -1039,6 +1039,29 @@ class AgilentQuotesTracker():  # {
 
     # }
     
+    def _column_sort(self, col, descending=False): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # grab values to sort as a list of typles (column value, column id)
+            # e.g. [('Argentina', 'I001'), 'Australia', 'I002'), ('Brazil', 'I003'))]
+            data = [(self.tree.set(child, col), child) for child in self.tree.get_children('')]
+            
+            # reorder data
+            # tkinter looks after moving other items in
+            # the same row
+            data.sort(reverse=descending)
+            for indx, item in enumerate(data): # {
+                self.tree.move(item[1], '', indx)
+            # }
+            
+            # reverse sort direction for next sort operation
+            
+        # }
+        except: #{
+            pass
+        # }
+    # }
+    
     def clear_create_tab(self): # {
         # TRY THE FOLLOWING
         try: # {
@@ -2934,12 +2957,13 @@ class AgilentQuotesTracker():  # {
 
 # }
 
-class RefreshTable(AgilentQuotesTracker): # {
+class RefreshTable(Thread): # {
     
     def __init__(self, root, duration): # {
-        super().__init__(root)
+        # [2020-01-30]\\super().__init__(root)
         """Initialize the Thread"""
         Thread.__init__(self)
+        self.root = root
         self.duration = duration
     # }
     
@@ -2990,8 +3014,20 @@ def setup_logger():  # {
 
 # }
 
+def create_threads(): # {
+    """
+    Create a group of threads
+    """
+    for i in range(6): # {
+        name = "Thread #%s" % (i+1)
+        my_thread = RefreshTable(name, 5)
+        my_thread.start()
+    # }
+# }
+
 # MAIN BOILERPLATE
 if __name__ == "__main__":  # {
+    # [2020-01-30]\\create_threads()
     # SETUP LOGGER
     setup_logger()
     window = tk.Tk()

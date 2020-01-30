@@ -49,6 +49,9 @@ class CofA_E_Node(): # {
         self.in_directory = in_directory
         self.out_directory = out_directory
         self.ignore_list = ignore_list
+        ####################################
+        # INSTANTIATE/SETUP MAIN VARIABLES #
+        self.file_list_f = [] # remove duplicate below!!
         self.check_start = check_start
         self.check_end = check_end
         # <<< CALL MAIN FUNCTION >>>
@@ -158,6 +161,11 @@ if __name__ == "__main__": # {
                                             'Archive - For all archived CofA, see G Cofa Folder',
                                             'Instruction Sheets',
                                             'EXPORT ERRORS'],
+                               check_start=time_start,
+                               check_end=time_end)
+    G_Drive_node = CofA_E_Node(in_directory="G:/C of A's/Agilent/",
+                               out_directory="G:/C of A's/#Email Node/",
+                               ignore_list=['#Archive'],
                                check_start=time_start,
                                check_end=time_end)
 # }

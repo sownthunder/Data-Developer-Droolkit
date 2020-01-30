@@ -1,0 +1,87 @@
+2020-01-30 15:32:43,611 - __main__ - DEBUG - log DEBUG
+2020-01-30 15:32:43,621 - __main__ - ERROR - log ERROR
+2020-01-30 15:56:58,240 - __main__ - DEBUG - log DEBUG
+2020-01-30 15:56:58,246 - __main__ - ERROR - log ERROR
+2020-01-30 16:11:41,757 - __main__ - DEBUG - log DEBUG
+2020-01-30 16:11:41,757 - __main__ - DEBUG - log DEBUG
+2020-01-30 16:11:41,761 - __main__ - ERROR - log ERROR
+2020-01-30 16:11:41,761 - __main__ - ERROR - log ERROR
+2020-01-30 16:12:58,124 - __main__ - DEBUG - log DEBUG
+2020-01-30 16:12:58,124 - __main__ - DEBUG - log DEBUG
+2020-01-30 16:12:58,124 - __main__ - DEBUG - log DEBUG
+2020-01-30 16:12:58,131 - __main__ - ERROR - log ERROR
+2020-01-30 16:12:58,131 - __main__ - ERROR - log ERROR
+2020-01-30 16:12:58,131 - __main__ - ERROR - log ERROR
+2020-01-30 16:14:30,523 - __main__ - DEBUG - log DEBUG
+2020-01-30 16:14:30,529 - __main__ - ERROR - log ERROR
+2020-01-30 16:19:56,335 - __main__ - DEBUG - function 1
+2020-01-30 16:19:57,342 - __main__ - DEBUG - 10
+2020-01-30 16:19:58,344 - __main__ - DEBUG - 9
+2020-01-30 16:19:59,344 - __main__ - DEBUG - 8
+2020-01-30 16:20:00,345 - __main__ - DEBUG - 7
+2020-01-30 16:20:01,346 - __main__ - DEBUG - 6
+2020-01-30 16:20:02,347 - __main__ - DEBUG - 5
+2020-01-30 16:20:03,349 - __main__ - DEBUG - 4
+2020-01-30 16:20:04,350 - __main__ - DEBUG - 3
+2020-01-30 16:20:05,352 - __main__ - DEBUG - 2
+2020-01-30 16:20:06,353 - __main__ - DEBUG - 1
+2020-01-30 16:20:07,353 - __main__ - DEBUG - 0
+2020-01-30 16:20:07,354 - __main__ - INFO - Blast Off!
+2020-01-30 16:20:07,356 - __main__ - INFO - Operation Completed Successfully...
+2020-01-30 16:20:07,366 - __main__ - INFO - Operation Completed Successfully...
+2020-01-30 16:24:17,279: function 1, FROM=__init__, LINENO=7, __main__ - DEBUG
+2020-01-30 16:24:18,285: 15, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:19,286: 14, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:20,286: 13, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:21,288: 12, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:22,289: 11, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:23,291: 10, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:24,293: 9, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:25,293: 8, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:26,294: 7, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:27,294: 6, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:28,296: 5, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:29,298: 4, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:30,299: 3, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:31,301: 2, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:32,302: 1, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:33,304: 0, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:24:33,305: Blast Off!, FROM=countdown, LINENO=38, __main__ - INFO
+2020-01-30 16:24:33,306: Operation Completed Successfully..., FROM=countdown, LINENO=45, __main__ - INFO
+2020-01-30 16:24:33,312: Operation Completed Successfully..., FROM=watch_and_log_link, LINENO=103, __main__ - INFO
+2020-01-30 16:26:58,226: function 1, FROM=__init__, LINENO=7, __main__ - DEBUG
+2020-01-30 16:26:59,233: 16, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:00,235: 15, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:01,237: 14, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:02,239: 13, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:03,240: 12, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:04,242: 11, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:05,242: 10, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:06,243: 9, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:07,244: 8, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:08,245: 7, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:09,247: 6, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:10,249: 5, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:11,249: 4, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:12,251: 3, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:13,253: 2, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:14,254: 1, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:15,255: 0, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:27:15,256: Blast Off!, FROM=countdown, LINENO=38, __main__ - INFO
+2020-01-30 16:27:15,257: Operation Completed Successfully..., FROM=countdown, LINENO=45, __main__ - INFO
+2020-01-30 16:27:15,260: <bound method DataFrame.info of Empty DataFrame
+Columns: [Link, Watch_Duration, Watch_Timestamp]
+Index: []>, FROM=watch_and_log_link, LINENO=85, __main__ - INFO
+2020-01-30 16:27:15,266: Operation Completed Successfully..., FROM=watch_and_log_link, LINENO=105, __main__ - INFO
+2020-01-30 16:29:41,078: function 1, FROM=__init__, LINENO=7, __main__ - DEBUG
+2020-01-30 16:29:42,085: 5, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:29:43,090: 4, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:29:44,091: 3, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:29:45,092: 2, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:29:46,093: 1, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:29:47,095: 0, FROM=countdown, LINENO=34, __main__ - DEBUG
+2020-01-30 16:29:47,096: Blast Off!, FROM=countdown, LINENO=38, __main__ - INFO
+2020-01-30 16:29:47,097: Operation Completed Successfully..., FROM=countdown, LINENO=45, __main__ - INFO
+2020-01-30 16:29:47,101: <bound method NDFrame.describe of                      Link          Watch_Duration             Watch_Timestamp
+0  https://www.google.com  0 days 00:00:06.014288  2020-01-30 16:29:41.085239>, FROM=watch_and_log_link, LINENO=85, __main__ - INFO
+2020-01-30 16:29:47,110: Operation Completed Successfully..., FROM=watch_and_log_link, LINENO=105, __main__ - INFO
