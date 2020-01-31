@@ -32,6 +32,7 @@ EDITS:
 01/28/20 - copy function, version check, and side scrollbar all COMPLETE
 01/29/20 - fixed records that could be created with "Select: " as a type
 01/29/20 - Began THREADING for REFRESH TABLE every few minutes...
+01/31/20 - veritcal scrollbar, control + f to search
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -64,6 +65,7 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
+from pynput import keyboard
 
 
 class AgilentQuotesTracker():  # {
@@ -84,6 +86,9 @@ class AgilentQuotesTracker():  # {
     
 
     def __init__(self, root):  # {
+        """
+        CHECK DEV. OR PROD. COPY HERE
+        """
         """
         CHECK VERSION NO. HERE
         """
@@ -1011,6 +1016,7 @@ class AgilentQuotesTracker():  # {
             # BIND CLICK ACTIONS/EVENTS
             self.tree.bind("<<TreeviewSelect>>", self.on_single_click)
             self.tree.bind("<Double-1>", self.on_double_click)
+            self.tree.bind("<Control-f>", self.on_search)
             self.tree.bind("<Enter>", self.clear_message_area)
         # }
         except:  # {
@@ -1144,6 +1150,12 @@ class AgilentQuotesTracker():  # {
     """
     
     def on_single_click(self, event): # {
+        #### IF SELECTED HEADING... 
+        #### change view of tree?
+        # [2020-01-31]\\event.widget.yview()
+        #event.widget.config(columns = ('tracking_number'))
+        #event.widget.heading(column='tracking_number', )
+        #event.widget.heading(column="#0", text="NEW TEXT", command=self.turn_red)
         # TRY THE FOLLOWING
         try: # {
             # gets all values of the select row
@@ -1152,6 +1164,9 @@ class AgilentQuotesTracker():  # {
             print ("the test_str = \n", type(test_str_library), test_str_library, '\n')
             # WHICH ROW USER CLICKED ON
             item = self.tree.selection()[0]
+            # WHICH << COL >> USER CLCKED ON
+            #colly = self.tree.selection_set(column="#0")
+            #print("\n\ttest-column: " + str(colly))
             print ("item clicked ", item)
             # PRINTS THE FIRST VALUE OF THE VALUES (the id value)
             # [2020-01-23]\\logging.info ("Time Rec: " + str(self.tree.item(item)['values'][0]))
@@ -1375,6 +1390,32 @@ class AgilentQuotesTracker():  # {
             logging.info("Operation Completed Successfully...")
         # }
         logging.info("\t CHILDREN AFTER \n\t\t========>" + str(len(self.children_num)))
+    # }
+    
+    def on_search(self, event): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # self.admin_transient = tk.Toplevel(master=self.root)
+            self.search_box = tk.Toplevel(master=self.root)
+            self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
+            self.search_box.geometry('500x60+250+250')
+            self.search_box.resizable(width=False, height=False)
+            
+            self.search_box.mainloop()
+        # }
+        except: # {
+            print("FAIL")
+        # }
+        # TRY THE FOLLOWING
+        try: # {
+            # SET TAGS TO SEARCH CRITERIA
+            self.tree.item('00001', tags = ('search'))
+            # CHANGE TAGS TO DISPLAY SEARCH RESULTS
+            self.tree.tag_configure('search', background = 'yellow')
+        # }
+        except: # {
+            print("FAIL")
+        # }
     # }
     
     def copy_create_record(self): # {
@@ -2957,18 +2998,20 @@ class AgilentQuotesTracker():  # {
 
 # }
 
+# [2020-01-31]\\
+"""
 class RefreshTable(Thread): # {
     
     def __init__(self, root, duration): # {
         # [2020-01-30]\\super().__init__(root)
-        """Initialize the Thread"""
+        # Initialize the Thread 
         Thread.__init__(self)
         self.root = root
         self.duration = duration
     # }
     
     def run(self): # {
-        """Run the Thread"""
+        # Run the Thread
         amount = self.duration
         # BEGIN INFINITE LOOP
         while 1: # {
@@ -2978,6 +3021,7 @@ class RefreshTable(Thread): # {
     # }
     
 # }
+"""
 
 def setup_logger():  # {
     # TRY THE FOLLOWING
@@ -3014,16 +3058,17 @@ def setup_logger():  # {
 
 # }
 
+# [2020-01-31]\\
+"""
 def create_threads(): # {
-    """
-    Create a group of threads
-    """
+    # Create a group of threads
     for i in range(6): # {
         name = "Thread #%s" % (i+1)
         my_thread = RefreshTable(name, 5)
         my_thread.start()
     # }
 # }
+"""
 
 # MAIN BOILERPLATE
 if __name__ == "__main__":  # {
