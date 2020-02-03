@@ -33,6 +33,8 @@ EDITS:
 01/29/20 - fixed records that could be created with "Select: " as a type
 01/29/20 - Began THREADING for REFRESH TABLE every few minutes...
 01/31/20 - veritcal scrollbar, control + f to search
+02/03/20 - BOUND control + f search to "application-level", SEARCH BAR GUI
+02/03/20 - COPY FUNCTION requested change... why?
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -792,6 +794,22 @@ class AgilentQuotesTracker():  # {
                                       text="CLEAR",
                                       command=self.clear_create_tab
                                       ).grid(row=8, column=1, padx=10, pady=10, sticky='n')
+            # << CREATE-COPY >> BUTTON
+            self.create_copy_button = ttk.Button(master=self.lblframe_create,
+                                                 text="Create-COPY",
+                                                 command=""
+                                                 ).grid(row=9, column =0, padx=10, pady=10, sticky='n')
+            
+            ## COPY SPINBOX 
+            # SPINBOX (int var)
+            self.num_of_copies = tk.IntVar(master=self.lblframe_copy, value="1")
+            # SPINBOX SPINBOX
+            ttk.Spinbox(master=self.lblframe_create, 
+                               from_=0, 
+                               to=100, 
+                               width=18,
+                               textvariable=self.num_of_copies
+                               ).grid(row=9, column=1, padx=10, pady=10, sticky='e')
             
             """
             # <<< CLOCK (timestamp_test) >>>
@@ -1016,7 +1034,7 @@ class AgilentQuotesTracker():  # {
             # BIND CLICK ACTIONS/EVENTS
             self.tree.bind("<<TreeviewSelect>>", self.on_single_click)
             self.tree.bind("<Double-1>", self.on_double_click)
-            self.tree.bind("<Control-f>", self.on_search)
+            self.tree.bind_all("<Control-f>", self.open_search_window)
             self.tree.bind("<Enter>", self.clear_message_area)
         # }
         except:  # {
@@ -1392,29 +1410,40 @@ class AgilentQuotesTracker():  # {
         logging.info("\t CHILDREN AFTER \n\t\t========>" + str(len(self.children_num)))
     # }
     
-    def on_search(self, event): # {
+    
+    def on_search(self, item=''): # {
+        logging.info("SEARCHING...")
+        logging.info("SEARCH CRITERION: ")
+        children = self.tree.get_children()
         # TRY THE FOLLOWING
         try: # {
-            # self.admin_transient = tk.Toplevel(master=self.root)
-            self.search_box = tk.Toplevel(master=self.root)
-            self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
-            self.search_box.geometry('500x60+250+250')
-            self.search_box.resizable(width=False, height=False)
-            
-            self.search_box.mainloop()
+            for child in children: # {
+                text = self.tree.item(child, 'text')
+                if text.startswith(self.search_box_str.get()): # {
+                    self.tree.selection_set(child)
+                    return True
+                # }
+                else:# {
+                    res = self.on_search(child)
+                    if res: # {
+                        return True
+                # }
+            # }
         # }
         except: # {
-            print("FAIL")
+            pass
         # }
         # TRY THE FOLLOWING
         try: # {
-            # SET TAGS TO SEARCH CRITERIA
-            self.tree.item('00001', tags = ('search'))
-            # CHANGE TAGS TO DISPLAY SEARCH RESULTS
-            self.tree.tag_configure('search', background = 'yellow')
+            x = self.tree.get_children()
+            # changing all children from root item
+            for item in x: # {
+                # [2020-02-03]\\self.tree.item(item, text="blub", values=("foo", "bar"))
+                self.tree.item(item, text="robert", values=("nub", "noob"))
+            # }
         # }
         except: # {
-            print("FAIL")
+            pass
         # }
     # }
     
@@ -2182,6 +2211,100 @@ class AgilentQuotesTracker():  # {
         # the_str - value in %P
         if fnmatch.fnmatch(the_str, str(self.account_id_regex)): # {
             return True
+        # }
+    # }
+    
+    def open_search_window(self, event): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # GET MOUSE LOCATION
+            self.mouse_location = pyautogui.position()
+            logging.info("MOUSE LOCATION:\n" + str(self.mouse_location))
+            # GET SCREEN RESOLUTION/SIZE
+            self.screen_resolution = pyautogui.size()
+            logging.info("SCREEN SIZE:\n" + str(self.screen_resolution))
+        # }
+        except: # {
+            logging.error("Error determining mouse location & screen size...")
+        # }
+        # TRY THE FOLLOWING
+        try: # {
+            # self.admin_transient = tk.Toplevel(master=self.root)
+            self.search_box = tk.Toplevel(master=self.root)
+            self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
+            xindex = str(self.mouse_location).find("x=", 0, len(str(self.mouse_location)))
+            xend = str(self.mouse_location).find(",", 0, len(str(self.mouse_location)))
+            yindex = str(self.mouse_location).find("y=", 0, len(str(self.mouse_location)))
+            yend = str(self.mouse_location).rfind(')', 0, len(str(self.mouse_location)))
+            x_val = int(str(self.mouse_location)[xindex+2:xend])
+            y_val = int(str(self.mouse_location)[yindex+2:yend])
+            logging.info("X == " + str(x_val))
+            logging.info("Y == " + str(y_val))
+            # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
+            location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
+            self.search_box.geometry(str('450x75+' + location_str))
+            self.search_box.resizable(width=True, height=True)
+            # [2020-02-03]\\self.search_box.minsize(width=425, height=50)
+            # [2020-02-03]\\self.search_box.maxsize(width=550, height=125)
+            
+            # STR holding the search user entered
+            # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
+            self.search_box_str = tk.StringVar(master=self.root, value="")
+            
+            # LISTBOX
+            tk.Listbox(master=self.search_box, width=20, height=20
+                        ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            #.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky='n')
+            
+            ttk.Entry(master=self.search_box,
+                      textvariable=self.search_box_str,
+                      width=40
+                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
+            #.grid(row=0, column=2, rowspan=2, columnspan=2, padx=10, pady=10, sticky='w')
+            
+            ttk.Button(master=self.search_box,
+                       text="SEARCH",
+                       height=30,
+                       command=self.on_search
+                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
+            # .grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky='e')
+            
+            
+            
+            # GIVE FOCUS TO ENTRY BOX
+            
+            
+            self.search_box.mainloop()
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        # TRY THE FOLLOWING
+        try: # {
+            # SET TAGS TO SEARCH CRITERIA
+            self.tree.item('00001', tags = ('search'))
+            # CHANGE TAGS TO DISPLAY SEARCH RESULTS
+            self.tree.tag_configure('search', background = 'yellow')
+        # }
+        except: # {
+            print("FAIL")
         # }
     # }
 

@@ -144,5 +144,13 @@ namespace TaskLoggerTaskPane
 
             }
         }
+
+        private void CreateCustomFolder()
+        {
+
+            
+
+
+        }
     }
 }
