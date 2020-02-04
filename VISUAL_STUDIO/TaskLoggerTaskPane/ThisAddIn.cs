@@ -7,6 +7,7 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools;
 
+
 namespace TaskLoggerTaskPane
 {
     public partial class ThisAddIn
@@ -19,6 +20,11 @@ namespace TaskLoggerTaskPane
         // [2019-12-19]
         private TaskPaneControl myTaskPaneControl1;
         private Microsoft.Office.Tools.CustomTaskPane myCustomTaskPane;
+
+        // [2020-02-04]
+        Outlook.NameSpace outlookNameSpace;
+        Outlook.MAPIFolder inbox;
+        Outlook.Items items;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
@@ -143,6 +149,14 @@ namespace TaskLoggerTaskPane
                 return taskPane;
 
             }
+        }
+
+        // [2020-02-04]
+        private void SearchInBox()
+        {
+
+            // [2020-02-04] Outlook.Folder inbox = this.Application.ActiveExplorer().Session.
+
         }
 
         private void CreateCustomFolder()

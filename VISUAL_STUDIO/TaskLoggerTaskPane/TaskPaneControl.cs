@@ -35,7 +35,7 @@ namespace TaskLoggerTaskPane
         private void button1_Click(object sender, EventArgs e)
         {
 
-
+            // [2020-02-04] Outlook
 
         }
     }

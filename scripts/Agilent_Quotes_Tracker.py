@@ -424,7 +424,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -624,7 +624,7 @@ class AgilentQuotesTracker():  # {
 
     def fill_tab_containers(self):  # {
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
-        # () CREATE TAB CONTENTS () #
+        #### () CREATE TAB CONTENTS () #
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
         # TRY THE FOLLOWING
         try:  # {
@@ -792,23 +792,35 @@ class AgilentQuotesTracker():  # {
             # CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
                                       text="CLEAR",
-                                      command=self.clear_create_tab
-                                      ).grid(row=8, column=1, padx=10, pady=10, sticky='n')
+                                      command=self.clear_create_tab,
+                                      width=35
+                                      ).grid(row=10, column=0, columnspan=2, padx=10, pady=10, sticky='n')
+            # CHECK BUTTON (int var)
+            self.copy_check_int = tk.IntVar(master=self.root)
+            # CHECK BUTTON (for copy display/hide)
+            self.create_copy_check = ttk.Checkbutton(master=self.lblframe_create,
+                                                     text="COP(IES) ?",
+                                                     command=self.copy_create_check,
+                                                     variable=self.copy_check_int
+                                                     ).grid(row=8, column=1, padx=10, pady=10, sticky='n')
+            
             # << CREATE-COPY >> BUTTON
             self.create_copy_button = ttk.Button(master=self.lblframe_create,
                                                  text="Create-COPY",
-                                                 command=""
-                                                 ).grid(row=9, column =0, padx=10, pady=10, sticky='n')
+                                                 command="",
+                                                 state=tk.DISABLED
+                                                 ).grid(row=9, column=0, padx=10, pady=10, sticky='n')
             
             ## COPY SPINBOX 
             # SPINBOX (int var)
-            self.num_of_copies = tk.IntVar(master=self.lblframe_copy, value="1")
+            self.num_of_copies = tk.IntVar(master=self.lblframe_create, value="1")
             # SPINBOX SPINBOX
             ttk.Spinbox(master=self.lblframe_create, 
                                from_=0, 
                                to=100, 
                                width=18,
-                               textvariable=self.num_of_copies
+                               textvariable=self.num_of_copies,
+                               state=tk.ACTIVE
                                ).grid(row=9, column=1, padx=10, pady=10, sticky='e')
             
             """
@@ -868,7 +880,7 @@ class AgilentQuotesTracker():  # {
             logging.info("[CREATE-TAB] Operation Completed Successfully...")
         # }
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
-        # () COPY TAB CONTENTS () 
+        #### () COPY TAB CONTENTS () 
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
         # TRY THE FOLLOWING
         try: # {
@@ -1007,7 +1019,7 @@ class AgilentQuotesTracker():  # {
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER)  # 'tracking_number' in BACKEND
+            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self.turn_red)  # 'tracking_number' in BACKEND
             self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER) # "Open_time" in BACKEND
             self.tree.heading('#2', text='Initials', anchor=tk.CENTER)
             self.tree.heading('#3', text='Type', anchor=tk.CENTER)
@@ -1097,7 +1109,8 @@ class AgilentQuotesTracker():  # {
             self.initials.set("")           # initials
             self.type_var.set("Select: ")   # quote type
             # [2020-01-14]\\self.notes.set("")              
-            self.notes.insert(tk.INSERT, "") # notes
+            # [2020-02-04]\\self.notes.insert(tk.INSERT, "") # notes
+            self.notes.set("")
         # }
         except: # { 
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1445,6 +1458,10 @@ class AgilentQuotesTracker():  # {
         except: # {
             pass
         # }
+    # }
+    
+    def copy_create_check(self): # {
+        print("CHECK")
     # }
     
     def copy_create_record(self): # {
@@ -2251,8 +2268,14 @@ class AgilentQuotesTracker():  # {
             # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
             self.search_box_str = tk.StringVar(master=self.root, value="")
             
-            # LISTBOX
-            tk.Listbox(master=self.search_box, width=20, height=20
+            # variable to hold str in combobox
+            self.combo_box_str = tk.StringVar(master=self.root, value="")
+            
+            # COMBOBOX
+            ttk.Combobox(master=self.search_box,
+                         width=40,
+                         textvariable=self.combo_box_str,
+                         values=["Tracking #", "Time Rec."]
                         ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             #.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky='n')
             
@@ -2262,9 +2285,8 @@ class AgilentQuotesTracker():  # {
                       ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
             #.grid(row=0, column=2, rowspan=2, columnspan=2, padx=10, pady=10, sticky='w')
             
-            ttk.Button(master=self.search_box,
+            submit_search = ttk.Button(master=self.search_box,
                        text="SEARCH",
-                       height=30,
                        command=self.on_search
                        ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
             # .grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky='e')
