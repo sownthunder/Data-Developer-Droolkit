@@ -424,7 +424,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(self.root)
             # # STYLE THEME
-            self.style.set_theme("radiance") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
             # Modify the font of the headings
@@ -503,7 +503,7 @@ class AgilentQuotesTracker():  # {
             self.tab_control.add(self.tab1, text='CREATE')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             
-            
+            # [2020-2-05]\\
             # TAB-2 // COPY TOOLS
             self.tab2 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab2, text='COPY')
@@ -571,12 +571,12 @@ class AgilentQuotesTracker():  # {
             self.lblframe_copy.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
             # Create the IMPORT Tab Container
-            self.lblframe_import = ttk.Frame(master=self.tab3)
-            self.lblframe_import.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            # [2020-02-05]\\self.lblframe_import = ttk.Frame(master=self.tab3)
+            # [2020-02-05]\\self.lblframe_import.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
             # Create the EXPORT Tab Container
-            self.lblframe_export = ttk.Frame(master=self.tab4)
-            self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            # [2020-02-05]\\self.lblframe_export = ttk.Frame(master=self.tab4)
+            # [2020-02-05]\\self.lblframe_export.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
 
             # Create the IMPORT Tab Container
             # [2020-01-03]\\self.lblframe_import = ttk.LabelFrame(master=self.tab2, text="ABOUT the Agilent Quotes Tracker:")
@@ -628,7 +628,7 @@ class AgilentQuotesTracker():  # {
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
         # TRY THE FOLLOWING
         try:  # {
-            # COMPANY NAME Input
+            #### COMPANY NAME Input
             ttk.Label(master=self.lblframe_create,
                       text='Company Name: ').grid(row=0, column=0, padx=10, pady=10, sticky='nw')
             self.company_name = tk.StringVar(master=self.lblframe_create)
@@ -637,7 +637,7 @@ class AgilentQuotesTracker():  # {
                                           width=20
                                           ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
             
-            # CONTACT PERSON (NAME)
+            #### CONTACT PERSON (NAME)
             ttk.Label(master=self.lblframe_create,
                       text='Contact Person: ').grid(row=2, column=0, padx=10, pady=10, sticky='nw')
             self.name = tk.StringVar(master=self.root)
@@ -647,18 +647,18 @@ class AgilentQuotesTracker():  # {
                                        state='active',
                                        width=20
                                        ).grid(row=2, column=1, padx=10, pady=10, sticky='w')
-            # EMAIL ADDRESS #
+            #### EMAIL ADDRESS #
             ttk.Label(master=self.lblframe_create,
-                      text='Email Address: ').grid(row=3, column=0, padx=10, pady=10, sticky='w')
+                      text='Email Address: ').grid(row=3, column=0, padx=10, pady=10, sticky='nw')
             self.email = tk.StringVar(master=self.root)
             ttk.Entry(master=self.lblframe_create,
                                       textvariable=self.email,
                                       state='active',
                                       width=20
-                                      ).grid(row=3, column=1, padx=10, pady=10, stick='nw') 
-            # ACCOUNT ID #
+                                      ).grid(row=3, column=1, padx=10, pady=10, stick='w') 
+            #### ACCOUNT ID #
             ttk.Label(master=self.lblframe_create,
-                      text='Account ID: ').grid(row=4, column=0, padx=10, pady=10, sticky='w')
+                      text='Account ID: ').grid(row=4, column=0, padx=10, pady=10, sticky='nw')
             self.account_id = tk.StringVar(master=self.root)
             ttk.Entry(master=self.lblframe_create,
                                    textvariable=self.account_id,
@@ -706,9 +706,9 @@ class AgilentQuotesTracker():  # {
                                        ).grid(row=8, column=1, padx=10, pady=10, sticky='w')
             """
             
-            # INITIALS #
+            #### INITIALS #
             ttk.Label(master=self.lblframe_create,
-                      text='Initials: ').grid(row=5, column=0, padx=10, pady=10, sticky='w')
+                      text='Initials: ').grid(row=5, column=0, padx=10, pady=10, sticky='nw')
             self.initials = tk.StringVar(master=self.root)
             ttk.Entry(master=self.lblframe_create,
                                  textvariable=self.initials,
@@ -717,10 +717,10 @@ class AgilentQuotesTracker():  # {
                                  ).grid(row=5, column=1, padx=10, pady=10, sticky='w')
             
             ########
-            # TYPE #
+            ##### TYPE #
             ttk.Label(master=self.lblframe_create,
                       text='Type: '
-                      ).grid(row=6, column=0, padx=10, pady=10, sticky='w')
+                      ).grid(row=6, column=0, padx=10, pady=10, sticky='nw')
             
             self.type_var = tk.StringVar(master=self.root, value="Select: ") #, value="email")
             """
@@ -738,6 +738,12 @@ class AgilentQuotesTracker():  # {
                             ).grid(row=6, column=1, columsnpan=3, sticky='e', padx=20, pady=10)
             
             """
+            ttk.Combobox(self.lblframe_create,
+                         width=18,
+                         textvariable=self.type_var,
+                         values=["web", "email"],
+                         ).grid(row=6, column=1, padx=10, pady=10, sticky='w')
+            """
             ttk.OptionMenu(self.lblframe_create, 
                            self.type_var, 
                            "Select: ", 
@@ -745,7 +751,7 @@ class AgilentQuotesTracker():  # {
                            "email", 
                            direction="right"
                            ).grid(row=6, column=1, padx=10, pady=10, sticky='w')
-            
+            """
             #########################################################################
             
             self.sep_2 = ttk.Separator(master=self.lblframe_create, orient=tk.HORIZONTAL)
@@ -753,9 +759,9 @@ class AgilentQuotesTracker():  # {
             
             ##########################################################################
             
-            # NOTES #
+            #### NOTES #
             ttk.Label(master=self.lblframe_create,
-                      text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='w')
+                      text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='nw')
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
             self.notes = tk.StringVar(master=self.root, value="None")
             """
@@ -768,7 +774,7 @@ class AgilentQuotesTracker():  # {
             ttk.Entry(master=self.lblframe_create,
                                    width=20,
                                    textvariable=self.notes
-                                   ).grid(row=7, column=1, padx=10, pady=10, sticky='e')
+                                   ).grid(row=7, column=1, padx=10, pady=10, sticky='w')
             """
             self.notes = tk.Text(master=self.lblframe_create, 
                             height=10,
@@ -780,21 +786,13 @@ class AgilentQuotesTracker():  # {
             self.notes.insert(index=0, chars="")
             """
             
-            # CREATE BUTTON #
-            self.create_button = ttk.Button(master=self.lblframe_create, 
-                                       text="CREATE",
-                                       command=self.add_new_record
-                                       ).grid(row=8, column=0, padx=10, pady=10, sticky='n')
+            
             # BIND ACTION TO CREATE BUTTON
+            # [2020-02-05]\\create_button.bind("<Return>", self.add_new_record)
             # [2020-01-23]\\self.create_button.bind("<ButtonRelease-1>", self.on_create_button)
             # [2020-01-29]\\self.create_button.bind("<FocusIn>", self.turn_red)
             # [2020-01-29]\\self.create_button.bind("<Return>", self.turn_red)
-            # CLEAR BUTTON #
-            self.clear_button = ttk.Button(master=self.lblframe_create,
-                                      text="CLEAR",
-                                      command=self.clear_create_tab,
-                                      width=35
-                                      ).grid(row=10, column=0, columnspan=2, padx=10, pady=10, sticky='n')
+            """
             # CHECK BUTTON (int var)
             self.copy_check_int = tk.IntVar(master=self.root)
             # CHECK BUTTON (for copy display/hide)
@@ -802,27 +800,39 @@ class AgilentQuotesTracker():  # {
                                                      text="COP(IES) ?",
                                                      command=self.copy_create_check,
                                                      variable=self.copy_check_int
-                                                     ).grid(row=8, column=1, padx=10, pady=10, sticky='n')
-            
+                                                     ).grid(row=8, column=0, padx=10, pady=10, sticky='nw')
             # << CREATE-COPY >> BUTTON
             self.create_copy_button = ttk.Button(master=self.lblframe_create,
                                                  text="Create-COPY",
                                                  command="",
                                                  state=tk.DISABLED
                                                  ).grid(row=9, column=0, padx=10, pady=10, sticky='n')
-            
-            ## COPY SPINBOX 
+            """
+            ttk.Label(master=self.lblframe_create,
+                      text="Number of Cop(ies): ").grid(row=8, column=0, padx=10, pady=10, sticky='nw')
+            #### CREATE-COPIES SPINBOX 
             # SPINBOX (int var)
-            self.num_of_copies = tk.IntVar(master=self.lblframe_create, value="1")
+            self.num_of_copies = tk.IntVar(master=self.lblframe_create, value="0")
             # SPINBOX SPINBOX
-            ttk.Spinbox(master=self.lblframe_create, 
+            self.copy_spinbox = ttk.Spinbox(master=self.lblframe_create, 
                                from_=0, 
                                to=100, 
-                               width=18,
+                               width=20,
                                textvariable=self.num_of_copies,
                                state=tk.ACTIVE
-                               ).grid(row=9, column=1, padx=10, pady=10, sticky='e')
-            
+                               ).grid(row=8, column=1, padx=10, pady=10, sticky='w')
+            #### CREATE BUTTON #
+            create_button = ttk.Button(master=self.lblframe_create, 
+                                       text="CREATE",
+                                       # IF COPY AMOUNT IS SET TO ZERO THEN CALL NORMAL CREATE... ELSE CALL "check" which then calls CREATE loops
+                                       command=self.add_new_record if int(self.num_of_copies.get()) <=0 else self.copy_create_check,
+                                       width=20
+                                       ).grid(row=9, column=0, padx=10, pady=10, sticky='nw')
+            #### CLEAR BUTTON #
+            self.clear_button = ttk.Button(master=self.lblframe_create,
+                                      text="CLEAR",
+                                      command=self.clear_create_tab,
+                                      ).grid(row=9, column=1, padx=10, pady=10, sticky='w')
             """
             # <<< CLOCK (timestamp_test) >>>
             self.clock = ttk.Label(master=self.lblframe_create, font=("Calibri", 20, 'bold'),
@@ -887,7 +897,7 @@ class AgilentQuotesTracker():  # {
             # SELECTED TRACKING # (label)
             ttk.Label(master=self.lblframe_copy, 
                       text="Selected Tracking #: "
-                      ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
+                      ).grid(row=0, column=0, padx=10, pady=10, sticky='nw')
             # SELECTED TRACKING # (stringVar)
             self.selected_tracking_num = tk.StringVar(master=self.lblframe_copy, value="None")
             # SELECTED TRACKING # (entry)
@@ -895,11 +905,11 @@ class AgilentQuotesTracker():  # {
                       textvariable=self.selected_tracking_num,
                       state=tk.DISABLED,
                       width=20
-                      ).grid(row=0, column=1, padx=10, pady=10, sticky='e')
+                      ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
             # SELECTED TIME RECEIVED (label)
             ttk.Label(master=self.lblframe_copy,
                       text="Selected (Time rec): "
-                      ).grid(row=1, column=0, padx=10, pady=10, sticky='w')
+                      ).grid(row=1, column=0, padx=10, pady=10, sticky='nw')
             # SELECTED TIME RECEIVED (stringVar)
             self.selected_time_rec = tk.StringVar(master=self.lblframe_copy, value="None")
             # SELECTED TIME RECEIVED (entry)
@@ -907,7 +917,7 @@ class AgilentQuotesTracker():  # {
                       textvariable=self.selected_time_rec,
                       state=tk.DISABLED,
                       width=20
-                      ).grid(row=1, column=1, padx=10, pady=10, sticky='e')
+                      ).grid(row=1, column=1, padx=10, pady=10, sticky='w')
             # SELECTED CELL 3 (INITIALS)
             # SELECTED CELL 4 (TYPE)
             # SELECTED CELL 5 (COMPANY)
@@ -915,16 +925,17 @@ class AgilentQuotesTracker():  # {
             # SPINBOX (to copy multiple entries)
             ttk.Label(master=self.lblframe_copy,
                       text="Number of Copies: "
-                      ).grid(row=4, column=0, padx=10, pady=10, sticky='w')
+                      ).grid(row=4, column=0, padx=10, pady=10, sticky='nw')
             # SPINBOX (int var)
-            self.num_of_copies = tk.IntVar(master=self.lblframe_copy, value="1")
+            #### NUMBER OF NEW COPIES
+            self.num_of_new_copies = tk.IntVar(master=self.lblframe_copy, value="1")
             # SPINBOX SPINBOX
             ttk.Spinbox(master=self.lblframe_copy, 
                                from_=0, 
                                to=100, 
                                width=18,
-                               textvariable=self.num_of_copies
-                               ).grid(row=4, column=1, padx=10, pady=10, sticky='e')
+                               textvariable=self.num_of_new_copies
+                               ).grid(row=4, column=1, padx=10, pady=10, sticky='w')
             # RADIOBOX (for current or "copied" timestamp)
             self.select_ts_2copy = tk.IntVar(master=self.lblframe_copy, value=1)
             ttk.Radiobutton(master=self.lblframe_copy,
@@ -942,7 +953,7 @@ class AgilentQuotesTracker():  # {
                                           text='COPY',
                                           command=self.copy_create_record,
                                           width=35
-                                          ).grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky='n')
+                                          ).grid(row=5, column=0, columnspan=2, rowspan=2, padx=10, pady=10, sticky='n')
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1074,6 +1085,15 @@ class AgilentQuotesTracker():  # {
         # }
 
     # }
+    
+    def _select_column(self, item=''): # {
+        children = self.tree.get_children(item)
+        for child in children: # {
+            text = self.tree.item(child, 'text')
+            if text.startswith(self.entry.get()): # {
+                self.tree.selection_set(child)
+            # }
+        # }}
     
     def _column_sort(self, col, descending=False): # {
         # TRY THE FOLLOWING
@@ -1444,7 +1464,24 @@ class AgilentQuotesTracker():  # {
             # }
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
         # TRY THE FOLLOWING
         try: # {
@@ -1456,12 +1493,67 @@ class AgilentQuotesTracker():  # {
             # }
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
     # }
     
     def copy_create_check(self): # {
-        print("CHECK")
+        # TRY THE FOLLOWING
+        try: # {
+            # CHECK NUMBER OF COPIES USER ENTERED:
+            print("num of copies? \n\t " + str(self.num_of_copies.get()))
+            # CHECK STATE OF CHECK BUTTON
+            if int(self.copy_check_int.get()) == 0: # {
+                print("NOT CHECKED!")
+                # DECTIVATE THE SPINBOX SO IT CANT BE USED!
+                self.copy_spinbox['state'] = tk.DISABLED
+            # }
+            else: # {
+                print("CHECKED!")
+                # SET SPINBOX TO BE ACTIVE!
+                self.copy_spinbox['state'] = tk.ACTIVE
+                # SET "create button" to inactive
+                # [2020-02-05]\\self.create_button.state = tk.DISABLED
+                # [2020-02-05]\\self.create_button['state'] = tk.DISABLED
+            # }
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                 "\n" + fileE +
+                                 "\n" + lineE +
+                                 "\n" + messageE)
+        # }
     # }
     
     def copy_create_record(self): # {
@@ -2095,6 +2187,7 @@ class AgilentQuotesTracker():  # {
     
     def turn_red(self, event): # {
         print("THIS WIDGET's TEXT:\n" + str(event.widget['text']))
+        #self.message['text'] = "SOOOUP"
         # [2020-01-08]\\event.widget["activeforeground"] = "red"  
     # }
 
@@ -2165,6 +2258,8 @@ class AgilentQuotesTracker():  # {
             quote_tracker_entries = self.execute_db_query(query)
             for row in quote_tracker_entries:  # {
                 # [2020-01-14]\\print("PRINTING ROW:\n\t" + str(row))
+                # [2020-02-05]\\
+                """
                 logging.info("TRACKING # == " + str(row[0]))
                 logging.info("Time REC. === " + str(row[5])) #  WAS NAME [row=1]
                 logging.info("Initials == " + str(row[9]))  # WAS EMAIL [row=2]
@@ -2183,6 +2278,7 @@ class AgilentQuotesTracker():  # {
                 # [2019-12-31]\\logging.info("Time Sent. == " + str(row[6])) # WAS PRICE [row=13]
                 logging.info("NOTES == " + str(row[8]))  # WAS PRODFLOW QUOTE # [row=11]
                 logging.info("TURN AROUND TIME (if any) == " + str(row[7]))
+                """
                 # CREATE LIST TO HOLD RECORD ENTRY
                 # [Tracking #] [Name] [Email] [Type] [Timestamp/open_time]
                 # [2019-12-31]
@@ -2259,10 +2355,12 @@ class AgilentQuotesTracker():  # {
             logging.info("Y == " + str(y_val))
             # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
             location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
-            self.search_box.geometry(str('450x75+' + location_str))
+            self.search_box.geometry(str('450x375+' + location_str))
             self.search_box.resizable(width=True, height=True)
             # [2020-02-03]\\self.search_box.minsize(width=425, height=50)
             # [2020-02-03]\\self.search_box.maxsize(width=550, height=125)
+            self.search_box.minsize(width=450, height=375)
+            self.search_box.maxsize(width=700, height=600)
             
             # STR holding the search user entered
             # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
@@ -2271,18 +2369,32 @@ class AgilentQuotesTracker():  # {
             # variable to hold str in combobox
             self.combo_box_str = tk.StringVar(master=self.root, value="")
             
-            # COMBOBOX
+            #### COMBOBOX
             ttk.Combobox(master=self.search_box,
-                         width=40,
-                         textvariable=self.combo_box_str,
-                         values=["Tracking #", "Time Rec."]
-                        ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                        width=20,
+                        textvariable=self.combo_box_str,
+                        selectmode='browse',
+                        values=["Tracking #", 
+                                 "Time Rec.",
+                                 "Initials",
+                                 "Type",
+                                 "Company",
+                                 "Contact Person",
+                                 "Email Address",
+                                 "Account ID",
+                                 "Product #",
+                                 "PF Quote #",
+                                 "SAP QUOTE #",
+                                 "Sent",
+                                 "Time Sent",
+                                 "Notes"]
+                        ).pack(side=tk.LEFT, fill=tk.Y, expand=True)
             #.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky='n')
             
             ttk.Entry(master=self.search_box,
                       textvariable=self.search_box_str,
                       width=40
-                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
+                      ).pack(anchor=tk.NE, fill=tk.X, expand=True)
             #.grid(row=0, column=2, rowspan=2, columnspan=2, padx=10, pady=10, sticky='w')
             
             submit_search = ttk.Button(master=self.search_box,
@@ -2290,11 +2402,11 @@ class AgilentQuotesTracker():  # {
                        command=self.on_search
                        ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
             # .grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky='e')
+            print("FOCUS == " + str(self.search_box.focus_get()))
             
             
-            
-            # GIVE FOCUS TO ENTRY BOX
-            
+            # GIVE FOCUS TO (ENTRY) SEARCH BOX
+            self.search_box.focus_set()
             
             self.search_box.mainloop()
         # }
