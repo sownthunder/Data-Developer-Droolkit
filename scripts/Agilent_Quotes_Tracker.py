@@ -35,6 +35,9 @@ EDITS:
 01/31/20 - veritcal scrollbar, control + f to search
 02/03/20 - BOUND control + f search to "application-level", SEARCH BAR GUI
 02/03/20 - COPY FUNCTION requested change... why?
+02/04/20 - fixed CLEAR MESSAGE error where Notes not clearing propely
+02/05/20 - implemented **BOTH** copy functions, new and already existing...
+02/06/20 - 
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -85,6 +88,10 @@ class AgilentQuotesTracker():  # {
     # VERSION CONTROL NUMBER
     version_number = "20.01.29"
     ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
+    # BOOL TO HOLD IF copy_tab IS OPEN OR NOT
+    # originally set to True... becuase when first initiated...
+    # calls function that sets it back to FAlSE (because its not shown)
+    copy_tab = True
     
 
     def __init__(self, root):  # {
@@ -495,8 +502,10 @@ class AgilentQuotesTracker():  # {
             # self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-            # NOTEBOOK WIDGET
+            #### NOTEBOOK WIDGET
             self.tab_control = ttk.Notebook(self.leftframe)
+            # ENABLE KEYBOARD TRAVERSAL
+            self.tab_control.enable_traversal()
 
             # TAB-1 // CREATE
             self.tab1 = ttk.Frame(master=self.tab_control)
@@ -508,6 +517,9 @@ class AgilentQuotesTracker():  # {
             self.tab2 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab2, text='COPY')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
+            
+            # BIND TAB EVENTS
+            self.tab_control.bind("<<NotebookTabChanged>>", self.copy_create_check)
             
             # [2020-01-15]
             """
@@ -560,13 +572,13 @@ class AgilentQuotesTracker():  # {
     def create_tab_containers(self):  # {
         # TRY THE FOLLOWING:
         try:  # {
-            # Create the CREATE Tab Container
+            #### CREATE Tab
             # [2020-01-03]\\self.lblframe_create = ttk.LabelFrame(master=self.tab1, text="Enter the following information:")
             self.lblframe_create = ttk.Frame(master=self.tab1)
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
-            # Create the COPY Tab Container
+            #### COPY Tab
             self.lblframe_copy = ttk.Frame(master=self.tab2)
             self.lblframe_copy.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
@@ -624,7 +636,7 @@ class AgilentQuotesTracker():  # {
 
     def fill_tab_containers(self):  # {
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
-        #### () CREATE TAB CONTENTS () #
+        #### () CREATE TAB CONTENTS ()
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
         # TRY THE FOLLOWING
         try:  # {
@@ -808,31 +820,41 @@ class AgilentQuotesTracker():  # {
                                                  state=tk.DISABLED
                                                  ).grid(row=9, column=0, padx=10, pady=10, sticky='n')
             """
+            
+            #########################################################################
+            
+            self.sep_3 = ttk.Separator(master=self.lblframe_create, orient=tk.HORIZONTAL)
+            self.sep_3.place(x=10, y=340, width=275, height=1)  # WAS y=330
+            
+            ##########################################################################
+            
             ttk.Label(master=self.lblframe_create,
-                      text="Number of Cop(ies): ").grid(row=8, column=0, padx=10, pady=10, sticky='nw')
-            #### CREATE-COPIES SPINBOX 
-            # SPINBOX (int var)
-            self.num_of_copies = tk.IntVar(master=self.lblframe_create, value="0")
+                      text="Number to Create: ").grid(row=8, column=0, padx=10, pady=10, sticky='nw')
+            #### SPINBOX (copies while create) 
+            ### tk.IntVar (self.num_of_copies)
+            self.num_of_copies = tk.IntVar(master=self.lblframe_create, value="1")
             # SPINBOX SPINBOX
             self.copy_spinbox = ttk.Spinbox(master=self.lblframe_create, 
-                               from_=0, 
-                               to=100, 
-                               width=20,
+                               from_=1, 
+                               to=10, 
+                               width=19,
                                textvariable=self.num_of_copies,
                                state=tk.ACTIVE
                                ).grid(row=8, column=1, padx=10, pady=10, sticky='w')
+            # [2020-02-06]\\self.copy_spinbox.bind("<<Increment>>", self.turn_red)
             #### CREATE BUTTON #
             create_button = ttk.Button(master=self.lblframe_create, 
                                        text="CREATE",
                                        # IF COPY AMOUNT IS SET TO ZERO THEN CALL NORMAL CREATE... ELSE CALL "check" which then calls CREATE loops
-                                       command=self.add_new_record if int(self.num_of_copies.get()) <=0 else self.copy_create_check,
+                                       command=self.add_new_record, # [2020-02-06]\\if int(self.num_of_copies.get()) <= 0 else self.copy_create_check,
                                        width=20
-                                       ).grid(row=9, column=0, padx=10, pady=10, sticky='nw')
+                                       ).grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky='nw')
             #### CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
                                       text="CLEAR",
                                       command=self.clear_create_tab,
-                                      ).grid(row=9, column=1, padx=10, pady=10, sticky='w')
+                                      width=10
+                                      ).grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky='ne')
             """
             # <<< CLOCK (timestamp_test) >>>
             self.clock = ttk.Label(master=self.lblframe_create, font=("Calibri", 20, 'bold'),
@@ -903,12 +925,12 @@ class AgilentQuotesTracker():  # {
             # SELECTED TRACKING # (entry)
             ttk.Entry(master=self.lblframe_copy,
                       textvariable=self.selected_tracking_num,
-                      state=tk.DISABLED,
+                      state=tk.ACTIVE,
                       width=20
                       ).grid(row=0, column=1, padx=10, pady=10, sticky='w')
             # SELECTED TIME RECEIVED (label)
             ttk.Label(master=self.lblframe_copy,
-                      text="Selected (Time rec): "
+                      text="Selected Timestamp: "
                       ).grid(row=1, column=0, padx=10, pady=10, sticky='nw')
             # SELECTED TIME RECEIVED (stringVar)
             self.selected_time_rec = tk.StringVar(master=self.lblframe_copy, value="None")
@@ -922,37 +944,37 @@ class AgilentQuotesTracker():  # {
             # SELECTED CELL 4 (TYPE)
             # SELECTED CELL 5 (COMPANY)
             # SELECTED CELL 6 (CONTACT PERSON)
-            # SPINBOX (to copy multiple entries)
-            ttk.Label(master=self.lblframe_copy,
-                      text="Number of Copies: "
-                      ).grid(row=4, column=0, padx=10, pady=10, sticky='nw')
-            # SPINBOX (int var)
-            #### NUMBER OF NEW COPIES
-            self.num_of_new_copies = tk.IntVar(master=self.lblframe_copy, value="1")
-            # SPINBOX SPINBOX
-            ttk.Spinbox(master=self.lblframe_copy, 
-                               from_=0, 
-                               to=100, 
-                               width=18,
-                               textvariable=self.num_of_new_copies
-                               ).grid(row=4, column=1, padx=10, pady=10, sticky='w')
             # RADIOBOX (for current or "copied" timestamp)
             self.select_ts_2copy = tk.IntVar(master=self.lblframe_copy, value=1)
             ttk.Radiobutton(master=self.lblframe_copy,
                             text='COPY (old) timestamp',
                             value=1, 
                             variable=self.select_ts_2copy,
-                            ).grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky='e')
+                            ).grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky='w')
             ttk.Radiobutton(master=self.lblframe_copy,
                             text='CREATE (new) timestamp',
                             value=2,
                             variable=self.select_ts_2copy,
-                            ).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='e')
-            # COPY BUTTON
+                            ).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='w')
+            #### SPINBOX (new copies)
+            ttk.Label(master=self.lblframe_copy,
+                      text="Number of Copies: "
+                      ).grid(row=4, column=0, padx=10, pady=10, sticky='nw')
+            # SPINBOX (int var)
+            #### tk.IntVar (self.num_of_new_copies)
+            self.num_of_new_copies = tk.IntVar(master=self.lblframe_copy, value="1")
+            # SPINBOX SPINBOX
+            ttk.Spinbox(master=self.lblframe_copy, 
+                               from_=1, 
+                               to=10, 
+                               width=19,
+                               textvariable=self.num_of_new_copies
+                               ).grid(row=4, column=1, padx=10, pady=10, sticky='w')
+            #### COPY BUTTON
             self.copy_button = ttk.Button(master=self.lblframe_copy,
                                           text='COPY',
                                           command=self.copy_create_record,
-                                          width=35
+                                          width=36
                                           ).grid(row=5, column=0, columnspan=2, rowspan=2, padx=10, pady=10, sticky='n')
         # }
         except: # {
@@ -1130,7 +1152,8 @@ class AgilentQuotesTracker():  # {
             self.type_var.set("Select: ")   # quote type
             # [2020-01-14]\\self.notes.set("")              
             # [2020-02-04]\\self.notes.insert(tk.INSERT, "") # notes
-            self.notes.set("")
+            self.num_of_copies.set("0") # posible copies to create
+            self.notes.set("None")  # notes
         # }
         except: # { 
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1401,7 +1424,7 @@ class AgilentQuotesTracker():  # {
             ############################################## 
             # CHECK IF ANOTHER WINDOW IS ALREADY OPEN (greaater than 6)
             if len(self.children_num) > 6: # {
-                messagebox.showwarning(title="WARNING:", message="cannot click while other window open!")
+                messagebox.showwarning(title="WARNING:", message="ATTEMPTED TO OPEN MULTIPLE MODIFY WINDOWS:\nCannot perform action while other window open!")
             # }
             else: # {
                 # SEND SELECTIONS AND OPEN MODIFY WINDOW
@@ -1514,7 +1537,40 @@ class AgilentQuotesTracker():  # {
         # }
     # }
     
-    def copy_create_check(self): # {
+    # CALLED WHEN NOTEBOOK TAB IS SWITCHED/CHANGED
+    def copy_create_check(self, event): # {
+        print("\n\tself.num_of_copies.get() == " + str(self.num_of_copies.get()))
+        print("\tself.num_of_new_copies.get() == " + str(self.num_of_new_copies.get()))
+        
+        """
+        
+        "new_copies" are create in "COPY" tab
+        "copies" are made while creating a new quote
+        
+        FOR each num in "num_of_copies.get()", call the ADD NEW RECORD function
+        make sure 
+        
+        """
+        ## IF THE COPY HAS BEEN SWITCHED TOO....
+        if self.copy_tab is False: # {
+            # change bool to true because user is on "copy"
+            self.copy_tab = True
+            # set OTHER NUMBER To 0?
+            print("\t<<SET CREATE TAB TO ZERO>>")
+            # CODE TO HIDE COLUMNS
+            #self.tree["displaycolumns"]=("one", "two", "three", "four")
+        # }
+        # else.... IT HAS BEEN SWITCHED AWAY FORM...
+        else: # {
+            # change bool to false because user is on "create"
+            self.copy_tab = False
+            # set OTHER NUMBER To 0?
+            print("\t<<SET COPY TAB TO ZERO>>")
+            # CODE TO HIDE COLUMNS
+            #self.tree["displaycolumns"]=("five", "six", "seven", "eight")
+        # } 
+        print("\n\tCOPY TAB BOOL = " + str(self.copy_tab))
+        """
         # TRY THE FOLLOWING
         try: # {
             # CHECK NUMBER OF COPIES USER ENTERED:
@@ -1554,6 +1610,7 @@ class AgilentQuotesTracker():  # {
                                  "\n" + lineE +
                                  "\n" + messageE)
         # }
+        """
     # }
     
     def copy_create_record(self): # {
@@ -1569,7 +1626,7 @@ class AgilentQuotesTracker():  # {
                 try: # {
                     logging.info("COPY " + str(self.num_of_copies.get()) + " ENTRIES !!")
                     # GET number to copy and set as INT
-                    copy_num = int(self.num_of_copies.get())
+                    copy_num = int(self.num_of_new_copies.get())
                     # set counter
                     counter = 0
                     while copy_num > counter: # {
@@ -1973,7 +2030,7 @@ class AgilentQuotesTracker():  # {
                 display_str += "SAP Quote #:\t\tNONE\n"
                 display_str += "product #:\t\tNONE\n"
                 display_str += "-------------------------------------------\n"
-                display_str += "notes: \n\n"
+                display_str += "notes:\n\t\t"
                 display_str += str(self.notes.get())  # ("1.0", tk.END))
                 # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
                 confirm_box = messagebox.askokcancel(title="Confirm Create", message=str(display_str))
@@ -1981,6 +2038,102 @@ class AgilentQuotesTracker():  # {
                 if str(confirm_box) == "True":  # {
                     # IF THE USER SAID YES.... ADD NEW RECORD!
                     logging.info("...ADDING NEW RECORD...")
+                    """
+                    ############################################################
+                    << CHECK NUMBER OF NEW RECORDS TO ADD >>
+                    ############################################################
+                    """
+                    print("\n\t self.num_of_copies.get() == " + str(self.num_of_copies.get()))
+                    # CHECK NUMBER OF COPIES USER WISHES TO MAKE:
+                    if int(self.num_of_copies.get()) > 1: # {
+                        real_number_to_create = int(self.num_of_copies.get())
+                        print("\n\t... WISHES TO CREATE multiple NEW ENTRIES... " + str(real_number_to_create))
+                    # }
+                    # ELSE... USER DIDNT CHANGE NUMBER.. so set to 1 by default
+                    else: # { 
+                        real_number_to_create = 1
+                        print("n\t... WISHES TO CREATE (one) SINGLE ENTRY... ")
+                    # }
+                    """
+                    <<<<<<<<<<<<<<<<<<< LOOOP & CREATE (copies of) RECORD >>>>>>>>>>>>>>>
+                    """
+                    # LOOP FOR EACH INSTANCE OF "real_number_to_create"
+                    while int(real_number_to_create) > 0: # {
+                        # create ENTRY variables
+                        # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
+                        track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
+                        the_name = [str(self.name.get())]
+                        the_email = [str(self.email.get())]
+                        the_type = [str(self.type_var.get())]
+                        # [2020-01-08]\\the_sent = [str(self.radio_sent_var.get())]
+                        the_sent = [str("False")]
+                        open_time = [str(pd.Timestamp.now())[:19]]
+                        close_time = [str("None")]
+                        turn_around = [str("None")]  # np.Nan?
+                        # [2019-12-18]\\the_notes = [str(self.notes.get())]
+                        # IF NOTES IS LEFT EMPTY ADD IN THAT IT IS SO
+                        if str(self.notes.get()) == "":  # {
+                            # SET NOTES TO STRING OF "none"
+                            the_notes = ["None"]
+                        # }
+                        # ELSE ITS NOT EMPTY SO ASSIGN TO DATAFRAME
+                        else:  # {
+                            # [2020-01-14]\\the_notes = [str(self.notes.get("1.0", tk.END))]
+                            the_notes = [str(self.notes.get())]
+                        # }
+                        the_initials = [str(self.initials.get())]
+                        the_account_id_num = [str(self.account_id.get())]
+                        # [2020-01-10]\\the_prodflow_quote_num = [str(self.prodflow_quote_num.get())]
+                        # [2020-01-10]\\the_sap_quote_num = [str(self.sap_quote_num.get())]
+                        # [2020-01-10]\\the_product_number = [str(self.product_num.get())]
+                        the_prodflow_quote_num = [""]
+                        the_sap_quote_num = [""]
+                        the_product_number = [""]
+                        the_company_name = [str(self.company_name.get())]
+                        # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
+                        # DICTIONARY OF LISTS
+                        """
+                        *************************
+                        MUST BE THE SAME AS THE SQLite COLUMN NAMES
+                        ****************************
+                        """
+                        new_entry_dict = {'tracking_number': track_num,
+                                          'name': the_name,
+                                          'email': the_email,
+                                          'type': the_type,
+                                          'sent': the_sent,
+                                          'open_time': open_time,
+                                          'close_time': close_time,
+                                          'turn_around': turn_around,
+                                          'notes': the_notes,
+                                          'initials': the_initials,
+                                          'account_id': the_account_id_num,
+                                          'prodflow_quote_number': the_prodflow_quote_num,
+                                          'sap_quote_number': the_sap_quote_num,
+                                          'product_number': the_product_number,
+                                          'company_name': the_company_name
+                                          # [2019-12-31]\\'price': the_price
+                                          }
+                        # CREATE EMPTY DATAFRAME
+                        new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
+                        # CREATE ENGINE (for sending to Database)
+                        engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                        # SEND DATAFRAME TO DATABASE
+                        new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
+                        # UPDATE DISPLAY MESSAGE
+                        self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
+                        """
+                        # CREATE ENTRY
+                        print("create entry " + str(real_number_to_create))
+                        # decrement count
+                        real_number_to_create -= 1
+                        """
+                    # }
+                    else: # {
+                        print("create entry 0... so finished!")
+                    # }
+                    stop_input = input("did they work?")
+                    """
                     # create ENTRY variables
                     # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
                     track_num = [self.create_file_name_convention(the_pickle=self.t_count_filename, number_of_digits=8)]
@@ -2014,11 +2167,9 @@ class AgilentQuotesTracker():  # {
                     the_company_name = [str(self.company_name.get())]
                     # [2019-12-12]\\ts_meow = [str(pd.Timestamp.now())]
                     # DICTIONARY OF LISTS
-                    """
-                    *************************
-                    MUST BE THE SAME AS THE SQLite COLUMN NAMES
-                    ****************************
-                    """
+                    #*************************
+                    #MUST BE THE SAME AS THE SQLite COLUMN NAMES
+                    #****************************
                     new_entry_dict = {'tracking_number': track_num,
                                       'name': the_name,
                                       'email': the_email,
@@ -2046,7 +2197,6 @@ class AgilentQuotesTracker():  # {
                     self.message['text'] = "NEW QUOTE \n#{}\nCREATED!".format(str(track_num))
                     # CLEAR ENTRY BOXES
                     # [2020-01-10]\\
-                    """
                     self.name.delete(0, tk.END)
                     self.email.delete(0, tk.END)
                     self.notes.delete(0, tk.END)
@@ -2059,17 +2209,25 @@ class AgilentQuotesTracker():  # {
                     self.type_var.set("Select: ")
                     # [2019-12-31]\\self.price.delete(0, tk.END)
                     """
+                    #### CLEAR ENTRY BOXES
+                    self.company_name.set("")
                     self.name.set("")
                     self.email.set("")
                     self.notes.set("")
                     # [2020-01-14]\\self.notes.insert(tk.INSERT, "")
                     self.initials.set("")
                     self.account_id.set("")
+                    # removed [2020-01-10] - re added [2020-02-06]\\
                     # [2020-01-10]\\self.prodflow_quote_num.set("")
                     # [2020-01-10]\\self.sap_quote_num.set("")
                     # [2020-01-10]\\self.product_num.set("")
+                    self.prodflow_quote_num.set("")
+                    self.quote_num.set("")
+                    self.product_num.set("")
                     self.company_name.set("")
                     self.type_var.set("Select: ")
+                    # SET COPIES BACK TO 1
+                    self.num_of_copies.set("1")
                 # }
                 else:  # {
                     # SHOW WARNING BOX
@@ -2186,7 +2344,11 @@ class AgilentQuotesTracker():  # {
     # }
     
     def turn_red(self, event): # {
-        print("THIS WIDGET's TEXT:\n" + str(event.widget['text']))
+        print("turn red!")
+        # PRIN OUT SELECTED TAB?
+        selected_tab = self.tab_control.tabs()
+        print("selected tab:\n\t" + str(selected_tab))
+        # [2020-02-6]\\print("THIS WIDGET's TEXT:\n" + str(event.widget['text']))
         #self.message['text'] = "SOOOUP"
         # [2020-01-08]\\event.widget["activeforeground"] = "red"  
     # }
@@ -2246,7 +2408,7 @@ class AgilentQuotesTracker():  # {
     def view_records(self):  # {
         logging.info("Begin Populating TreeView...")
         # display message
-        self.message['text'] = " <<< Updating / Refreshing Table >>> "
+        # [2020-02-06]\\self.message['text'] = " <<< Updating / Refreshing Table >>> "
         # TRY THE FOLLOWING
         try:  # {
             items = self.tree.get_children()
@@ -2373,7 +2535,6 @@ class AgilentQuotesTracker():  # {
             ttk.Combobox(master=self.search_box,
                         width=20,
                         textvariable=self.combo_box_str,
-                        selectmode='browse',
                         values=["Tracking #", 
                                  "Time Rec.",
                                  "Initials",

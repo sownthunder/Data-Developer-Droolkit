@@ -7,8 +7,17 @@ Agilent_Directory_Digger_Tool.py
 PERFORMS THE FOLLOWING FUNCTIONS:
     - present user with GUI
     - lets user select directory(ies?) (tk.filedialog)
-    - lets user select option on said directories (scan, count, etc)
-    - lets user select output **TYPE** of file (csv, xlsx, txt...)
+    - lets user select option on said directories
+        - scan within files for text
+        - count number of files
+        - count files by date
+        - count files by string
+        - zip or move files
+    - lets user select output **TYPE** of file
+        - csv
+        - xlsx
+        - txt
+        - zip (if move or extraction of files)
     - lets user select output *LOCATION* of file (tk.filedialog)
 
 @author: derbates
