@@ -37,7 +37,7 @@ EDITS:
 02/03/20 - COPY FUNCTION requested change... why?
 02/04/20 - fixed CLEAR MESSAGE error where Notes not clearing propely
 02/05/20 - implemented **BOTH** copy functions, new and already existing...
-02/06/20 - 
+02/06/20 - display columns after clicking on headers?
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -1052,8 +1052,8 @@ class AgilentQuotesTracker():  # {
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self.turn_red)  # 'tracking_number' in BACKEND
-            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER) # "Open_time" in BACKEND
+            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER)  # 'tracking_number' in BACKEND
+            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER, command=self._select_column) # "Open_time" in BACKEND
             self.tree.heading('#2', text='Initials', anchor=tk.CENTER)
             self.tree.heading('#3', text='Type', anchor=tk.CENTER)
             self.tree.heading('#4', text='Company', anchor=tk.CENTER)  # COMPANY_NAME
@@ -1109,13 +1109,21 @@ class AgilentQuotesTracker():  # {
     # }
     
     def _select_column(self, item=''): # {
+        print('YOU SELECTED ' + str(item.widget.text))
         children = self.tree.get_children(item)
+        print("CHILDREN == " + str(children))
         for child in children: # {
             text = self.tree.item(child, 'text')
-            if text.startswith(self.entry.get()): # {
+            # if text.startswith(self.entry.get()):
+            if text.startswith("poop"): # {
                 self.tree.selection_set(child)
             # }
-        # }}
+        # }
+        # PRINT NUMBER OF COLUMNS BEING DISPLAYED 
+        print("\n\tNUM OF COLS: " + str(len(self.tree["displaycolumns"])))
+        # HIDE ALL BUT ONE COLUMN
+        self.tree["displaycolumns"]=("one") # "two", "three", "four")
+    # }
     
     def _column_sort(self, col, descending=False): # {
         # TRY THE FOLLOWING
@@ -2528,8 +2536,9 @@ class AgilentQuotesTracker():  # {
             # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
             self.search_box_str = tk.StringVar(master=self.root, value="")
             
+            #### tk.StringVar
             # variable to hold str in combobox
-            self.combo_box_str = tk.StringVar(master=self.root, value="")
+            self.combo_box_str = tk.StringVar(master=self.search_box, value="Tracking #")
             
             #### COMBOBOX
             ttk.Combobox(master=self.search_box,
@@ -2549,20 +2558,17 @@ class AgilentQuotesTracker():  # {
                                  "Sent",
                                  "Time Sent",
                                  "Notes"]
-                        ).pack(side=tk.LEFT, fill=tk.Y, expand=True)
-            #.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky='n')
+                        ).grid(row=0, column=0, padx=10, pady=10, sticky='nesw')
             
             ttk.Entry(master=self.search_box,
                       textvariable=self.search_box_str,
                       width=40
-                      ).pack(anchor=tk.NE, fill=tk.X, expand=True)
-            #.grid(row=0, column=2, rowspan=2, columnspan=2, padx=10, pady=10, sticky='w')
+                      ).grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='nesw')
             
             submit_search = ttk.Button(master=self.search_box,
                        text="SEARCH",
                        command=self.on_search
-                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
-            # .grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky='e')
+                       ).grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='nesw')
             print("FOCUS == " + str(self.search_box.focus_get()))
             
             
