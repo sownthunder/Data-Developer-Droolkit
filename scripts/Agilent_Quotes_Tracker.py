@@ -38,6 +38,8 @@ EDITS:
 02/04/20 - fixed CLEAR MESSAGE error where Notes not clearing propely
 02/05/20 - implemented **BOTH** copy functions, new and already existing...
 02/06/20 - display columns after clicking on headers?
+02/07/10 - added in DEV copies to use DUMMY databases
+02/10/10 - re-arranged DEV & PROD instantiates... fixed DEV dummy 
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -72,12 +74,39 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from pynput import keyboard
 
+"""
+class Logger(): # {
+    
+    def __init__(self, logging_output_dir): # {
+        self.logging_output_dir = logging_output_dir
+        # INITIATING THE LOGGER OBJECT
+        self.logger = logging.getLogger(__name__)}}
+"""
 
 class AgilentQuotesTracker():  # {
 
-    db_filename = "E:/_Quotes_Tracker/data/quotes_tracker.db"
+    #################################################
+    #### check if DEV or PROD copy
+    if fnmatch.fnmatch(str(sys.argv[0]), "*_dev*"): # {
+        logging.info(">>>> loading DEV >>>>>")
+        #### set DEV values
+        db_filename = "e:/_Quotes_Tracker/dev/data/quotes_tracker.db"
+        t_count_filename = "e:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
+        # VERSION CONTROL NUMBER
+        version_number = "20.02.10"
+        ver_file = Path("E:/_Quotes_Tracker/dev/config/ver_no.txt")
+    # }
+    else: # {
+        logging.info(">>>>> loading PROD >>>>>")
+        #### set PROD values
+        db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
+        t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
+        # VERSION CONTROL NUMBER
+        version_number = "20.01.29"
+        ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
+    # }
+    ##################################################
     #db_filename = "C:/Temp/E/data/quotes_tracker.db"
-    t_count_filename = "E:/_Quotes_Tracker/config/quotes_t_number.pkl"
     #t_count_filename = "C:/Temp/E/config/quotes_t_number.pkl"
     time1 = ""
     # REGEX STRINGS FOR FILE NAMING CONVENTIONS
@@ -85,9 +114,6 @@ class AgilentQuotesTracker():  # {
     # [2020-01-09]\\account_id_regex = "[*][*][*][*][*][*][*][*][*]"
     pf_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9]"
     sap_quote_regex = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
-    # VERSION CONTROL NUMBER
-    version_number = "20.01.29"
-    ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
     # BOOL TO HOLD IF copy_tab IS OPEN OR NOT
     # originally set to True... becuase when first initiated...
     # calls function that sets it back to FAlSE (because its not shown)
@@ -1052,20 +1078,20 @@ class AgilentQuotesTracker():  # {
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER)  # 'tracking_number' in BACKEND
+            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self._de_select_column)  # 'tracking_number' in BACKEND
             self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER, command=self._select_column) # "Open_time" in BACKEND
-            self.tree.heading('#2', text='Initials', anchor=tk.CENTER)
-            self.tree.heading('#3', text='Type', anchor=tk.CENTER)
-            self.tree.heading('#4', text='Company', anchor=tk.CENTER)  # COMPANY_NAME
-            self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER) # NAME IN BACKEND
-            self.tree.heading('#6', text='Email Address', anchor=tk.CENTER)  #
-            self.tree.heading('#7', text='Account ID', anchor=tk.CENTER)
-            self.tree.heading("#8", text='Product #', anchor=tk.CENTER)
-            self.tree.heading('#9', text='PF Quote #', anchor=tk.CENTER)
-            self.tree.heading('#10', text='SAP Quote #', anchor=tk.CENTER)
-            self.tree.heading('#11', text='Sent', anchor=tk.CENTER)
-            self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER)       # CLOSE TIME IN BACKEND
-            self.tree.heading('#13', text='Notes', anchor=tk.CENTER)
+            self.tree.heading('#2', text='Initials', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#3', text='Type', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#4', text='Company', anchor=tk.CENTER, command=self._select_column)  # COMPANY_NAME
+            self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER, command=self._select_column) # NAME IN BACKEND
+            self.tree.heading('#6', text='Email Address', anchor=tk.CENTER, command=self._select_column)  #
+            self.tree.heading('#7', text='Account ID', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading("#8", text='Product #', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#9', text='PF Quote #', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#10', text='SAP Quote #', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#11', text='Sent', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER, command=self._select_column)       # CLOSE TIME IN BACKEND
+            self.tree.heading('#13', text='Notes', anchor=tk.CENTER, command=self._select_column)
             
             # CONFIG SCROLLBAR (horixontal/xview)
             self.scrollbar.config(command = self.tree.xview)
@@ -1109,20 +1135,69 @@ class AgilentQuotesTracker():  # {
     # }
     
     def _select_column(self, item=''): # {
-        print('YOU SELECTED ' + str(item.widget.text))
+        # gets all values of the select row
+        str_row = self.tree.item(self.tree.selection())
+        print("STR ROW == " + str(str_row))
+        # GET/SET HEADING (main heading)
+        heading = str(self.tree.heading(column="#0")['text'])
+        print("HEADING == " + str(heading))
+        selected_item = str(self.tree.selection()) ## get selected item
+        selected_col = str(self.tree.column(column="#0"))
+        print('YOU SELECTED ' + str(selected_item))
+        print('item == ' + str(item))
+        #KEEP#print('heading == ' + str(self.tree.heading(column="#0")['text']))
+        print('col == ' + str(selected_col))
         children = self.tree.get_children(item)
         print("CHILDREN == " + str(children))
         for child in children: # {
             text = self.tree.item(child, 'text')
+            # print(text)
+        # }
+        """
+        for child in children: # {
+            text = self.tree.item(child, 'text')
             # if text.startswith(self.entry.get()):
-            if text.startswith("poop"): # {
+            if text.startswith(self.search_box_str.get()): # {
                 self.tree.selection_set(child)
             # }
         # }
+        """
         # PRINT NUMBER OF COLUMNS BEING DISPLAYED 
         print("\n\tNUM OF COLS: " + str(len(self.tree["displaycolumns"])))
         # HIDE ALL BUT ONE COLUMN
         self.tree["displaycolumns"]=("one") # "two", "three", "four")
+    # }
+    
+    def _de_select_column(self, item=''): # {
+        print("DE-SELECTING ALL COLUMNS (showing all)...")
+        # TRY THE FOLLOWING
+        try: # {
+            # SHOW ALL COLUMNS
+            self.tree["displaycolumns"]=("one", "two", "three",
+                                           "four", "five", "six",
+                                           "seven", "eight", "nine",
+                                           "ten", "eleven", "twelve", "thirteen")
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
     # }
     
     def _column_sort(self, col, descending=False): # {
@@ -1144,7 +1219,24 @@ class AgilentQuotesTracker():  # {
             
         # }
         except: #{
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
     # }
     
@@ -1477,7 +1569,6 @@ class AgilentQuotesTracker():  # {
     
     def on_search(self, item=''): # {
         logging.info("SEARCHING...")
-        logging.info("SEARCH CRITERION: ")
         children = self.tree.get_children()
         # TRY THE FOLLOWING
         try: # {
@@ -1694,7 +1785,8 @@ class AgilentQuotesTracker():  # {
                         # CREATE EMPTY DATAFRAME
                         copy_entry_df = pd.DataFrame(data=copy_entry_dict, index=None, dtype=np.str)
                         # CREATE ENGINE (for sending to Database)
-                        engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                        # [2020-02-10]\\engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                        engine = create_engine('sqlite:///' + str(self.db_filename))
                         # SEND DATAFRAME TO DATABASE
                         copy_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
                         # UPDATE DISPLAY MESSAGE
@@ -1813,11 +1905,12 @@ class AgilentQuotesTracker():  # {
 
     def check_quote_completion(self, the_df):  # {
         # CREATE ENGINE (for pulling from Database)
-        engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+        # [2020-02-10]\\engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+        engine = create_engine('sqlite:///' + str(self.db_filename))
         # USE ENGINE TO CONNECT TO DATABASE
         # [2020-01-17]\\cnxn = pyodbc.connect(engine)
-        conn = sqlite3.connect("E:/_Quotes_Tracker/data/quotes_tracker.db")
-        
+        # [2020-02-10]\\conn = sqlite3.connect("E:/_Quotes_Tracker/data/quotes_tracker.db")
+        conn = sqlite3.connect(str(self.db_filename))
         # SEND DATAFRAME TO DATABASE
         # [2020-01-16]\\new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
         # TRY THE FOLLOWING
@@ -2125,7 +2218,8 @@ class AgilentQuotesTracker():  # {
                         # CREATE EMPTY DATAFRAME
                         new_entry_df = pd.DataFrame(data=new_entry_dict, index=None, dtype=np.str)
                         # CREATE ENGINE (for sending to Database)
-                        engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                        # [2020-02-10]\\engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                        engine = create_engine('sqlite:///' + str(self.db_filename))
                         # SEND DATAFRAME TO DATABASE
                         new_entry_df.to_sql(name="quotes", con=engine, if_exists="append", index=False)
                         # UPDATE DISPLAY MESSAGE
@@ -2133,14 +2227,14 @@ class AgilentQuotesTracker():  # {
                         """
                         # CREATE ENTRY
                         print("create entry " + str(real_number_to_create))
+                        """
                         # decrement count
                         real_number_to_create -= 1
-                        """
                     # }
                     else: # {
                         print("create entry 0... so finished!")
                     # }
-                    stop_input = input("did they work?")
+                    # [2020-02-10]\\stop_input = input("did they work?")
                     """
                     # create ENTRY variables
                     # [2019-12-26]\\track_num = [self.quote_number_convention()]  # auto-creates number
@@ -2229,13 +2323,14 @@ class AgilentQuotesTracker():  # {
                     # [2020-01-10]\\self.prodflow_quote_num.set("")
                     # [2020-01-10]\\self.sap_quote_num.set("")
                     # [2020-01-10]\\self.product_num.set("")
-                    self.prodflow_quote_num.set("")
-                    self.quote_num.set("")
-                    self.product_num.set("")
-                    self.company_name.set("")
+                    # [2020-02-10]\\self.prodflow_quote_num.set("")
+                    # [2020-02-10]\\self.quote_num.set("")
+                    # [2020-02-10]\\self.product_num.set("")
+                    # [2020-02-10]\\self.company_name.set("")
                     self.type_var.set("Select: ")
                     # SET COPIES BACK TO 1
                     self.num_of_copies.set("1")
+                    self.num_of_new_copies.set("1")
                 # }
                 else:  # {
                     # SHOW WARNING BOX
@@ -2525,12 +2620,12 @@ class AgilentQuotesTracker():  # {
             logging.info("Y == " + str(y_val))
             # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
             location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
-            self.search_box.geometry(str('450x375+' + location_str))
+            # [2020-02-10]\\self.search_box.geometry(str('450x375+' + location_str))
             self.search_box.resizable(width=True, height=True)
             # [2020-02-03]\\self.search_box.minsize(width=425, height=50)
             # [2020-02-03]\\self.search_box.maxsize(width=550, height=125)
-            self.search_box.minsize(width=450, height=375)
-            self.search_box.maxsize(width=700, height=600)
+            # [2020-02-10]\\self.search_box.minsize(width=450, height=375)
+            # [2020-02-10]\\self.search_box.maxsize(width=700, height=600)
             
             # STR holding the search user entered
             # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
@@ -2567,8 +2662,9 @@ class AgilentQuotesTracker():  # {
             
             submit_search = ttk.Button(master=self.search_box,
                        text="SEARCH",
-                       command=self.on_search
-                       ).grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='nesw')
+                       command=self.on_search,
+                       width=30
+                       ).grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky='nesw')
             print("FOCUS == " + str(self.search_box.focus_get()))
             
             
@@ -3158,7 +3254,8 @@ class AgilentQuotesTracker():  # {
                 # TRY THE FOLLOWING
                 try: # {
                     # create engine
-                    engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                    # [2020-02-10]\\engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                    engine = create_engine('sqlite:///' + str(self.db_filename))
                     # Create connection to DB (from engine)
                     conn = engine.connect()
                     # PULL ENTIRE DB INTO A DATAFRAME
