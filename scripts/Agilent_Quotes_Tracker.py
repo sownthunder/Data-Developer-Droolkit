@@ -38,8 +38,9 @@ EDITS:
 02/04/20 - fixed CLEAR MESSAGE error where Notes not clearing propely
 02/05/20 - implemented **BOTH** copy functions, new and already existing...
 02/06/20 - display columns after clicking on headers?
-02/07/10 - added in DEV copies to use DUMMY databases
-02/10/10 - re-arranged DEV & PROD instantiates... fixed DEV dummy 
+02/07/20 - added in DEV copies to use DUMMY databases
+02/10/20 - re-arranged DEV & PROD instantiates... fixed DEV dummy 
+02/11/20 - finished CONTROL + F Search Function (excludes tracking #...)
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -93,7 +94,7 @@ class AgilentQuotesTracker():  # {
         db_filename = "e:/_Quotes_Tracker/dev/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
-        version_number = "20.02.10"
+        version_number = "20.02.11"
         ver_file = Path("E:/_Quotes_Tracker/dev/config/ver_no.txt")
     # }
     else: # {
@@ -1078,20 +1079,20 @@ class AgilentQuotesTracker():  # {
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self._de_select_column)  # 'tracking_number' in BACKEND
-            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER, command=self._select_column) # "Open_time" in BACKEND
-            self.tree.heading('#2', text='Initials', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading('#3', text='Type', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading('#4', text='Company', anchor=tk.CENTER, command=self._select_column)  # COMPANY_NAME
-            self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER, command=self._select_column) # NAME IN BACKEND
-            self.tree.heading('#6', text='Email Address', anchor=tk.CENTER, command=self._select_column)  #
-            self.tree.heading('#7', text='Account ID', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading("#8", text='Product #', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading('#9', text='PF Quote #', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading('#10', text='SAP Quote #', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading('#11', text='Sent', anchor=tk.CENTER, command=self._select_column)
-            self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER, command=self._select_column)       # CLOSE TIME IN BACKEND
-            self.tree.heading('#13', text='Notes', anchor=tk.CENTER, command=self._select_column)
+            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER) #, command=self._de_select_column)  # 'tracking_number' in BACKEND
+            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER) #, command=self._select_column) # "Open_time" in BACKEND
+            self.tree.heading('#2', text='Initials', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#3', text='Type', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#4', text='Company', anchor=tk.CENTER) #, command=self._select_column)  # COMPANY_NAME
+            self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER) #, command=self._select_column) # NAME IN BACKEND
+            self.tree.heading('#6', text='Email Address', anchor=tk.CENTER) #, command=self._select_column)  #
+            self.tree.heading('#7', text='Account ID', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading("#8", text='Product #', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#9', text='PF Quote #', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#10', text='SAP Quote #', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#11', text='Sent', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER) #, command=self._select_column)       # CLOSE TIME IN BACKEND
+            self.tree.heading('#13', text='Notes', anchor=tk.CENTER) #, command=self._select_column)
             
             # CONFIG SCROLLBAR (horixontal/xview)
             self.scrollbar.config(command = self.tree.xview)
@@ -1135,37 +1136,72 @@ class AgilentQuotesTracker():  # {
     # }
     
     def _select_column(self, item=''): # {
-        # gets all values of the select row
-        str_row = self.tree.item(self.tree.selection())
-        print("STR ROW == " + str(str_row))
-        # GET/SET HEADING (main heading)
-        heading = str(self.tree.heading(column="#0")['text'])
-        print("HEADING == " + str(heading))
-        selected_item = str(self.tree.selection()) ## get selected item
-        selected_col = str(self.tree.column(column="#0"))
-        print('YOU SELECTED ' + str(selected_item))
-        print('item == ' + str(item))
-        #KEEP#print('heading == ' + str(self.tree.heading(column="#0")['text']))
-        print('col == ' + str(selected_col))
-        children = self.tree.get_children(item)
-        print("CHILDREN == " + str(children))
-        for child in children: # {
-            text = self.tree.item(child, 'text')
-            # print(text)
-        # }
-        """
-        for child in children: # {
-            text = self.tree.item(child, 'text')
-            # if text.startswith(self.entry.get()):
-            if text.startswith(self.search_box_str.get()): # {
-                self.tree.selection_set(child)
+        # TRY THE FOLLOWING
+        try: # {
+            # gets all values of the select row
+            str_row = self.tree.item(self.tree.selection())
+            print("STR ROW == " + str(str_row))
+            item = self.tree.selection() # what row did you click on
+            print(item)
+            # GET/SET HEADING (main heading)
+            heading = str(self.tree.heading(column="#0")['text'])
+            print("HEADING (main) == " + str(heading))
+            show_heading = self.tree["columns"]
+            print("HEADINGS == " + show_heading)
+            # GET SELECTED COL HEADING
+            #selected_heading = self.tree.heading(self.tree.item(self.tree.selection()))
+            #selected_heading = self.tree.heading(self.tree.selection())
+            selected_heading = self.tree.column(self.tree.item(self.tree.selection()), option='id')
+            #selected_heading = self.tree.heading(column=self.tree.item(self.tree.selection()))
+            str_selected_heading = str(selected_heading)
+            print("STR == " + str(str_selected_heading))
+            # [2020-02-11]\\selected_item = str(self.tree.selection()) ## get selected item
+            selected_item = self.tree.item(self.tree.column())
+            selected_col = str(self.tree.column(column="#0"))
+            print('YOU SELECTED ' + str(selected_item))
+            print('item == ' + str(item))
+            #KEEP#print('heading == ' + str(self.tree.heading(column="#0")['text']))
+            print('col == ' + str(selected_col))
+            children = self.tree.get_children(item)
+            print("CHILDREN == " + str(children))
+            for child in children: # {
+                text = self.tree.item(child, 'text')
+                print(text)
             # }
+            """
+            for child in children: # {
+                text = self.tree.item(child, 'text')
+                # if text.startswith(self.entry.get()):
+                if text.startswith(self.search_box_str.get()): # {
+                    self.tree.selection_set(child)
+                # }
+            # }
+            """
+            # PRINT NUMBER OF COLUMNS BEING DISPLAYED 
+            print("\n\tNUM OF COLS: " + str(len(self.tree["displaycolumns"])))
+            # HIDE ALL BUT ONE COLUMN
+            self.tree["displaycolumns"]=("one") # "two", "three", "four")
         # }
-        """
-        # PRINT NUMBER OF COLUMNS BEING DISPLAYED 
-        print("\n\tNUM OF COLS: " + str(len(self.tree["displaycolumns"])))
-        # HIDE ALL BUT ONE COLUMN
-        self.tree["displaycolumns"]=("one") # "two", "three", "four")
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
     # }
     
     def _de_select_column(self, item=''): # {
@@ -1524,7 +1560,7 @@ class AgilentQuotesTracker():  # {
             ############################################## 
             # CHECK IF ANOTHER WINDOW IS ALREADY OPEN (greaater than 6)
             if len(self.children_num) > 6: # {
-                messagebox.showwarning(title="WARNING:", message="ATTEMPTED TO OPEN MULTIPLE MODIFY WINDOWS:\nCannot perform action while other window open!")
+                messagebox.showwarning(title="WARNING:", message="ATTEMPTED TO OPEN MULTIPLE WINDOWS:\nCannot perform action while other window open!")
             # }
             else: # {
                 # SEND SELECTIONS AND OPEN MODIFY WINDOW
@@ -1568,11 +1604,79 @@ class AgilentQuotesTracker():  # {
     
     
     def on_search(self, item=''): # {
-        logging.info("SEARCHING...")
-        children = self.tree.get_children()
+        print("SEARCHING...")
+        search_cat = str(self.combo_box_str.get())
+        print("category>>>" + search_cat)
+        print("critera... " + str(self.search_box_str.get()))
+        children = self.tree.get_children() # variable to store the dictionary str
         # TRY THE FOLLOWING
         try: # {
             for child in children: # {
+                # variable to hold the cell values (dictionary)
+                values_Values = (self.tree.item(child)["values"])
+                print(values_Values)
+                # [2020-02-11]\\print("VALUE OF VALUES DOG == " + str(values_Values[str(search_cat)]))
+                # CREATE DICTIONARY CONTIANING VALUES
+                search_dict = {
+                    "time rec": 0,
+                    "Initials": 1,
+                    "Type": 2,
+                    "Company": 3,
+                    "Contact Person": 4,
+                    "email_address": 5,
+                    "account_id": 6,
+                    "product_num": 7,
+                    "SAP QUOTE #": 8,
+                    "sent": 9,
+                    "time sent": 10,
+                    "notes": 11
+                    }
+                # DETERMINE WHICH VALUE OF VALUES TO LOOK FOR WHEN COMPARING TO SEARCH
+                value_to_search = int(search_dict.get(str(search_cat)))
+                print("\n\t DIC RETURNS: " + str(value_to_search))
+                # CHECK IF SEARCH IS VALID
+                if str(values_Values[value_to_search]).startswith(self.search_box_str.get()): # {
+                    print("CONTAINS VALUE!")
+                # }
+                else: # {
+                    print("DOES NOT")
+                    self.tree.detach(child)
+                # }
+                """
+                # LOOP THRU TUPLE
+                for value in values_Values: # {
+                    # CHECK IF VALUE MATCHES SEARCH CRITERIA
+                    if str(value).startswith(self.search_box_str.get()): # {
+                        print("CONTAINS VALUE!")
+                        self.tree.detach(child)
+                        #self.tree.item(child, text="blob", values=("foo", "bar"))
+                    # }
+                    else: # {
+                        # DELETE BOX
+                        print("DOES NOT CONTAIN")
+                        # DETACH
+                        #self.tree.detach(child)
+                        #self.tree.item(child, text="blob", values=("foo", "bar"))
+                        #print(child)
+                    # }
+                # }
+                print(str(type(values_Values)))
+                print("LEN of VALUE == " + str(len(values_Values)))
+                print("VALUES == " + str(values_Values))
+                print("time rec == " + str(values_Values[0]))
+                print("Initials == " + str(values_Values[1]))
+                print("Type == " + str(values_Values[2]))
+                print("Company == " + str(values_Values[3]))
+                print("Contact Person == " + str(values_Values[4]))
+                print("Email Address == " + str(values_Values[5]))
+                print("Account ID == " + str(values_Values[6]))
+                print("Product # == " + str(values_Values[7]))
+                print("SAP Quote # == " + str(values_Values[8]))
+                print("Sent == " + str(values_Values[9]))
+                print("time sent == " + str(values_Values[10]))
+                print("notes == " + str(values_Values[11]))
+                """
+                """
                 text = self.tree.item(child, 'text')
                 if text.startswith(self.search_box_str.get()): # {
                     self.tree.selection_set(child)
@@ -1583,6 +1687,7 @@ class AgilentQuotesTracker():  # {
                     if res: # {
                         return True
                 # }
+                """
             # }
         # }
         except: # {
@@ -1605,13 +1710,18 @@ class AgilentQuotesTracker():  # {
                                          "\n" + lineE +
                                          "\n" + messageE)
         # }
+        else: # {
+            logging.info("Operation Completed Successfully...")
+        # }
         # TRY THE FOLLOWING
         try: # {
             x = self.tree.get_children()
             # changing all children from root item
             for item in x: # {
                 # [2020-02-03]\\self.tree.item(item, text="blub", values=("foo", "bar"))
+                """
                 self.tree.item(item, text="robert", values=("nub", "noob"))
+                """
             # }
         # }
         except: # {
@@ -2594,6 +2704,15 @@ class AgilentQuotesTracker():  # {
     
     def open_search_window(self, event): # {
         # TRY THE FOLLOWING
+        try: #{
+            # GET NUMBER OF CHILDREN (of ROOT)
+            self.children_num = self.root.winfo_children()
+            logging.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
+        # }
+        except: # {
+            logging.error("failed getting the children...")
+        # }
+        # TRY THE FOLLOWING
         try: # {
             # GET MOUSE LOCATION
             self.mouse_location = pyautogui.position()
@@ -2607,71 +2726,85 @@ class AgilentQuotesTracker():  # {
         # }
         # TRY THE FOLLOWING
         try: # {
-            # self.admin_transient = tk.Toplevel(master=self.root)
-            self.search_box = tk.Toplevel(master=self.root)
-            self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
-            xindex = str(self.mouse_location).find("x=", 0, len(str(self.mouse_location)))
-            xend = str(self.mouse_location).find(",", 0, len(str(self.mouse_location)))
-            yindex = str(self.mouse_location).find("y=", 0, len(str(self.mouse_location)))
-            yend = str(self.mouse_location).rfind(')', 0, len(str(self.mouse_location)))
-            x_val = int(str(self.mouse_location)[xindex+2:xend])
-            y_val = int(str(self.mouse_location)[yindex+2:yend])
-            logging.info("X == " + str(x_val))
-            logging.info("Y == " + str(y_val))
-            # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
-            location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
-            # [2020-02-10]\\self.search_box.geometry(str('450x375+' + location_str))
-            self.search_box.resizable(width=True, height=True)
-            # [2020-02-03]\\self.search_box.minsize(width=425, height=50)
-            # [2020-02-03]\\self.search_box.maxsize(width=550, height=125)
-            # [2020-02-10]\\self.search_box.minsize(width=450, height=375)
-            # [2020-02-10]\\self.search_box.maxsize(width=700, height=600)
-            
-            # STR holding the search user entered
-            # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
-            self.search_box_str = tk.StringVar(master=self.root, value="")
-            
-            #### tk.StringVar
-            # variable to hold str in combobox
-            self.combo_box_str = tk.StringVar(master=self.search_box, value="Tracking #")
-            
-            #### COMBOBOX
-            ttk.Combobox(master=self.search_box,
-                        width=20,
-                        textvariable=self.combo_box_str,
-                        values=["Tracking #", 
-                                 "Time Rec.",
-                                 "Initials",
-                                 "Type",
-                                 "Company",
-                                 "Contact Person",
-                                 "Email Address",
-                                 "Account ID",
-                                 "Product #",
-                                 "PF Quote #",
-                                 "SAP QUOTE #",
-                                 "Sent",
-                                 "Time Sent",
-                                 "Notes"]
-                        ).grid(row=0, column=0, padx=10, pady=10, sticky='nesw')
-            
-            ttk.Entry(master=self.search_box,
-                      textvariable=self.search_box_str,
-                      width=40
-                      ).grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky='nesw')
-            
-            submit_search = ttk.Button(master=self.search_box,
-                       text="SEARCH",
-                       command=self.on_search,
-                       width=30
-                       ).grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky='nesw')
-            print("FOCUS == " + str(self.search_box.focus_get()))
-            
-            
-            # GIVE FOCUS TO (ENTRY) SEARCH BOX
-            self.search_box.focus_set()
-            
-            self.search_box.mainloop()
+            if len(self.children_num) > 6: # {
+                messagebox.showwarning(title="WARNING:", message="ATTEMPTED TO OPEN MULTIPLE WINDOWS:\nCannot perform action while other window open!")
+            # }
+            else: # {
+                self.search_box = tk.Toplevel(master=self.root)
+                # [2020-02-11]\self.search_box.wm_transient(master=self.root)  # MAKE WINDOW TRANS
+                self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
+                xindex = str(self.mouse_location).find("x=", 0, len(str(self.mouse_location)))
+                xend = str(self.mouse_location).find(",", 0, len(str(self.mouse_location)))
+                yindex = str(self.mouse_location).find("y=", 0, len(str(self.mouse_location)))
+                yend = str(self.mouse_location).rfind(')', 0, len(str(self.mouse_location)))
+                x_val = int(str(self.mouse_location)[xindex+2:xend])
+                y_val = int(str(self.mouse_location)[yindex+2:yend])
+                logging.info("X == " + str(x_val))
+                logging.info("Y == " + str(y_val))
+                # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
+                location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
+                self.search_box.geometry(str('450x175+' + location_str))
+                self.search_box.resizable(width=False, height=True)
+                # [2020-02-03]\\self.search_box.minsize(width=425, height=50)
+                # [2020-02-03]\\self.search_box.maxsize(width=550, height=125)
+                self.search_box.minsize(width=450, height=175)
+                self.search_box.maxsize(width=450, height=350)
+                # [2020-02-10]\\self.search_box.minsize(width=450, height=375)
+                # [2020-02-10]\\self.search_box.maxsize(width=700, height=600)
+                
+                # STR holding the search user entered
+                # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
+                self.search_box_str = tk.StringVar(master=self.search_box, value="enter search here...")
+                # [2020-02-10]\\self.search_box_str.bind("<Key>", self.on_search)
+                
+                #### tk.StringVar
+                # variable to hold str in combobox
+                self.combo_box_str = tk.StringVar(master=self.search_box, value="Time Rec.")
+                
+                #### COMBOBOX
+                ttk.Combobox(master=self.search_box,
+                             #width=20,
+                             textvariable=self.combo_box_str,
+                             values=["Time Rec.",
+                                     "Initials",
+                                     "Type",
+                                     "Company",
+                                     "Contact Person",
+                                     "Email Address",
+                                     "Account ID",
+                                     "Product #",
+                                     "PF Quote #",
+                                     "SAP QUOTE #",
+                                     "Sent",
+                                     "Time Sent",
+                                     "Notes"]
+                             ).pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+                
+                ttk.Entry(master=self.search_box,
+                          textvariable=self.search_box_str,
+                          font=("Calibri", 32)
+                          #width=40
+                          ).pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                
+                submit_search = ttk.Button(master=self.search_box,
+                                           text="SEARCH",
+                                           command=self.on_search,
+                                           #width=30
+                                           ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                ttk.Button(master=self.search_box,
+                           text='REVERT',
+                           command=self.view_records,
+                           #width=30
+                           ).pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+                self.search_box.focus_set()
+                print("FOCUS == " + str(self.search_box.focus_get()))
+                
+                
+                # GIVE FOCUS TO (ENTRY) SEARCH BOX
+                self.search_box.focus_set()
+                
+                self.search_box.mainloop()
+            # }
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
