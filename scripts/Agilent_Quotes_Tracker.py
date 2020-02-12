@@ -75,14 +75,33 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from pynput import keyboard
 
-"""
 class Logger(): # {
     
     def __init__(self, logging_output_dir): # {
         self.logging_output_dir = logging_output_dir
-        # INITIATING THE LOGGER OBJECT
-        self.logger = logging.getLogger(__name__)}}
-"""
+        #### INITIATING THE LOGGER OBJECT
+        self.logger = logging.getLogger(__name__)
+        
+        # set the level of the logger (THIS IS SUPER USEFUL since it enables)
+        # Explanation regarding the logger levels can be found here:
+        # https://docs.python.org/3/howto/logging.html
+        self.logger.setLevel(logging.DEBUG)
+        
+        # Create the logs.log file
+        user_name = str(os.getlogin()) # get username 
+        log_file_name = user_name + str(pd.Timestamp.now())[:10] + "-quotes-use"
+        log_file_path = os.path.join(self.logging_output_dir, str(log_file_name) + ".log")
+        file_handler = logging.FileHandler(log_file_path)
+        
+        # Create the console handler with a higher log level
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.ERROR)
+        
+        # Format the logs structure so that every line would incude:
+        # the time, the message, the function, the line #, script and level name
+        #formatter = logging.
+    # }
+# }
 
 class AgilentQuotesTracker():  # {
 
@@ -103,7 +122,7 @@ class AgilentQuotesTracker():  # {
         db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
-        version_number = "20.01.29"
+        version_number = "20.02.12" #01-29
         ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
     # }
     ##################################################
@@ -140,6 +159,7 @@ class AgilentQuotesTracker():  # {
             sleep(5)
             sys.exit(69)
         # }
+        # [2020-02-12]\\self.the_logger = the_logger
         self.root = root
         self.root.title("Agilent Customs Quotes Request Log")
         logging.info("SCRIPT NAME == " + str(sys.argv[0]))
@@ -516,7 +536,10 @@ class AgilentQuotesTracker():  # {
         self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=False)
         # BIND FUNCTIONS TO FRAME
         # [2020-01-14\\self.leftframe.bind('<Leave>', self.clear_message_area)
-        self.leftframe.bind('<Enter>', self.clear_message_area)
+        # [2020-02-12]\\self.leftframe.bind('<Enter>', self.clear_message_area)
+        # [2020-02-12]\\self.leftframe.bind('<FocusOut>', self.clear_message_area)
+        # [2020-02-12]\\self.leftframe.bind('<FocusIn>', self.view_records)
+        self.leftframe.bind('<Return>', self.turn_red) # self.view_records)
 
     # }
 
@@ -538,6 +561,8 @@ class AgilentQuotesTracker():  # {
             self.tab1 = ttk.Frame(master=self.tab_control)
             self.tab_control.add(self.tab1, text='CREATE')
             self.tab_control.pack(expand=2, fill=tk.BOTH)
+            # BIND ENTER BUTTON ?
+            self.tab1.bind('<Return>', self.turn_red)
             
             # [2020-2-05]\\
             # TAB-2 // COPY TOOLS
@@ -547,6 +572,7 @@ class AgilentQuotesTracker():  # {
             
             # BIND TAB EVENTS
             self.tab_control.bind("<<NotebookTabChanged>>", self.copy_create_check)
+            self.tab_control.bind("<Return>", self.turn_red)
             
             # [2020-01-15]
             """
@@ -604,6 +630,7 @@ class AgilentQuotesTracker():  # {
             self.lblframe_create = ttk.Frame(master=self.tab1)
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            self.lblframe_create.bind('<Return>', self.turn_red)
             
             #### COPY Tab
             self.lblframe_copy = ttk.Frame(master=self.tab2)
@@ -870,12 +897,13 @@ class AgilentQuotesTracker():  # {
                                ).grid(row=8, column=1, padx=10, pady=10, sticky='w')
             # [2020-02-06]\\self.copy_spinbox.bind("<<Increment>>", self.turn_red)
             #### CREATE BUTTON #
-            create_button = ttk.Button(master=self.lblframe_create, 
+            self.create_button = ttk.Button(master=self.lblframe_create, 
                                        text="CREATE",
                                        # IF COPY AMOUNT IS SET TO ZERO THEN CALL NORMAL CREATE... ELSE CALL "check" which then calls CREATE loops
                                        command=self.add_new_record, # [2020-02-06]\\if int(self.num_of_copies.get()) <= 0 else self.copy_create_check,
                                        width=20
                                        ).grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky='nw')
+            # [2020-02-12]\\self.create_button.bind("<Enter>", self.view_records)
             #### CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
                                       text="CLEAR",
@@ -1107,7 +1135,8 @@ class AgilentQuotesTracker():  # {
             self.tree.bind("<<TreeviewSelect>>", self.on_single_click)
             self.tree.bind("<Double-1>", self.on_double_click)
             self.tree.bind_all("<Control-f>", self.open_search_window)
-            self.tree.bind("<Enter>", self.clear_message_area)
+            # [2020-02-12]\\self.tree.bind("<Enter>", self.clear_message_area)
+            # [2020-02-12]\\self.tree.bind("<Leave>", self.view_records)
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1611,83 +1640,96 @@ class AgilentQuotesTracker():  # {
         children = self.tree.get_children() # variable to store the dictionary str
         # TRY THE FOLLOWING
         try: # {
-            for child in children: # {
-                # variable to hold the cell values (dictionary)
-                values_Values = (self.tree.item(child)["values"])
-                print(values_Values)
-                # [2020-02-11]\\print("VALUE OF VALUES DOG == " + str(values_Values[str(search_cat)]))
-                # CREATE DICTIONARY CONTIANING VALUES
-                search_dict = {
-                    "time rec": 0,
-                    "Initials": 1,
-                    "Type": 2,
-                    "Company": 3,
-                    "Contact Person": 4,
-                    "email_address": 5,
-                    "account_id": 6,
-                    "product_num": 7,
-                    "SAP QUOTE #": 8,
-                    "sent": 9,
-                    "time sent": 10,
-                    "notes": 11
+            # CHECK IF SEARCH FOR TRACKING # or OTHER
+            if str(search_cat) == "Tracking #": # {
+                print("REQUESTING TRACKING #...")
+                for child in children: # {
+                    # variable to hold the cell TEXT ['text']
+                    values_Text = (self.tree.item(child)["text"])
+                    print(values_Text)
+                # }
+            # }
+            # ELSE... if searching for << ANY OTHER >> Criteria...
+            else: # {
+                for child in children: # {
+                    # variable to hold the cell values (dictionary)
+                    values_Values = (self.tree.item(child)["values"])
+                    print(values_Values)
+                    # [2020-02-11]\\print("VALUE OF VALUES DOG == " + str(values_Values[str(search_cat)]))
+                    # CREATE DICTIONARY CONTIANING VALUES
+                    search_dict = {
+                        "Time Rec.": 0,
+                        "Initials": 1,
+                        "Type": 2,
+                        "Company": 3,
+                        "Contact Person": 4,
+                        "Email Address": 5,
+                        "Account ID": 6,
+                        "Product #": 7,
+                        "PF Quote #": 8,
+                        "SAP QUOTE #": 9,
+                        "Sent": 10,
+                        "Time Sent": 11,
+                        "Notes": 12
                     }
-                # DETERMINE WHICH VALUE OF VALUES TO LOOK FOR WHEN COMPARING TO SEARCH
-                value_to_search = int(search_dict.get(str(search_cat)))
-                print("\n\t DIC RETURNS: " + str(value_to_search))
-                # CHECK IF SEARCH IS VALID
-                if str(values_Values[value_to_search]).startswith(self.search_box_str.get()): # {
-                    print("CONTAINS VALUE!")
-                # }
-                else: # {
-                    print("DOES NOT")
-                    self.tree.detach(child)
-                # }
-                """
-                # LOOP THRU TUPLE
-                for value in values_Values: # {
-                    # CHECK IF VALUE MATCHES SEARCH CRITERIA
-                    if str(value).startswith(self.search_box_str.get()): # {
+                    # DETERMINE WHICH VALUE OF VALUES TO LOOK FOR WHEN COMPARING TO SEARCH
+                    value_to_search = int(search_dict.get(str(search_cat)))
+                    print("\n\t DIC RETURNS: " + str(value_to_search))
+                    # CHECK IF SEARCH IS VALID
+                    if str(values_Values[value_to_search]).startswith(self.search_box_str.get()): # {
                         print("CONTAINS VALUE!")
-                        self.tree.detach(child)
-                        #self.tree.item(child, text="blob", values=("foo", "bar"))
                     # }
                     else: # {
-                        # DELETE BOX
-                        print("DOES NOT CONTAIN")
-                        # DETACH
-                        #self.tree.detach(child)
-                        #self.tree.item(child, text="blob", values=("foo", "bar"))
-                        #print(child)
+                        print("DOES NOT")
+                        self.tree.detach(child)
                     # }
-                # }
-                print(str(type(values_Values)))
-                print("LEN of VALUE == " + str(len(values_Values)))
-                print("VALUES == " + str(values_Values))
-                print("time rec == " + str(values_Values[0]))
-                print("Initials == " + str(values_Values[1]))
-                print("Type == " + str(values_Values[2]))
-                print("Company == " + str(values_Values[3]))
-                print("Contact Person == " + str(values_Values[4]))
-                print("Email Address == " + str(values_Values[5]))
-                print("Account ID == " + str(values_Values[6]))
-                print("Product # == " + str(values_Values[7]))
-                print("SAP Quote # == " + str(values_Values[8]))
-                print("Sent == " + str(values_Values[9]))
-                print("time sent == " + str(values_Values[10]))
-                print("notes == " + str(values_Values[11]))
-                """
-                """
-                text = self.tree.item(child, 'text')
-                if text.startswith(self.search_box_str.get()): # {
-                    self.tree.selection_set(child)
-                    return True
-                # }
-                else:# {
-                    res = self.on_search(child)
-                    if res: # {
+                    """
+                    # LOOP THRU TUPLE
+                    for value in values_Values: # {
+                        # CHECK IF VALUE MATCHES SEARCH CRITERIA
+                        if str(value).startswith(self.search_box_str.get()): # {
+                            print("CONTAINS VALUE!")
+                            self.tree.detach(child)
+                            #self.tree.item(child, text="blob", values=("foo", "bar"))
+                        # }
+                        else: # {
+                            # DELETE BOX
+                            print("DOES NOT CONTAIN")
+                            # DETACH
+                            #self.tree.detach(child)
+                            #self.tree.item(child, text="blob", values=("foo", "bar"))
+                            #print(child)
+                        # }
+                    # }
+                    print(str(type(values_Values)))
+                    print("LEN of VALUE == " + str(len(values_Values)))
+                    print("VALUES == " + str(values_Values))
+                    print("time rec == " + str(values_Values[0]))
+                    print("Initials == " + str(values_Values[1]))
+                    print("Type == " + str(values_Values[2]))
+                    print("Company == " + str(values_Values[3]))
+                    print("Contact Person == " + str(values_Values[4]))
+                    print("Email Address == " + str(values_Values[5]))
+                    print("Account ID == " + str(values_Values[6]))
+                    print("Product # == " + str(values_Values[7]))
+                    print("SAP Quote # == " + str(values_Values[8]))
+                    print("Sent == " + str(values_Values[9]))
+                    print("time sent == " + str(values_Values[10]))
+                    print("notes == " + str(values_Values[11]))
+                    """
+                    """
+                    text = self.tree.item(child, 'text')
+                    if text.startswith(self.search_box_str.get()): # {
+                        self.tree.selection_set(child)
                         return True
+                    # }
+                    else:# {
+                        res = self.on_search(child)
+                        if res: # {
+                            return True
+                        # }
+                    """
                 # }
-                """
             # }
         # }
         except: # {
@@ -1748,6 +1790,8 @@ class AgilentQuotesTracker():  # {
     
     # CALLED WHEN NOTEBOOK TAB IS SWITCHED/CHANGED
     def copy_create_check(self, event): # {
+        # CALL UPDATE RECORDS
+        self.view_records()
         print("\n\tself.num_of_copies.get() == " + str(self.num_of_copies.get()))
         print("\tself.num_of_new_copies.get() == " + str(self.num_of_new_copies.get()))
         
@@ -2557,6 +2601,7 @@ class AgilentQuotesTracker():  # {
     # }
     
     def turn_red(self, event): # {
+        self.message['text'] = 'YOU HIT ENETER BOIII'
         print("turn red!")
         # PRIN OUT SELECTED TAB?
         selected_tab = self.tab_control.tabs()
@@ -2754,18 +2799,29 @@ class AgilentQuotesTracker():  # {
                 
                 # STR holding the search user entered
                 # [2020-02-03]\\self.search_box_str = tk.StringVar(master=self.search_box, value=None)
-                self.search_box_str = tk.StringVar(master=self.search_box, value="enter search here...")
+                self.search_box_str = tk.StringVar(master=self.root, value="enter search here...")
                 # [2020-02-10]\\self.search_box_str.bind("<Key>", self.on_search)
                 
                 #### tk.StringVar
                 # variable to hold str in combobox
-                self.combo_box_str = tk.StringVar(master=self.search_box, value="Time Rec.")
+                self.combo_box_str = tk.StringVar(master=self.search_box, value="Tracking #")
+                
+                """
+                ttk.OptionMenu(self.search_box, 
+                           self.type_var, 
+                           "Select: ", 
+                           "web", 
+                           "email", 
+                           direction="right"
+                           ).grid(row=6, column=1, padx=10, pady=10, sticky='w')
+                """
                 
                 #### COMBOBOX
                 ttk.Combobox(master=self.search_box,
                              #width=20,
                              textvariable=self.combo_box_str,
-                             values=["Time Rec.",
+                             values=["Tracking #",
+                                     "Time Rec.",
                                      "Initials",
                                      "Type",
                                      "Company",
@@ -3729,8 +3785,9 @@ if __name__ == "__main__":  # {
     # [2020-01-30]\\create_threads()
     # SETUP LOGGER
     setup_logger()
+    # [2020-02-12]\\logger = Logger(logging_output_dir="E:/_Quotes_Tracker/log/")
     window = tk.Tk()
-    application = AgilentQuotesTracker(window)
+    application = AgilentQuotesTracker(root=window)
     # [2020-01-29]\\application.refresh_table()
     # [2020-01-03]\\application.tick()  # BEGIN "COUNTING" TIME(STAMP)
     window.config()
