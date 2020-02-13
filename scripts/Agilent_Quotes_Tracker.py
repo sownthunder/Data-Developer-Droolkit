@@ -41,6 +41,7 @@ EDITS:
 02/07/20 - added in DEV copies to use DUMMY databases
 02/10/20 - re-arranged DEV & PROD instantiates... fixed DEV dummy 
 02/11/20 - finished CONTROL + F Search Function (excludes tracking #...)
+02/12/20 - PUSHED SECOND PROD. COPY
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -122,7 +123,7 @@ class AgilentQuotesTracker():  # {
         db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
-        version_number = "20.02.12" #01-29
+        version_number = "20.02.13" #01-29
         ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
     # }
     ##################################################
@@ -539,7 +540,8 @@ class AgilentQuotesTracker():  # {
         # [2020-02-12]\\self.leftframe.bind('<Enter>', self.clear_message_area)
         # [2020-02-12]\\self.leftframe.bind('<FocusOut>', self.clear_message_area)
         # [2020-02-12]\\self.leftframe.bind('<FocusIn>', self.view_records)
-        self.leftframe.bind('<Return>', self.turn_red) # self.view_records)
+        # [2020-02-13]\\self.leftframe.bind('<FocusIn>', self.view_records)  ^^ CHANGE PARAMS to "event=None"
+        # [2020-02-13]\\self.leftframe.bind('<Return>', self.turn_red) # self.view_records)
 
     # }
 
@@ -551,11 +553,12 @@ class AgilentQuotesTracker():  # {
                                      font=("Times New Roman", 12, 'italic'), foreground='red')
             # self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            self.message.bind("<Enter>", self.clear_message_area)
 
             #### NOTEBOOK WIDGET
             self.tab_control = ttk.Notebook(self.leftframe)
             # ENABLE KEYBOARD TRAVERSAL
-            self.tab_control.enable_traversal()
+            # [2020-02-13]\\self.tab_control.enable_traversal()
 
             # TAB-1 // CREATE
             self.tab1 = ttk.Frame(master=self.tab_control)
@@ -572,7 +575,7 @@ class AgilentQuotesTracker():  # {
             
             # BIND TAB EVENTS
             self.tab_control.bind("<<NotebookTabChanged>>", self.copy_create_check)
-            self.tab_control.bind("<Return>", self.turn_red)
+            # [2020-02-13]\\self.tab_control.bind("<Return>", self.turn_red)
             
             # [2020-01-15]
             """
@@ -630,7 +633,7 @@ class AgilentQuotesTracker():  # {
             self.lblframe_create = ttk.Frame(master=self.tab1)
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
-            self.lblframe_create.bind('<Return>', self.turn_red)
+            # [2020-02-13]\\self.lblframe_create.bind('<Return>', self.turn_red)
             
             #### COPY Tab
             self.lblframe_copy = ttk.Frame(master=self.tab2)
@@ -1645,8 +1648,21 @@ class AgilentQuotesTracker():  # {
                 print("REQUESTING TRACKING #...")
                 for child in children: # {
                     # variable to hold the cell TEXT ['text']
-                    values_Text = (self.tree.item(child)["text"])
-                    print(values_Text)
+                    text_Text = (self.tree.item(child)["text"])
+                    print(text_Text)
+                    # CREATE VARIABLE CONTAINING TEXT
+                    text_to_search = str(text_Text) # int(search_dict.get(str(search_cat)))
+                    print("\n\t VAR RETURNS: " + str(text_to_search))
+                    # CHECK IF SEARCH IS VALID 
+                    if str(text_Text).rfind(self.search_box_str.get()) != "None": # {
+                    #.startswith(self.search_box_str.get()): # {
+                        print("CONTAINS VALUE!")
+                    # }
+                    else: # {
+                        print("DOES NOT")
+                        # DETACH CHILD FROM TREE (to only show search)
+                        self.tree.detach(child)
+                    # }
                 # }
             # }
             # ELSE... if searching for << ANY OTHER >> Criteria...
@@ -1681,6 +1697,7 @@ class AgilentQuotesTracker():  # {
                     # }
                     else: # {
                         print("DOES NOT")
+                        # DETACH CHILD FROM TREE (to only show search)
                         self.tree.detach(child)
                     # }
                     """
@@ -2777,6 +2794,7 @@ class AgilentQuotesTracker():  # {
             else: # {
                 self.search_box = tk.Toplevel(master=self.root)
                 # [2020-02-11]\self.search_box.wm_transient(master=self.root)  # MAKE WINDOW TRANS
+                self.search_box.wm_transient(master=self.root) # MAKE WINDOW TRANS
                 self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
                 xindex = str(self.mouse_location).find("x=", 0, len(str(self.mouse_location)))
                 xend = str(self.mouse_location).find(",", 0, len(str(self.mouse_location)))
