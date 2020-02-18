@@ -14,6 +14,7 @@ TO-DO:
 (X) - drop decimal places on the creation/completion timestamps
 (X) - copy cell tab/feature
 ( ) - create button triggers virtual event hiding first 3 columns
+( ) - RECALCULATE NEW "turn_around_time" (via SQLITE3) when copying
 
 EDITS:
 12/18/19 - made database accessible via anywhere by file_path to E_DRIVE
@@ -42,10 +43,14 @@ EDITS:
 02/10/20 - re-arranged DEV & PROD instantiates... fixed DEV dummy 
 02/11/20 - finished CONTROL + F Search Function (excludes tracking #...)
 02/12/20 - PUSHED SECOND PROD. COPY
+02/14/20 - removed LOGGER class to hopefully fix build issues...
+02/14/20 - properly gets "NEW" timestamp when selected during CREATE-COPY
+02/14/20 - properly displays table ressults in descending or by TRACK #
+
 
 LATER:
     - CREATE button to shrink first 3 cols
-    - notificatins from TISS
+    - notifications from TISS
     - SAP <--> ProdFlow two-way connection
 
 @author: derbates
@@ -76,6 +81,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from pynput import keyboard
 
+"""
 class Logger(): # {
     
     def __init__(self, logging_output_dir): # {
@@ -103,6 +109,7 @@ class Logger(): # {
         #formatter = logging.
     # }
 # }
+"""
 
 class AgilentQuotesTracker():  # {
 
@@ -123,7 +130,7 @@ class AgilentQuotesTracker():  # {
         db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
-        version_number = "20.02.13" #01-29
+        version_number = "20.02.14" #01-29
         ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
     # }
     ##################################################
@@ -415,37 +422,41 @@ class AgilentQuotesTracker():  # {
 
     def create_menubar(self):  # {
         self.menubar = tk.Menu(self.root)
-        # MENU-BAR ^^
+        #### MENU-BAR ^^
         self.filemenu = tk.Menu(master=self.menubar,
                                 borderwidth=3,
-                                background="#0C85CE",
+                                # [2020-02-14]\\background="#0C85CE",
+                                background="#666699",
                                 font=("Calibri", 16),
                                 tearoff=0)
         self.filemenu.add_command(label="Import Settings...", command="")
         self.filemenu.add_command(label="Export Settings...", command="")
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.root.destroy)
-        # FILE SUB-MENU ^^
+        #### FILE SUB-MENU ^^
         self.menubar.add_cascade(foreground="#000000", 
                                  label="File", 
                                  menu=self.filemenu, 
                                  activebackground="#d9d9d9", 
                                  activeforeground="#111111",
-                                 background="#d9d9d9")
+                                 # [2020-02-14]\\background="#d9d9d9")
+                                 background="#666699")
         self.editmenu = tk.Menu(master=self.root,
                                 borderwidth=3,
-                                background="#9e0ccf",
+                                # [2020-02-14]\\background="#9e0ccf",
+                                background="#666699",
                                 font=("Calibri", 16),
                                 tearoff=0)
         self.editmenu.add_command(label="Search", command="")
         self.editmenu.add_separator()
         self.editmenu.add_command(label="Select Regino", command="")
         self.editmenu.add_command(label="Select All", command="")
-        # EDIT SUB-MENU ^^
+        #### EDIT SUB-MENU ^^
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         self.viewmenu = tk.Menu(master=self.menubar,
                                 borderwidth=3,
-                                background="#ffbf00",
+                                # [2020-02-14]\\background="#ffbf00",
+                                background="#666699",
                                 font=("Calibri", 16),
                                 relief=tk.RIDGE,
                                 tearoff=1)
@@ -453,11 +464,12 @@ class AgilentQuotesTracker():  # {
         # [2020-01-16]\\self.viewmenu.add_separator()
         # [2020-01-16]\\self.viewmenu.add_command(label="Filter Table", command="") # Help index
         self.viewmenu.add_command(label="REFRESH Table", command=self.view_records) # About...
-        # VIEW SUB-MENU ^^
+        #### VIEW SUB-MENU ^^
         self.menubar.add_cascade(label="View", menu=self.viewmenu)
         self.helpmenu = tk.Menu(master=self.root,
                                  borderwidth=3,
-                                 background='#3d4043',
+                                 # [2020-02-14]\\background='#3d4043',
+                                 background="#666699",
                                  font=("Calibri", 16),
                                  relief=tk.RIDGE,
                                  tearoff=0)
@@ -465,7 +477,7 @@ class AgilentQuotesTracker():  # {
         self.helpmenu.add_command(label="About", command=self.view_records)  # REFRESH TABLE
         self.helpmenu.add_command(label="Check for Updates...", command="")
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)  # TABLE TOOLS
-        # HELP SUB-MENU ^^
+        #### HELP SUB-MENU ^^
     # }
 
     def create_ttk_styles(self, the_style):  # {
@@ -554,11 +566,13 @@ class AgilentQuotesTracker():  # {
             # self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.message.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.message.bind("<Enter>", self.clear_message_area)
+            # [2020-02-14]\\self.message.bind("<Enter>", self.copy_create_check)
 
             #### NOTEBOOK WIDGET
             self.tab_control = ttk.Notebook(self.leftframe)
             # ENABLE KEYBOARD TRAVERSAL
             # [2020-02-13]\\self.tab_control.enable_traversal()
+            self.tab_control.enable_traversal()
 
             # TAB-1 // CREATE
             self.tab1 = ttk.Frame(master=self.tab_control)
@@ -628,14 +642,14 @@ class AgilentQuotesTracker():  # {
     def create_tab_containers(self):  # {
         # TRY THE FOLLOWING:
         try:  # {
-            #### CREATE Tab
+            #### INSTANTIATE CREATE Tab
             # [2020-01-03]\\self.lblframe_create = ttk.LabelFrame(master=self.tab1, text="Enter the following information:")
             self.lblframe_create = ttk.Frame(master=self.tab1)
             # [2019-12-30]\\self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             # [2020-02-13]\\self.lblframe_create.bind('<Return>', self.turn_red)
             
-            #### COPY Tab
+            #### INSTANTIATE COPY Tab
             self.lblframe_copy = ttk.Frame(master=self.tab2)
             self.lblframe_copy.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             
@@ -1003,7 +1017,7 @@ class AgilentQuotesTracker():  # {
             # SELECTED CELL 5 (COMPANY)
             # SELECTED CELL 6 (CONTACT PERSON)
             # RADIOBOX (for current or "copied" timestamp)
-            self.select_ts_2copy = tk.IntVar(master=self.lblframe_copy, value=1)
+            self.select_ts_2copy = tk.IntVar(master=self.root, value=1) # self.lblframe_copy
             ttk.Radiobutton(master=self.lblframe_copy,
                             text='COPY (old) timestamp',
                             value=1, 
@@ -1013,6 +1027,7 @@ class AgilentQuotesTracker():  # {
                             text='CREATE (new) timestamp',
                             value=2,
                             variable=self.select_ts_2copy,
+                            # [2020-02-14\\command=self.copy_create_check
                             ).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky='w')
             #### SPINBOX (new copies)
             ttk.Label(master=self.lblframe_copy,
@@ -1139,6 +1154,7 @@ class AgilentQuotesTracker():  # {
             self.tree.bind("<Double-1>", self.on_double_click)
             self.tree.bind_all("<Control-f>", self.open_search_window)
             # [2020-02-12]\\self.tree.bind("<Enter>", self.clear_message_area)
+            self.tree.bind("<Enter>", self.clear_message_area)
             # [2020-02-12]\\self.tree.bind("<Leave>", self.view_records)
         # }
         except:  # {
@@ -1462,7 +1478,8 @@ class AgilentQuotesTracker():  # {
             print (self.tree.item(item)['text'])
             # CHANGE THE COPY FILL TAB CONTAINER TO SHOW THE ABOVE VALUES
             self.selected_tracking_num.set(self.tree.item(item)['text'])
-            self.selected_time_rec.set(self.tree.item(item)['values'][0])
+            # [2020-02-14]\\self.selected_time_rec.set(self.tree.item(item)['values'][0])
+            self.selected_time_rec.set(self.time_rec_2copy)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1653,10 +1670,18 @@ class AgilentQuotesTracker():  # {
                     # CREATE VARIABLE CONTAINING TEXT
                     text_to_search = str(text_Text) # int(search_dict.get(str(search_cat)))
                     print("\n\t VAR RETURNS: " + str(text_to_search))
-                    # CHECK IF SEARCH IS VALID 
-                    if str(text_Text).rfind(self.search_box_str.get()) != "None": # {
+                    # CHECK IF SEARCH IS VALID (back part of STR)
+                    if str(text_Text).endswith(self.search_box_str.get()): # {
                     #.startswith(self.search_box_str.get()): # {
-                        print("CONTAINS VALUE!")
+                        print("CONTAINS VALUE (at end)!")
+                    # }
+                    # ELSE... IF... check front part of STR
+                    elif str(text_Text).startswith(self.search_box_str.get()): # {
+                        print("CONTAINS VALUE (at beg)!")
+                    # }
+                    # ELSE... IF... check AT LEAST CONTAINS somewhere
+                    elif int(str(text_Text).find(self.search_box_str.get())) != -1: # {
+                        print("CONTAINS VALUE (inside)!")
                     # }
                     else: # {
                         print("DOES NOT")
@@ -1693,7 +1718,10 @@ class AgilentQuotesTracker():  # {
                     print("\n\t DIC RETURNS: " + str(value_to_search))
                     # CHECK IF SEARCH IS VALID
                     if str(values_Values[value_to_search]).startswith(self.search_box_str.get()): # {
-                        print("CONTAINS VALUE!")
+                        print("CONTAINS VALUE (at beg)!")
+                    # }
+                    elif str(values_Values[value_to_search]).endswith(self.search_box_str.get()): # {
+                        print("CONTAINS VALUE (at end)!")
                     # }
                     else: # {
                         print("DOES NOT")
@@ -1811,7 +1839,7 @@ class AgilentQuotesTracker():  # {
         self.view_records()
         print("\n\tself.num_of_copies.get() == " + str(self.num_of_copies.get()))
         print("\tself.num_of_new_copies.get() == " + str(self.num_of_new_copies.get()))
-        
+        print("\n\n\t value of CHECK BOX " + str(self.select_ts_2copy.get()))
         """
         
         "new_copies" are create in "COPY" tab
@@ -1883,6 +1911,9 @@ class AgilentQuotesTracker():  # {
         """
     # }
     
+    """
+    MAKES COPIES OF A RECORD THAT HAS ALREADY BEEN CREATED
+    """
     def copy_create_record(self): # {
         # TRY THE FOLLOWING
         try: # {
@@ -2691,7 +2722,8 @@ class AgilentQuotesTracker():  # {
                 self.tree.delete(item)
             # }
             # [2020-01-03]\\query = 'SELECT * FROM quotes ORDER BY name desc'
-            query = 'SELECT * FROM quotes ORDER BY open_time desc'
+            # [2020-02-14]\\query = 'SELECT * FROM quotes ORDER BY open_time desc'
+            query = 'SELECT * FROM quotes ORDER BY tracking_number desc'
             quote_tracker_entries = self.execute_db_query(query)
             for row in quote_tracker_entries:  # {
                 # [2020-01-14]\\print("PRINTING ROW:\n\t" + str(row))
@@ -2795,7 +2827,7 @@ class AgilentQuotesTracker():  # {
                 self.search_box = tk.Toplevel(master=self.root)
                 # [2020-02-11]\self.search_box.wm_transient(master=self.root)  # MAKE WINDOW TRANS
                 self.search_box.wm_transient(master=self.root) # MAKE WINDOW TRANS
-                self.search_box.title("SEARCH - Agilent Custom Quotes Request Log")
+                self.search_box.title("[FILTER/SEARCH] - Agilent Custom Quotes Request Log")
                 xindex = str(self.mouse_location).find("x=", 0, len(str(self.mouse_location)))
                 xend = str(self.mouse_location).find(",", 0, len(str(self.mouse_location)))
                 yindex = str(self.mouse_location).find("y=", 0, len(str(self.mouse_location)))
