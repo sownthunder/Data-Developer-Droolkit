@@ -1,0 +1,11 @@
+{
+  "base_url": "/",
+  "hostname": "localhost",
+  "notebook_dir": "C:\\Users\\derbates\\OneDrive - Agilent Technologies\\Documents\\_staging\\Data-Developer-Droolkit",
+  "password": false,
+  "pid": 98540,
+  "port": 8889,
+  "secure": false,
+  "token": "7bd5c05da43b2883ec6c55ed0da0236a9897b814cbca1ab9",
+  "url": "http://localhost:8889/"
+}
