@@ -46,6 +46,7 @@ EDITS:
 02/14/20 - removed LOGGER class to hopefully fix build issues...
 02/14/20 - properly gets "NEW" timestamp when selected during CREATE-COPY
 02/14/20 - properly displays table ressults in descending or by TRACK #
+02/21/20 - BEGIN putting in "check_quote_completion" after "COPY-RECORD" runs
 
 
 LATER:
@@ -2142,6 +2143,7 @@ class AgilentQuotesTracker():  # {
             the_df["turn_around"] = result
             logging.info(the_df)
             # RETURN DATAFRAME TO REPLACE OLD/OUTDATED ONE
+            return the_df
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"

@@ -1,0 +1,1368 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# LINKS\n",
+    "\n",
+    "- ## [prior_code](http://localhost:8888/notebooks/OneDrive%20-%20Agilent%20Technologies/Documents/_staging/Data-Developer-Droolkit/AGILENT/METRICS/_ODBC_ACCESS_select_query.ipynb)\n",
+    "\n",
+    "- ## [pandas.read_sql_query](\"\")\n",
+    "\n",
+    "- ## [group_a_time_series_PANDAS](https://chrisalbon.com/python/data_wrangling/pandas_group_by_time/)\n",
+    "\n",
+    "- ## [select_date_time_ranges_PANDAS](https://chrisalbon.com/machine_learning/preprocessing_dates_and_times/select_date_and_time_ranges/)\n",
+    "\n",
+    "- ## [join_merge_data_sql_dataframe_PANDAS](http://www.datasciencemadesimple.com/join-merge-data-frames-pandas-python/)\n",
+    "\n",
+    "- ## [mean_function_in_python_PANDAS](http://www.datasciencemadesimple.com/mean-function-python-pandas-dataframe-row-column-wise-mean/)\n",
+    "\n",
+    "- ## [hierarchical_index_python_PANDAS](http://www.datasciencemadesimple.com/hierarchical-indexing-multiple-indexing-python-pandas/)\n",
+    "\n",
+    "- ## [rename_column_headers_in_python_PANDAS](https://chrisalbon.com/python/data_wrangling/pandas_rename_multiple_columns/)\n",
+    "\n",
+    "- ## [analyzing_time_series_data_PANDAS](https://towardsdatascience.com/analyzing-time-series-data-in-pandas-be3887fdd621)\n",
+    "\n",
+    "- ## [select_rows_multiple_filters_PANDAS](https://chrisalbon.com/python/data_wrangling/pandas_select_rows_multiple_filters/)\n",
+    "\n",
+    "- ## [cumulative_sum_of_col_PADAS](http://www.datasciencemadesimple.com/cumulative-sum-column-pandas-python-2/)\n",
+    "\n",
+    "- ## [python_PANDAS_date_range](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html)\n",
+    "\n",
+    "- ## [select_rows_multiple_filters_PANDAS](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.date_range.html)\n",
+    "\n",
+    "- ## [create_histogram_using_MATPLOTLIB](http://www.datasciencemadesimple.com/histogram-in-python-using-matplotlib/)\n",
+    "\n",
+    "- ## [line_plot_with_legends_python](http://www.datasciencemadesimple.com/line-plot-line-chart-in-python-legends/)\n",
+    "\n",
+    "- ## [get_day_of_year_from_date_python_PADNAS](http://www.datasciencemadesimple.com/get-day-of-year-from-date-pandas-python-2/)\n",
+    "\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# `ProdsPerDay` QCMetrics\n",
+    "\n",
+    "## CODE"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:40.803483Z",
+     "start_time": "2020-02-21T16:29:40.799484Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import os, sys, time\n",
+    "from time import sleep\n",
+    "from pathlib import Path\n",
+    "import calendar\n",
+    "from datetime import datetime"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:40.877477Z",
+     "start_time": "2020-02-21T16:29:40.806477Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import tkinter as tk\n",
+    "import tkinter.ttk as ttk\n",
+    "from tkinter import filedialog\n",
+    "from tkinter import messagebox"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:43.197493Z",
+     "start_time": "2020-02-21T16:29:40.879479Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "from pandas import Series, DataFrame\n",
+    "import pyodbc\n",
+    "import matplotlib\n",
+    "from matplotlib import pyplot as plt\n",
+    "%matplotlib inline\n",
+    "matplotlib.rcParams['figure.figsize'] = [12.0, 8.0]\n",
+    "# [2020-02-19]]\\\\import matplotlib.pyplot as plt\n",
+    "import seaborn as sns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "### get current date"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2020-02-21 13:35:07.165971\n",
+      "Type :-  <class 'datetime.datetime'>\n"
+     ]
+    }
+   ],
+   "source": [
+    "datetime_object = datetime.now()\n",
+    "print(datetime_object)\n",
+    "print('Type :- ', type(datetime_object))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "my_string = '2019'"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "### check ACCESS drivers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:43.214497Z",
+     "start_time": "2020-02-21T16:29:43.199494Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['Microsoft Access Driver (*.mdb, *.accdb)']"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[x for x in pyodbc.drivers() if x.startswith('Microsoft Access Driver')]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "### create connection str (*Access*)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:43.236499Z",
+     "start_time": "2020-02-21T16:29:43.218498Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "FIN...\n"
+     ]
+    }
+   ],
+   "source": [
+    "try: #{\n",
+    "    conn_str = (\n",
+    "        r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'\n",
+    "        r'DBQ=C:\\Users\\derbates\\OneDrive - Agilent Technologies\\Desktop\\Offline Prodflow II\\Custom Quotes_fe.accdb;'\n",
+    "    )\n",
+    "#}\n",
+    "except: #{\n",
+    "    errorMessage = str(sys.exc_info()[0]) + \"\\n\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[1]) + \"\\n\\t\\t\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[2]) + \"\\n\"\n",
+    "    exc_type, exc_obj, exc_tb = sys.exc_info()\n",
+    "    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]\n",
+    "    typeE = str(\"TYPE : \" + str(exc_type))\n",
+    "    fileE = str(\"FILE : \" + str(fname))\n",
+    "    lineE = str(\"LINE : \" + str(exc_tb.tb_lineno))\n",
+    "    messageE = str(\"MESG : \" + \"\\n\\n\" + str(errorMessage) + \"\\n\")\n",
+    "    print(\"\\n\" + typeE + \n",
+    "          \"\\n\" + fileE + \n",
+    "          \"\\n\" + lineE + \n",
+    "          \"\\n\" + messageE)\n",
+    "#}\n",
+    "else: #{\n",
+    "    print(\"FIN...\")\n",
+    "#}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "### Create `pyodbc` connection\n",
+    "### Create `cnxn.cursor` (*not used*)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:43.904500Z",
+     "start_time": "2020-02-21T16:29:43.240501Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "FIN...\n"
+     ]
+    }
+   ],
+   "source": [
+    "try: #{\n",
+    "    cnxn = pyodbc.connect(conn_str)\n",
+    "    crsr = cnxn.cursor()\n",
+    "#}\n",
+    "except: #{\n",
+    "    errorMessage = str(sys.exc_info()[0]) + \"\\n\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[1]) + \"\\n\\t\\t\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[2]) + \"\\n\"\n",
+    "    exc_type, exc_obj, exc_tb = sys.exc_info()\n",
+    "    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]\n",
+    "    typeE = str(\"TYPE : \" + str(exc_type))\n",
+    "    fileE = str(\"FILE : \" + str(fname))\n",
+    "    lineE = str(\"LINE : \" + str(exc_tb.tb_lineno))\n",
+    "    messageE = str(\"MESG : \" + \"\\n\\n\" + str(errorMessage) + \"\\n\")\n",
+    "    print(\"\\n\" + typeE + \n",
+    "          \"\\n\" + fileE + \n",
+    "          \"\\n\" + lineE + \n",
+    "          \"\\n\" + messageE)\n",
+    "#}\n",
+    "else: #{\n",
+    "    print(\"FIN...\")\n",
+    "#}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## `Products` Table"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:48.610544Z",
+     "start_time": "2020-02-21T16:29:43.907502Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Operation Completed Successfully...\n"
+     ]
+    }
+   ],
+   "source": [
+    "# TRY THE FOLLOWING\n",
+    "try: # {\n",
+    "    df_products = pd.read_sql_query(sql='SELECT * FROM Products', con=cnxn)\n",
+    "# }\n",
+    "except: # {\n",
+    "    errorMessage = str(sys.exc_info()[0]) + \"\\n\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[1]) + \"\\n\\t\\t\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[2]) + \"\\n\"\n",
+    "    exc_type, exc_obj, exc_tb = sys.exc_info()\n",
+    "    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]\n",
+    "    typeE = str(\"TYPE : \" + str(exc_type))\n",
+    "    fileE = str(\"FILE : \" + str(fname))\n",
+    "    lineE = str(\"LINE : \" + str(exc_tb.tb_lineno))\n",
+    "    messageE = str(\"MESG : \" + \"\\n\\n\" + str(errorMessage) + \"\\n\")\n",
+    "    print(\"\\n\" + typeE + \n",
+    "          \"\\n\" + fileE + \n",
+    "          \"\\n\" + lineE + \n",
+    "          \"\\n\" + messageE)\n",
+    "# }\n",
+    "else: # {\n",
+    "    print(\"Operation Completed Successfully...\")\n",
+    "# }"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "### Rename Headers in `Products` table"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:48.789536Z",
+     "start_time": "2020-02-21T16:29:48.613539Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_products.rename(columns={'Product#': 'ProductNo'}, inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:48.829540Z",
+     "start_time": "2020-02-21T16:29:48.794540Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>ProductID</th>\n",
+       "      <th>ProductNo</th>\n",
+       "      <th>ProductName</th>\n",
+       "      <th>LineID</th>\n",
+       "      <th>Description</th>\n",
+       "      <th>Specials</th>\n",
+       "      <th>OriginationDate</th>\n",
+       "      <th>EntryDate</th>\n",
+       "      <th>Status</th>\n",
+       "      <th>MatrixNumber</th>\n",
+       "      <th>...</th>\n",
+       "      <th>MatrixNotes</th>\n",
+       "      <th>RecipeId</th>\n",
+       "      <th>RushPriority</th>\n",
+       "      <th>IsVoided</th>\n",
+       "      <th>SagePartNumber</th>\n",
+       "      <th>ProductLevel</th>\n",
+       "      <th>DateInserted</th>\n",
+       "      <th>CofATemplate</th>\n",
+       "      <th>UniqueRequestID</th>\n",
+       "      <th>Test_Timestamp</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>0</td>\n",
+       "      <td>5417</td>\n",
+       "      <td>00301-23032</td>\n",
+       "      <td>Benzophenone Solution</td>\n",
+       "      <td>7</td>\n",
+       "      <td>None</td>\n",
+       "      <td>00301-23032</td>\n",
+       "      <td>1999-01-20</td>\n",
+       "      <td>2011-05-09</td>\n",
+       "      <td>oem</td>\n",
+       "      <td>JHP-014</td>\n",
+       "      <td>...</td>\n",
+       "      <td>None</td>\n",
+       "      <td>RP-00106</td>\n",
+       "      <td>False</td>\n",
+       "      <td>VOID</td>\n",
+       "      <td>00301-23032</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaT</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "      <td>b'\\x00\\x00\\x00\\x00\\x00\\x1f\\xc64'</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>1</td>\n",
+       "      <td>5418</td>\n",
+       "      <td>00301-23058A</td>\n",
+       "      <td>Octafluoronaphthalene Calibration Standard</td>\n",
+       "      <td>1</td>\n",
+       "      <td>None</td>\n",
+       "      <td>00301-23058A</td>\n",
+       "      <td>1999-01-20</td>\n",
+       "      <td>2011-05-09</td>\n",
+       "      <td>oem</td>\n",
+       "      <td>JHP-014</td>\n",
+       "      <td>...</td>\n",
+       "      <td>None</td>\n",
+       "      <td>RP-00107</td>\n",
+       "      <td>False</td>\n",
+       "      <td>VOID</td>\n",
+       "      <td>None</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaT</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "      <td>b'\\x00\\x00\\x00\\x00\\x00!\\xbaM'</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>2</td>\n",
+       "      <td>5419</td>\n",
+       "      <td>00301-23058B</td>\n",
+       "      <td>Octafluoronaphthalene Calibration Standard</td>\n",
+       "      <td>7</td>\n",
+       "      <td>None</td>\n",
+       "      <td>00301-23058B</td>\n",
+       "      <td>1999-01-20</td>\n",
+       "      <td>2011-05-09</td>\n",
+       "      <td>oem</td>\n",
+       "      <td>JHP-014</td>\n",
+       "      <td>...</td>\n",
+       "      <td>None</td>\n",
+       "      <td>RP-00108</td>\n",
+       "      <td>False</td>\n",
+       "      <td>VOID</td>\n",
+       "      <td>None</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaT</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "      <td>b'\\x00\\x00\\x00\\x00\\x00\\x1f\\xc66'</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>3 rows × 42 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   ProductID     ProductNo                                 ProductName  \\\n",
+       "0       5417   00301-23032                       Benzophenone Solution   \n",
+       "1       5418  00301-23058A  Octafluoronaphthalene Calibration Standard   \n",
+       "2       5419  00301-23058B  Octafluoronaphthalene Calibration Standard   \n",
+       "\n",
+       "   LineID Description      Specials OriginationDate  EntryDate Status  \\\n",
+       "0       7        None   00301-23032      1999-01-20 2011-05-09    oem   \n",
+       "1       1        None  00301-23058A      1999-01-20 2011-05-09    oem   \n",
+       "2       7        None  00301-23058B      1999-01-20 2011-05-09    oem   \n",
+       "\n",
+       "  MatrixNumber  ...  MatrixNotes         RecipeId RushPriority IsVoided  \\\n",
+       "0      JHP-014  ...         None  RP-00106               False     VOID   \n",
+       "1      JHP-014  ...         None  RP-00107               False     VOID   \n",
+       "2      JHP-014  ...         None  RP-00108               False     VOID   \n",
+       "\n",
+       "  SagePartNumber ProductLevel  DateInserted CofATemplate UniqueRequestID  \\\n",
+       "0    00301-23032          NaN           NaT         None            None   \n",
+       "1           None          NaN           NaT         None            None   \n",
+       "2           None          NaN           NaT         None            None   \n",
+       "\n",
+       "                     Test_Timestamp  \n",
+       "0  b'\\x00\\x00\\x00\\x00\\x00\\x1f\\xc64'  \n",
+       "1     b'\\x00\\x00\\x00\\x00\\x00!\\xbaM'  \n",
+       "2  b'\\x00\\x00\\x00\\x00\\x00\\x1f\\xc66'  \n",
+       "\n",
+       "[3 rows x 42 columns]"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# [2020-02-21]\\\\df_products.to_csv(\"C:/data/outbound/Metrics/PRODUCTS.csv\", index=False)\n",
+    "df_products.head(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## `tblProdflow` Table *(parse dates)*"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:54.285582Z",
+     "start_time": "2020-02-21T16:29:48.832538Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Operation Completed Successfully...\n"
+     ]
+    }
+   ],
+   "source": [
+    "# TRY THE FOLLOWING\n",
+    "try: # {\n",
+    "    df_tblProdflow = pd.read_sql_query(sql='SELECT * FROM tblProdflow', parse_dates='QCDate', con=cnxn)\n",
+    "# }\n",
+    "except: # {\n",
+    "    errorMessage = str(sys.exc_info()[0]) + \"\\n\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[1]) + \"\\n\\t\\t\"\n",
+    "    errorMessage = errorMessage + str(sys.exc_info()[2]) + \"\\n\"\n",
+    "    exc_type, exc_obj, exc_tb = sys.exc_info()\n",
+    "    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]\n",
+    "    typeE = str(\"TYPE : \" + str(exc_type))\n",
+    "    fileE = str(\"FILE : \" + str(fname))\n",
+    "    lineE = str(\"LINE : \" + str(exc_tb.tb_lineno))\n",
+    "    messageE = str(\"MESG : \" + \"\\n\\n\" + str(errorMessage) + \"\\n\")\n",
+    "    print(\"\\n\" + typeE + \n",
+    "          \"\\n\" + fileE + \n",
+    "          \"\\n\" + lineE + \n",
+    "          \"\\n\" + messageE)\n",
+    "# }\n",
+    "else: # {\n",
+    "    print(\"Operation Completed Successfully...\")\n",
+    "# }"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:54.315579Z",
+     "start_time": "2020-02-21T16:29:54.287583Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>PfIDNo</th>\n",
+       "      <th>PfBatchID</th>\n",
+       "      <th>ProductNo</th>\n",
+       "      <th>OrdID</th>\n",
+       "      <th>QuoteNo</th>\n",
+       "      <th>PfSentTo</th>\n",
+       "      <th>PrepDate</th>\n",
+       "      <th>PrepVolume</th>\n",
+       "      <th>PrepUnit</th>\n",
+       "      <th>PrepVessel</th>\n",
+       "      <th>...</th>\n",
+       "      <th>QCValidation</th>\n",
+       "      <th>FgInvCount</th>\n",
+       "      <th>FgAccpacNote</th>\n",
+       "      <th>CofAHeaderNo</th>\n",
+       "      <th>QCChromatogram</th>\n",
+       "      <th>Correct</th>\n",
+       "      <th>DoNotCorrect</th>\n",
+       "      <th>DensityUnit</th>\n",
+       "      <th>DensityTemp</th>\n",
+       "      <th>recipeid</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>0</td>\n",
+       "      <td>26</td>\n",
+       "      <td>ND00026</td>\n",
+       "      <td>CUS-5136</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>103103-88</td>\n",
+       "      <td>done</td>\n",
+       "      <td>2003-11-21 15:36:10</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>mL</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>None</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>None</td>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>1</td>\n",
+       "      <td>78</td>\n",
+       "      <td>ND00078</td>\n",
+       "      <td>CUS-5174</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>111803-76</td>\n",
+       "      <td>done</td>\n",
+       "      <td>2003-12-09 13:33:16</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>mL</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>None</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>None</td>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>2</td>\n",
+       "      <td>130</td>\n",
+       "      <td>ND00130</td>\n",
+       "      <td>CUS-3185</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>121603-43</td>\n",
+       "      <td>done</td>\n",
+       "      <td>2003-12-23 15:32:28</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>mL</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>None</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>None</td>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "      <td>None</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>3 rows × 53 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   PfIDNo PfBatchID ProductNo  OrdID    QuoteNo PfSentTo            PrepDate  \\\n",
+       "0      26   ND00026  CUS-5136    NaN  103103-88     done 2003-11-21 15:36:10   \n",
+       "1      78   ND00078  CUS-5174    NaN  111803-76     done 2003-12-09 13:33:16   \n",
+       "2     130   ND00130  CUS-3185    NaN  121603-43     done 2003-12-23 15:32:28   \n",
+       "\n",
+       "   PrepVolume PrepUnit  PrepVessel  ... QCValidation FgInvCount FgAccpacNote  \\\n",
+       "0        50.0       mL         1.0  ...          1.0        NaN         None   \n",
+       "1        50.0       mL         1.0  ...          1.0        NaN         None   \n",
+       "2       100.0       mL         1.0  ...          1.0        NaN         None   \n",
+       "\n",
+       "  CofAHeaderNo QCChromatogram Correct DoNotCorrect DensityUnit DensityTemp  \\\n",
+       "0          1.0           None   False         True        None        None   \n",
+       "1          1.0           None   False         True        None        None   \n",
+       "2          1.0           None   False         True        None        None   \n",
+       "\n",
+       "  recipeid  \n",
+       "0     None  \n",
+       "1     None  \n",
+       "2     None  \n",
+       "\n",
+       "[3 rows x 53 columns]"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# [2020-02-21]\\\\df_tblProdflow.to_csv(\"c:/data/outbound/Metrics/tblProdflow.csv\", index=False)\n",
+    "df_tblProdflow.head(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Create `df_QCMetrics` Table (nothing dropped yet)"
+   ]
+  },
+  {
+   "cell_type": "raw",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:56.743607Z",
+     "start_time": "2020-02-21T16:29:54.321585Z"
+    }
+   },
+   "source": [
+    "#inner join in python pandas\n",
+    "df_QCMetrics = pd.merge(df_products, df_tblProdflow, on='ProductNo', how='inner')\n",
+    "# [2020-02-21]df_QCMetrics.to_csv(\"c:/data/outbound/Metrics/df_QCMETRICS.csv\", index=True)\n",
+    "print(len(df_QCMetrics))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:56.743607Z",
+     "start_time": "2020-02-21T16:29:54.321585Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "103503\n"
+     ]
+    }
+   ],
+   "source": [
+    "#inner join in python pandas\n",
+    "df_QCMetrics = pd.merge(df_products, df_tblProdflow, on='ProductNo', how='inner')\n",
+    "# [2020-02-21]df_QCMetrics.to_csv(\"c:/data/outbound/Metrics/df_QCMETRICS.csv\", index=True)\n",
+    "print(len(df_QCMetrics))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Create `df_QCMetrics` Table (will_have-time-index)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:56.743607Z",
+     "start_time": "2020-02-21T16:29:54.321585Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "103503\n"
+     ]
+    }
+   ],
+   "source": [
+    "#inner join in python pandas\n",
+    "df_QCMetrics = pd.merge(df_products, df_tblProdflow, on='ProductNo', how='inner')\n",
+    "# [2020-02-21]df_QCMetrics.to_csv(\"c:/data/outbound/Metrics/df_QCMETRICS.csv\", index=True)\n",
+    "print(len(df_QCMetrics))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Create `QCMetrics` (non-time-index)\n",
+    "\n",
+    "### Hierarchal Index (`QCDate`, `ProductLevel`)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:29:57.196597Z",
+     "start_time": "2020-02-21T16:29:56.745598Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# [2020-02-21]\\\\QCMetrics = df_QCMetrics.set_index(['QCDate', 'ProductID'])\n",
+    "# [2020-02-21]\\\\QCMetrics = df_QCMetrics.set_index(['QCDate', 'ProductLevel'])\n",
+    "QCMetrics = df_QCMetrics.set_index(['ProductLevel', 'ProductID'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:06.760671Z",
+     "start_time": "2020-02-21T16:29:57.197598Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "103503\n"
+     ]
+    }
+   ],
+   "source": [
+    "# [2020-02-19]\\\\df_QCMetrics.to_csv(\"QC_METRICS.csv\", index=True)\n",
+    "QCMetrics.to_csv(\"c:/data/outbound/Metrics/QCMetrics.csv\", index=True)\n",
+    "print(len(QCMetrics))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### *INTERPOLATEE* the QCDate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:06.766674Z",
+     "start_time": "2020-02-21T16:30:06.761670Z"
+    },
+    "raw_mimetype": "text/x-python"
+   },
+   "outputs": [],
+   "source": [
+    "# INTERPOLATE BASED ON TIME, axis=COLUMNS\n",
+    "#QCMetrics.interpolate(method='time', axis=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### DROP values missing `QCDate` & `ProductLevel`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:07.513680Z",
+     "start_time": "2020-02-21T16:30:06.769673Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "QCMetrics.dropna(axis=0, how='all')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## ...continue `QCMetrics`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### [TEST] Create Time-Series  *INDEX* of `df_QCMetrics`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T15:34:37.838338Z",
+     "start_time": "2020-02-21T15:34:37.822338Z"
+    }
+   },
+   "source": [
+    "#### Convert \"QCMetrics\" `QCDate` from string to datetime"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T17:05:32.526929Z",
+     "start_time": "2020-02-21T17:05:32.400893Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_QCMetrics['QCDate'] = pd.to_datetime(df_tblProdflow['QCDate'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### CREATE RANGE"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T17:05:33.580612Z",
+     "start_time": "2020-02-21T17:05:33.558591Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "rng = pd.date_range(df_QCMetrics['QCDate'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T15:35:52.033531Z",
+     "start_time": "2020-02-21T15:35:51.107981Z"
+    }
+   },
+   "source": [
+    "#### set *QCmetrics*'s `QCDate` as the index and delete column"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:07.549680Z",
+     "start_time": "2020-02-21T16:30:07.538676Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_QCMetrics.index = df_QCMetrics['QCDate']\n",
+    "# [2020-02-21]\\\\df_QCMetrics.reindex([df_QCMetrics['QCDate'], df_QCMetrics['ProductLevel']])\n",
+    "del df_QCMetrics['QCDate']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### fill na in index"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:08.326685Z",
+     "start_time": "2020-02-21T16:30:07.551680Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_QCMetrics.index = df_QCMetrics.index.fillna(0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### interpolate index"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.491754Z",
+     "start_time": "2020-02-21T16:30:08.330688Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# OVERWRITE DATAFRAME (interpolate based on time, axis=index)\n",
+    "df_QCMetrics.interpolate(method=\"time\", axis=0, inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### drop rows without date in index"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:08:46.680545Z",
+     "start_time": "2020-02-21T16:08:46.669544Z"
+    }
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## create `df_QCMetrics_minProdLvels`\n",
+    "\n",
+    "### select rows where `ProductLevel` is >= 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.553752Z",
+     "start_time": "2020-02-21T16:29:40.900Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_QCMetrics_minProdLevels = df_QCMetrics[(df_QCMetrics['ProductLevel'] >= 1)]\n",
+    "df_QCMetrics_minProdLevels.to_csv(\"c:/data/outbound/Metrics/df_QCMetris_minProdLevels.csv\",\n",
+    "                                 index=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.555755Z",
+     "start_time": "2020-02-21T16:29:40.905Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_QCMetrics.to_csv(\"c:/data/outbound/Metrics/df_QCMetrics.csv\", index=True)\n",
+    "print(len(df_QCMetrics))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### View all observations that occured in 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.556753Z",
+     "start_time": "2020-02-21T16:29:40.911Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics_minProdLevels['2019'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### View all observations that occured in 2020"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.558755Z",
+     "start_time": "2020-02-21T16:29:40.917Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics_minProdLevels['2020'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### View all observations that occured in May 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.559753Z",
+     "start_time": "2020-02-21T16:29:40.921Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics_minProdLevels['2019-05'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### View all observations that occured in Jan 2020"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.561754Z",
+     "start_time": "2020-02-21T16:29:40.927Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics_minProdLevels['2020-01'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Observations between May 3rd and May 4th, 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.562753Z",
+     "start_time": "2020-02-21T16:29:40.933Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics_minProdLevels['5/3/2019':'5/4/2019'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Observations between Oct 10th and Oct 17th, 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.564753Z",
+     "start_time": "2020-02-21T16:29:40.936Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics_minProdLevels['10/10/2019':'10/17/2019'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Count number of observations per timestamp"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.565754Z",
+     "start_time": "2020-02-21T16:29:40.941Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "len(df_QCMetrics.groupby(level=0).count())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Group the data by month, and take the sum for each group (i.e each month)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-02-21T16:30:17.567754Z",
+     "start_time": "2020-02-21T16:29:40.947Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_QCMetrics.resample('M').sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "# Unitizing Ampules"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "celltoolbar": "Raw Cell Format",
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.0"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": false
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -23,3 +23,24 @@ import pyodbc
 import matplotlib
 from matplotlib import pyplot as plt
 import seaborn as sns
+
+class AgilentMetricsTracker(): # {
+    
+    outbound_dir = "C:/data/outbound/"
+    
+    def __init__(self): # {
+        pass
+    # }
+    
+    def create_metrics_table(self): # {
+        pass
+    # }
+    
+# }
+
+if __name__ == "__main__": # { 
+    test_metrics = AgilentMetricsTracker()
+# }
+
+
+
