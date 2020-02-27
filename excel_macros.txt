@@ -1,0 +1,1 @@
+=COUNTIFS('TO-DO'!$D$6:$D$16,"<="&TODAY(),'TO-DO'!$F$6:$F$16,"Completed")/COUNTIF('TO-DO'!$D$6:$D$16,"<="&TODAY())

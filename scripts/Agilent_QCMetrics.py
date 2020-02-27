@@ -21,6 +21,8 @@ import os, sys, time
 from time import sleep
 from pathlib import Path
 from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+
 
 class AgilentQCMetrics(): # {
     
