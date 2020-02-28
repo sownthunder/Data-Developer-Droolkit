@@ -1126,10 +1126,10 @@ class AgilentQuotesTracker():  # {
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER) #, command=self._de_select_column)  # 'tracking_number' in BACKEND
-            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER) #, command=self._select_column) # "Open_time" in BACKEND
-            self.tree.heading('#2', text='Initials', anchor=tk.CENTER) #, command=self._select_column)
-            self.tree.heading('#3', text='Type', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self._de_select_column)  # 'tracking_number' in BACKEND
+            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER, command=self._column_select) # "Open_time" in BACKEND
+            self.tree.heading('#2', text='Initials', anchor=tk.CENTER, command=self._column_select)
+            self.tree.heading('#3', text='Type', anchor=tk.CENTER, command=self._column_select)
             self.tree.heading('#4', text='Company', anchor=tk.CENTER) #, command=self._select_column)  # COMPANY_NAME
             self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER) #, command=self._select_column) # NAME IN BACKEND
             self.tree.heading('#6', text='Email Address', anchor=tk.CENTER) #, command=self._select_column)  #
@@ -1140,6 +1140,7 @@ class AgilentQuotesTracker():  # {
             self.tree.heading('#11', text='Sent', anchor=tk.CENTER) #, command=self._select_column)
             self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER) #, command=self._select_column)       # CLOSE TIME IN BACKEND
             self.tree.heading('#13', text='Notes', anchor=tk.CENTER) #, command=self._select_column)
+            # [2020-02-28]\\ self.tree.heading("#1" text="Time").bind("<Button-1>", self._column_sort)
             
             # CONFIG SCROLLBAR (horixontal/xview)
             self.scrollbar.config(command = self.tree.xview)
@@ -1187,16 +1188,21 @@ class AgilentQuotesTracker():  # {
     def _select_column(self, item=''): # {
         # TRY THE FOLLOWING
         try: # {
+            self.tree["displaycolumns"] = ("one", "two", "three")
             # gets all values of the select row
             str_row = self.tree.item(self.tree.selection())
+            #str_heading = str(self.tree.heading(column=str_row))
             print("STR ROW == " + str(str_row))
+            # [2020-02-28]\\print("STR HEADING == " + str(self.tree.heading(column=self.tree.selection(self.tree["columns"]))))
             item = self.tree.selection() # what row did you click on
             print(item)
             # GET/SET HEADING (main heading)
             heading = str(self.tree.heading(column="#0")['text'])
+            heading_2 = str(self.tree.heading(column="one")['text'])
             print("HEADING (main) == " + str(heading))
+            print("HEADING (two) == " + str(heading_2))
             show_heading = self.tree["columns"]
-            print("HEADINGS == " + show_heading)
+            print("HEADINGS == " + str(show_heading))
             # GET SELECTED COL HEADING
             #selected_heading = self.tree.heading(self.tree.item(self.tree.selection()))
             #selected_heading = self.tree.heading(self.tree.selection())
@@ -1323,6 +1329,13 @@ class AgilentQuotesTracker():  # {
                                          "\n" + lineE +
                                          "\n" + messageE)
         # }
+    # }
+    
+    def _column_select(self): # {
+        heading_2 = str(self.tree.heading(column="one")['text'])
+        print(heading_2)
+        show_heading = self.tree["columns"]
+        print("HEADINGS == " + str(show_heading))
     # }
     
     def clear_create_tab(self): # {
