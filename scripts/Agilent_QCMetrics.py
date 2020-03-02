@@ -38,39 +38,66 @@ class AgilentQCMetrics(): # {
     outbound_dir = "C:/data/outbound/"
     
     def __init__(self, day_range): # {
-        # [2020-02-28]\\self.time_unit = time_unit
-        # [2020-02-28]\\self.time_value = time_value
-        self.day_range = day_range
-        # get/set current date variable
-        the_date = pd.Timestamp.now()
-        # create variable for a month ago
-        one_month_ago = the_date - timedelta(days = int(day_range))
-        # [2020-02-28]\\one_month_ago = the_date - pd.Timedelta(unit=str(self.time_unit), value=str(self.time_value))
-        print(type(one_month_ago))
-        # CREATE METRICS TABLE FROM CLASS METHOD
-        self.df_metrics_table = self.create_metrics_table()
-        # create .csv with no drops
-        self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_noDrop.csv"), index=True)
-        # DROP ROWS WITH PRODUCT LEVEL && QCDATE = NONE
-        self.df_metrics_table.dropna(axis=0, subset=['QCDate', 'ProductLevel'], how='any', inplace=True)
-        # create .csv with DROPS
-        self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_DROP.csv"), index=True)
-        # Set index of METRICS
-        self.df_metrics_table.set_index(['QCDate', 'ProductLevel'], inplace=True)
-        print(self.df_metrics_table)
-        # Display Index
-        print(self.df_metrics_table.index)
-        # create .csv with UNSORTED
-        self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_UNSORTED.csv"), index=True)
-        # SORT INDEX
-        self.df_metrics_table.sort_index(inplace=True)
-        # create .csv with SORTED
-        self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_SORTED.csv"), index=True)
-        print("SORTED:\n")
-        print(self.df_metrics_table.index)
-        # SLICE & DICE THE DATAFRAME
-        self.df_level_1s = self.df_metrics_table.loc[('2017-01-02', '1')]
-        print(self.df_level_1s)
+        # TRY THE FOLLOWING
+        try: # {
+            # [2020-02-28]\\self.time_unit = time_unit
+            # [2020-02-28]\\self.time_value = time_value
+            self.day_range = day_range
+            # get/set current date variable
+            the_date = pd.Timestamp.now()
+            # create variable for a month ago
+            one_month_ago = the_date - timedelta(days = int(day_range))
+            # [2020-02-28]\\one_month_ago = the_date - pd.Timedelta(unit=str(self.time_unit), value=str(self.time_value))
+            print(type(one_month_ago))
+            # CREATE METRICS TABLE FROM CLASS METHOD
+            self.df_metrics_table = self.create_metrics_table()
+            #############################
+            # create .csv with no drops #
+            #############################
+            self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_noDrop.csv"), index=True)
+            # DROP ROWS WITH PRODUCT LEVEL && QCDATE = NONE
+            self.df_metrics_table.dropna(axis=0, subset=['QCDate', 'ProductLevel'], how='any', inplace=True)
+            # create .csv with DROPS
+            self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_DROP.csv"), index=True)
+            # Set index of METRICS
+            self.df_metrics_table.set_index(['QCDate', 'ProductLevel'], inplace=True)
+            print(self.df_metrics_table)
+            # Display Index
+            print(self.df_metrics_table.index)
+            #############################
+            # create .csv with UNSORTED #
+            #############################
+            self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_UNSORTED.csv"), index=True)
+            # SORT INDEX
+            self.df_metrics_table.sort_index(inplace=True)
+            ###########################
+            # create .csv with SORTED #
+            ###########################
+            self.df_metrics_table.to_csv(os.path.join(self.outbound_dir, "df_metrics_SORTED.csv"), index=True)
+            print("SORTED:\n")
+            print(self.df_metrics_table.index)
+            # SLICE & DICE THE DATAFRAME
+            self.df_level_1s = self.df_metrics_table.loc[('2017-01-02', float(1))]
+            print(self.df_level_1s)
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
+        # }
+        else: # {
+            print("Operation Completed Successfully...")
+        # }
     # }
     
     """

@@ -47,7 +47,8 @@ EDITS:
 02/14/20 - properly gets "NEW" timestamp when selected during CREATE-COPY
 02/14/20 - properly displays table ressults in descending or by TRACK #
 02/21/20 - BEGIN putting in "check_quote_completion" after "COPY-RECORD" runs
-
+02/29/20 - header column functionality work-begin (treeview)
+03/02/20 - logger re-implemented (FINALIZED!)
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -82,7 +83,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from pynput import keyboard
 
-"""
 class Logger(): # {
     
     def __init__(self, logging_output_dir): # {
@@ -97,7 +97,7 @@ class Logger(): # {
         
         # Create the logs.log file
         user_name = str(os.getlogin()) # get username 
-        log_file_name = user_name + str(pd.Timestamp.now())[:10] + "-quotes-use"
+        log_file_name = user_name + "-" + str(pd.Timestamp.now())[:10] + "-quotes-use"
         log_file_path = os.path.join(self.logging_output_dir, str(log_file_name) + ".log")
         file_handler = logging.FileHandler(log_file_path)
         
@@ -107,10 +107,67 @@ class Logger(): # {
         
         # Format the logs structure so that every line would incude:
         # the time, the message, the function, the line #, script and level name
-        #formatter = logging.
+        formatter = logging.Formatter('%(asctime)s: %(message)s, FROM=%(funcName)s, LINENO=%(lineno)d, %(name)s - %(levelname)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        
+        # Adding the formater handlers
+        self.logger.addHandler(console_handler)
+        self.logger.addHandler(file_handler)
+        
+        # and printing the logs to the console as well
+        self.logger.addHandler(logging.StreamHandler(sys.stdout))
+        
     # }
 # }
-"""
+
+class CheckVersionNumber(Thread): # {
+    
+    def __init__(self): # {
+        # INIT the Thread
+        Thread.__init__(self)
+        self.run()
+    # }
+    
+    def run(self): # {
+        # Run the Thread
+        while 1: # {
+            # TRY THE FOLLOWING
+            try: # {
+                logger.info("CHECKING VER...")
+                # LOAD IN VER FILE
+                df_ver_file = pd.read_csv(AgilentQuotesTracker.ver_file, header=None, engine='python')
+                logger.info(">> CORRECT (current) == " + str(df_ver_file.iloc[0, 0]))
+                logger.info(">> current (actual) == " + str(AgilentQuotesTracker.version_number))
+                sleep(30)
+            # }
+            except: # {
+                errorMessage = str(sys.exc_info()[0]) + "\n"
+                errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+                errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                typeE = str("TYPE : " + str(exc_type))
+                fileE = str("FILE : " + str(fname))
+                lineE = str("LINE : " + str(exc_tb.tb_lineno))
+                messageE = str("MESG : " + "\n" + str(errorMessage))
+                logger.error("\n" + typeE +
+                              "\n" + fileE +
+                              "\n" + lineE +
+                              "\n" + messageE)
+                messagebox.showerror(title="ERROR!",
+                                     message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+            # }
+            else: # {
+                #logger.the_logger.info("Operation Completed ")
+                print("Operation Completed Succesfully")
+            # }
+        # } 
+    # }
+# }
 
 class AgilentQuotesTracker():  # {
 
@@ -122,7 +179,7 @@ class AgilentQuotesTracker():  # {
         db_filename = "e:/_Quotes_Tracker/dev/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
-        version_number = "20.02.11"
+        version_number = "20.03.03"
         ver_file = Path("E:/_Quotes_Tracker/dev/config/ver_no.txt")
     # }
     else: # {
@@ -149,7 +206,8 @@ class AgilentQuotesTracker():  # {
     copy_tab = True
     
 
-    def __init__(self, root):  # {
+    def __init__(self, root, the_logger):  # {
+        self.the_logger = the_logger
         """
         CHECK DEV. OR PROD. COPY HERE
         """
@@ -203,7 +261,7 @@ class AgilentQuotesTracker():  # {
         # CREATE TEMPORARY DATABASE / CONNECTION
         # [2019-12-11]\\self.temp_db = self.create_connection(db_csv=self.db_filename)
         # [2019-12-11]\\print(self.temp_db)
-        self.create_gui()
+        self.create_gui(the_root = self.root)
 
     # }
     ####################################################################################################
@@ -300,7 +358,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.critical("\n" + typeE +
+            self.the_logger.critical("\n" + typeE +
                              "\n" + fileE +
                              "\n" + lineE +
                              "\n" + messageE)
@@ -311,7 +369,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
             return query_result
 
     # }
@@ -335,7 +393,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.critical("\n" + typeE +
+            self.the_logger.critical("\n" + typeE +
                              "\n" + fileE +
                              "\n" + lineE +
                              "\n" + messageE)
@@ -346,7 +404,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
         
         return df
@@ -379,21 +437,22 @@ class AgilentQuotesTracker():  # {
         # }
     # }
 
-    def create_gui(self):  # {
+    def create_gui(self, the_root):  # {
         # TRY THE FOLLOWING
         try:  # {
             # [2019-12-11]\\self.create_menubar()
-            self.create_ttk_styles(the_style="blue")
+            self.create_ttk_styles(the_style="blue", the_root=the_root)
             # [2019-12-11]\\self.create_menubar()
-            self.create_menubar()
-            self.create_left_side()
-            self.create_tab_control()
-            self.create_tab_containers()
-            self.fill_tab_containers()
-            self.create_right_side()
-            self.create_tree_view()
+            self.create_menubar(the_root=the_root)
+            self.create_left_side(the_root=the_root)
+            self.create_tab_control(the_root=the_root)
+            self.create_tab_containers(the_root=the_root)
+            self.fill_tab_containers(the_root=the_root)
+            self.create_right_side(the_root=the_root)
+            self.create_tree_view(the_root=the_root)
             self.view_records()
-            self.root.config(menu=self.menubar)
+            # [2020-03-02]\\self.root.config(menu=self.menubar)
+            the_root.config(menu=self.menubar)
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -405,7 +464,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.critical("\n" + typeE +
+            self.the_logger.critical("\n" + typeE +
                              "\n" + fileE +
                              "\n" + lineE +
                              "\n" + messageE)
@@ -416,13 +475,13 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
 
-    def create_menubar(self):  # {
-        self.menubar = tk.Menu(self.root)
+    def create_menubar(self, the_root):  # {
+        self.menubar = tk.Menu(the_root)
         #### MENU-BAR ^^
         self.filemenu = tk.Menu(master=self.menubar,
                                 borderwidth=3,
@@ -433,7 +492,7 @@ class AgilentQuotesTracker():  # {
         self.filemenu.add_command(label="Import Settings...", command="")
         self.filemenu.add_command(label="Export Settings...", command="")
         self.filemenu.add_separator()
-        self.filemenu.add_command(label="Exit", command=self.root.destroy)
+        self.filemenu.add_command(label="Exit", command=the_root.destroy)
         #### FILE SUB-MENU ^^
         self.menubar.add_cascade(foreground="#000000", 
                                  label="File", 
@@ -442,7 +501,7 @@ class AgilentQuotesTracker():  # {
                                  activeforeground="#111111",
                                  # [2020-02-14]\\background="#d9d9d9")
                                  background="#666699")
-        self.editmenu = tk.Menu(master=self.root,
+        self.editmenu = tk.Menu(master=the_root,
                                 borderwidth=3,
                                 # [2020-02-14]\\background="#9e0ccf",
                                 background="#666699",
@@ -467,7 +526,7 @@ class AgilentQuotesTracker():  # {
         self.viewmenu.add_command(label="REFRESH Table", command=self.view_records) # About...
         #### VIEW SUB-MENU ^^
         self.menubar.add_cascade(label="View", menu=self.viewmenu)
-        self.helpmenu = tk.Menu(master=self.root,
+        self.helpmenu = tk.Menu(master=the_root,
                                  borderwidth=3,
                                  # [2020-02-14]\\background='#3d4043',
                                  background="#666699",
@@ -481,16 +540,16 @@ class AgilentQuotesTracker():  # {
         #### HELP SUB-MENU ^^
     # }
 
-    def create_ttk_styles(self, the_style):  # {
+    def create_ttk_styles(self, the_style, the_root):  # {
         # TRY THE FOLLOWING:
         try:  # {
             themes = sorted(ttk.Style().theme_names())
             for t in themes:  # {
-                logging.info(str(t))
+                self.the_logger.info(str(t))
             # }
             # CONFIGURE THE STYLE
             # [2019-12-31]\\self.style = ttk.Style()
-            self.style = ThemedStyle(self.root)
+            self.style = ThemedStyle(the_root)
             # # STYLE THEME
             self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
@@ -516,7 +575,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -527,7 +586,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
@@ -540,9 +599,9 @@ class AgilentQuotesTracker():  # {
 
     # }
 
-    def create_left_side(self):  # {
+    def create_left_side(self, the_root):  # {
         # CREATE FRAME CONTAINER
-        self.leftframe = tk.Frame(self.root)
+        self.leftframe = tk.Frame(the_root)
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True) # fill=tk.Both
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=True)
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
@@ -558,7 +617,7 @@ class AgilentQuotesTracker():  # {
 
     # }
 
-    def create_tab_control(self):  # {
+    def create_tab_control(self, the_root):  # {
         # TRY THE FOLLOWING
         try:  # {
             # CREATE MESSAGE AREA
@@ -624,7 +683,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -635,12 +694,12 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
 
-    def create_tab_containers(self):  # {
+    def create_tab_containers(self, the_root):  # {
         # TRY THE FOLLOWING:
         try:  # {
             #### INSTANTIATE CREATE Tab
@@ -695,18 +754,18 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.critical("\n" + typeE +
+            self.the_logger.critical("\n" + typeE +
                              "\n" + fileE +
                              "\n" + lineE +
                              "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation completed Successfully...")
+            self.the_logger.info("Operation completed Successfully...")
         # }
 
     # }
 
-    def fill_tab_containers(self):  # {
+    def fill_tab_containers(self, the_root):  # {
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
         #### () CREATE TAB CONTENTS ()
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
@@ -724,7 +783,7 @@ class AgilentQuotesTracker():  # {
             #### CONTACT PERSON (NAME)
             ttk.Label(master=self.lblframe_create,
                       text='Contact Person: ').grid(row=2, column=0, padx=10, pady=10, sticky='nw')
-            self.name = tk.StringVar(master=self.root)
+            self.name = tk.StringVar(master=the_root)
             # [2020-01-07]\\self.name.set(value="Hot-Stuff")
             ttk.Entry(master=self.lblframe_create,
                                        textvariable=self.name,
@@ -734,7 +793,7 @@ class AgilentQuotesTracker():  # {
             #### EMAIL ADDRESS #
             ttk.Label(master=self.lblframe_create,
                       text='Email Address: ').grid(row=3, column=0, padx=10, pady=10, sticky='nw')
-            self.email = tk.StringVar(master=self.root)
+            self.email = tk.StringVar(master=the_root)
             ttk.Entry(master=self.lblframe_create,
                                       textvariable=self.email,
                                       state='active',
@@ -743,7 +802,7 @@ class AgilentQuotesTracker():  # {
             #### ACCOUNT ID #
             ttk.Label(master=self.lblframe_create,
                       text='Account ID: ').grid(row=4, column=0, padx=10, pady=10, sticky='nw')
-            self.account_id = tk.StringVar(master=self.root)
+            self.account_id = tk.StringVar(master=the_root)
             ttk.Entry(master=self.lblframe_create,
                                    textvariable=self.account_id,
                                    state='active',
@@ -793,7 +852,7 @@ class AgilentQuotesTracker():  # {
             #### INITIALS #
             ttk.Label(master=self.lblframe_create,
                       text='Initials: ').grid(row=5, column=0, padx=10, pady=10, sticky='nw')
-            self.initials = tk.StringVar(master=self.root)
+            self.initials = tk.StringVar(master=the_root)
             ttk.Entry(master=self.lblframe_create,
                                  textvariable=self.initials,
                                  state='active',
@@ -806,7 +865,7 @@ class AgilentQuotesTracker():  # {
                       text='Type: '
                       ).grid(row=6, column=0, padx=10, pady=10, sticky='nw')
             
-            self.type_var = tk.StringVar(master=self.root, value="Select: ") #, value="email")
+            self.type_var = tk.StringVar(master=the_root, value="Select: ") #, value="email")
             """
             ttk.Radiobutton(master=self.lblframe_create,
                             variable=self.type_var,
@@ -847,7 +906,7 @@ class AgilentQuotesTracker():  # {
             ttk.Label(master=self.lblframe_create,
                       text='Notes: ').grid(row=7, column=0, padx=10, pady=10, sticky='nw')
             # [2020-01-03]\\self.notes = tk.StringVar(master=self.lblframe_create)
-            self.notes = tk.StringVar(master=self.root, value="None")
+            self.notes = tk.StringVar(master=the_root, value="None")
             """
             self.notes = tk.Text(master=self.lblframe_create, 
                                  height=6,
@@ -971,7 +1030,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -982,7 +1041,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("[CREATE-TAB] Operation Completed Successfully...")
+            self.the_logger.info("[CREATE-TAB] Operation Completed Successfully...")
         # }
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
         #### () COPY TAB CONTENTS () 
@@ -1018,7 +1077,7 @@ class AgilentQuotesTracker():  # {
             # SELECTED CELL 5 (COMPANY)
             # SELECTED CELL 6 (CONTACT PERSON)
             # RADIOBOX (for current or "copied" timestamp)
-            self.select_ts_2copy = tk.IntVar(master=self.root, value=1) # self.lblframe_copy
+            self.select_ts_2copy = tk.IntVar(master=the_root, value=1) # self.lblframe_copy
             ttk.Radiobutton(master=self.lblframe_copy,
                             text='COPY (old) timestamp',
                             value=1, 
@@ -1061,7 +1120,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1072,13 +1131,13 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else: # {
-            logging.info("[COPY-TAB] Operation Completed Successfully...")
+            self.the_logger.info("[COPY-TAB] Operation Completed Successfully...")
         # }
     # }
 
-    def create_right_side(self):  # {
+    def create_right_side(self, the_root):  # {
         # Create a Frame Container
-        self.rightframe = ttk.Frame(master=self.root)
+        self.rightframe = ttk.Frame(master=the_root)
         self.rightframe.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         """
         ################
@@ -1086,7 +1145,7 @@ class AgilentQuotesTracker():  # {
         ################
         """
         # create PanedWindow
-        pw = ttk.PanedWindow(master=self.root, orient=tk.HORIZONTAL)
+        pw = ttk.PanedWindow(master=the_root, orient=tk.HORIZONTAL)
         # pack into the TOP right side and fill whole
         pw.pack(side=tk.TOP, expand=tk.Y, fill=tk.BOTH)
         
@@ -1094,7 +1153,7 @@ class AgilentQuotesTracker():  # {
         # [2020-01-10]\\self.rightframe.bind('<Enter>', self.clear_message_area)
     # }
 
-    def create_tree_view(self):  # {
+    def create_tree_view(self, the_root):  # {
         # TRY THE FOLLOWING
         try:  # {
             # CREATE SCROLLBAR?
@@ -1106,40 +1165,47 @@ class AgilentQuotesTracker():  # {
             # TABLE
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
                                      height=30, columns=13, selectmode='browse')  # height = 20
+            # [2020-02-29]\\
+            """
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
+            """
+            self.tree['columns'] = (
+            "Time Rec.", "Initials", "Type", "Company", 
+            "Contact Person", "Email Address", "Account ID", 
+            "Product #", "PF Quote #", "SAP Quote #", "Sent", "Time Sent", "Notes")
             self.tree.column('#0', anchor=tk.CENTER, width=90, minwidth=85, stretch=tk.NO)  # TRACKING #
-            self.tree.column("one", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
-            self.tree.column("two", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
-            self.tree.column("three", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
-            self.tree.column("four", anchor=tk.W, width=125, minwidth=120, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
-            self.tree.column("five", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
-            self.tree.column("six", anchor=tk.W, width=175, minwidth=160, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
-            self.tree.column("seven", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
-            self.tree.column("eight", anchor=tk.CENTER, width=100, minwidth=80, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
-            self.tree.column("nine", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PF QUOTE #//  ACCOUNT ID
-            self.tree.column("ten", anchor=tk.CENTER, width=100, minwidth=75, stretch=tk.NO)  # SAP QUOTE # // PRODFLOW QUOTE #
-            self.tree.column("eleven", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # SENT
-            self.tree.column("twelve", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
-            self.tree.column("thirteen", anchor=tk.CENTER, width=175, minwidth=50, stretch=tk.YES)  # NOTES // PRICE
+            self.tree.column("Time Rec.", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
+            self.tree.column("Initials", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
+            self.tree.column("Type", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
+            self.tree.column("Company", anchor=tk.W, width=125, minwidth=120, stretch=tk.NO)  # COMPANY NAME //OPEN TIME
+            self.tree.column("Contact Person", anchor=tk.CENTER, width=120, minwidth=100, stretch=tk.NO)  # CONTACT PERSON //SENT , 45, 45
+            self.tree.column("Email Address", anchor=tk.W, width=175, minwidth=160, stretch=tk.NO)  #  EMAIL ADDRESS //TURN_AROUND, 100, 90
+            self.tree.column("Account ID", anchor=tk.CENTER, width=80, minwidth=80, stretch=tk.NO)  # ACCOUNT ID // NOTES
+            self.tree.column("Product #", anchor=tk.CENTER, width=100, minwidth=80, stretch=tk.NO)  # PRODUCT NUMBER //INITIALS
+            self.tree.column("PF Quote #", anchor=tk.CENTER, width=85, minwidth=75, stretch=tk.NO)  # PF QUOTE #//  ACCOUNT ID
+            self.tree.column("SAP Quote #", anchor=tk.CENTER, width=100, minwidth=75, stretch=tk.NO)  # SAP QUOTE # // PRODFLOW QUOTE #
+            self.tree.column("Sent", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # SENT
+            self.tree.column("Time Sent", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME_SENT // SAP QUOTE #
+            self.tree.column("Notes", anchor=tk.CENTER, width=175, minwidth=50, stretch=tk.YES)  # NOTES // PRICE
 
             # Definitions of Headings
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self._de_select_column)  # 'tracking_number' in BACKEND
-            self.tree.heading('#1', text='Time Rec.', anchor=tk.CENTER, command=self._column_select) # "Open_time" in BACKEND
-            self.tree.heading('#2', text='Initials', anchor=tk.CENTER, command=self._column_select)
-            self.tree.heading('#3', text='Type', anchor=tk.CENTER, command=self._column_select)
-            self.tree.heading('#4', text='Company', anchor=tk.CENTER) #, command=self._select_column)  # COMPANY_NAME
-            self.tree.heading('#5', text='Contact Person', anchor=tk.CENTER) #, command=self._select_column) # NAME IN BACKEND
-            self.tree.heading('#6', text='Email Address', anchor=tk.CENTER) #, command=self._select_column)  #
-            self.tree.heading('#7', text='Account ID', anchor=tk.CENTER) #, command=self._select_column)
-            self.tree.heading("#8", text='Product #', anchor=tk.CENTER) #, command=self._select_column)
-            self.tree.heading('#9', text='PF Quote #', anchor=tk.CENTER) #, command=self._select_column)
-            self.tree.heading('#10', text='SAP Quote #', anchor=tk.CENTER) #, command=self._select_column)
-            self.tree.heading('#11', text='Sent', anchor=tk.CENTER) #, command=self._select_column)
-            self.tree.heading('#12', text='Time Sent', anchor=tk.CENTER) #, command=self._select_column)       # CLOSE TIME IN BACKEND
-            self.tree.heading('#13', text='Notes', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('Time Rec.', text='Time Rec.', anchor=tk.CENTER, command=lambda: self._column_select()) # "Open_time" in BACKEND
+            self.tree.heading('Initials', text='Initials', anchor=tk.CENTER, command=self._column_select)
+            self.tree.heading('Type', text='Type', anchor=tk.CENTER, command=self._column_select)
+            self.tree.heading('Company', text='Company', anchor=tk.CENTER) #, command=self._select_column)  # COMPANY_NAME
+            self.tree.heading('Contact Person', text='Contact Person', anchor=tk.CENTER) #, command=self._select_column) # NAME IN BACKEND
+            self.tree.heading('Email Address', text='Email Address', anchor=tk.CENTER) #, command=self._select_column)  #
+            self.tree.heading('Account ID', text='Account ID', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading("Product #", text='Product #', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('PF Quote #', text='PF Quote #', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('SAP Quote #', text='SAP Quote #', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('Sent', text='Sent', anchor=tk.CENTER) #, command=self._select_column)
+            self.tree.heading('Time Sent', text='Time Sent', anchor=tk.CENTER) #, command=self._select_column)       # CLOSE TIME IN BACKEND
+            self.tree.heading('Notes', text='Notes', anchor=tk.CENTER) #, command=self._select_column)
             # [2020-02-28]\\ self.tree.heading("#1" text="Time").bind("<Button-1>", self._column_sort)
             
             # CONFIG SCROLLBAR (horixontal/xview)
@@ -1169,7 +1235,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1180,7 +1246,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
@@ -1194,7 +1260,7 @@ class AgilentQuotesTracker():  # {
             #str_heading = str(self.tree.heading(column=str_row))
             print("STR ROW == " + str(str_row))
             # [2020-02-28]\\print("STR HEADING == " + str(self.tree.heading(column=self.tree.selection(self.tree["columns"]))))
-            item = self.tree.selection() # what row did you click on
+            item = self.tree.selection()[0] # what row did you click on
             print(item)
             # GET/SET HEADING (main heading)
             heading = str(self.tree.heading(column="#0")['text'])
@@ -1247,7 +1313,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1264,10 +1330,10 @@ class AgilentQuotesTracker():  # {
         # TRY THE FOLLOWING
         try: # {
             # SHOW ALL COLUMNS
-            self.tree["displaycolumns"]=("one", "two", "three",
-                                           "four", "five", "six",
-                                           "seven", "eight", "nine",
-                                           "ten", "eleven", "twelve", "thirteen")
+            self.tree["displaycolumns"]=("Time Rec.", "Initials", "Type",
+                                           "Company", "Contact Person", "Email Address",
+                                           "Account ID", "Product #", "PF Quote #",
+                                           "SAP Quote #", "Sent", "Time Sent", "Notes")
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1279,7 +1345,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1319,7 +1385,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1332,7 +1398,18 @@ class AgilentQuotesTracker():  # {
     # }
     
     def _column_select(self): # {
-        heading_2 = str(self.tree.heading(column="one")['text'])
+        str_row = self.tree.item(self.tree.selection())
+        print(str_row)
+        # [2020-02-29]\\str_heading = self.tree.heading(str_row)
+        # [2020-02-29]\\print(str_heading)
+        item = self.tree.selection()
+        #item = self.tree.heading(column=0)['text']
+        print("ITEM == " + str(item))
+        print(self.tree.heading(column=0)['text'])
+        print(str(item))
+        is_open = bool(self.tree.item(item)['open'])
+        print("is_open:\t" + str(is_open))
+        heading_2 = str(self.tree.heading(column="Time Rec.")['text'])
         print(heading_2)
         show_heading = self.tree["columns"]
         print("HEADINGS == " + str(show_heading))
@@ -1363,7 +1440,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1376,7 +1453,7 @@ class AgilentQuotesTracker():  # {
         else: # {
             # display message in the message area
             self.message['text'] = ' <<< Cleared CREATE TAB >>>'
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
         
     # }
@@ -1505,7 +1582,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1518,13 +1595,13 @@ class AgilentQuotesTracker():  # {
         # TRY THE FOLLOWING
         try: # {
             # edit column?
-            logging.info(str(event.widget.displaycolumns()))
+            self.the_logger.info(str(event.widget.displaycolumns()))
             # [2020-01-15]\\event.widget['width'] = 2000
             # CHANGE THE WIDTH OF SELECT ROW
-            logging.info(str(self.tree.column(column="#1", width=200)))
+            self.the_logger.info(str(self.tree.column(column="#1", width=200)))
             test_column = self.tree.column(column="#0")
             # CHANGE ORDER OF DISPLAY COLUNS???
-            logging.info("TEST_COLUMN == " + str(test_column))
+            self.the_logger.info("TEST_COLUMN == " + str(test_column))
             self.tree.set_children()
             """
             POPULATE THE "COPY" TAB CONTAINER WITH VALUES OF ROW SELECTED!
@@ -1544,7 +1621,7 @@ class AgilentQuotesTracker():  # {
             
         # }
         else: # {
-            logging.info("Operation Successfully Completed...")
+            self.the_logger.info("Operation Successfully Completed...")
         # }
         
     # }
@@ -1554,22 +1631,22 @@ class AgilentQuotesTracker():  # {
         try: #{
             # GET NUMBER OF CHILDREN (of ROOT)
             self.children_num = self.root.winfo_children()
-            logging.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
+            self.the_logger.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
         # }
         except: # {
-            logging.error("failed getting the children...")
+            self.the_logger.error("failed getting the children...")
         # }
         # TRY THE FOLLOWING
         try: # {
             # GET MOUSE LOCATION
             self.mouse_location = pyautogui.position()
-            logging.info("MOUSE LOCATION:\n" + str(self.mouse_location))
+            self.the_logger.info("MOUSE LOCATION:\n" + str(self.mouse_location))
             # GET SCREEN RESOLUTION/SIZE
             self.screen_resolution = pyautogui.size()
-            logging.info("SCREEN SIZE:\n" + str(self.screen_resolution))
+            self.the_logger.info("SCREEN SIZE:\n" + str(self.screen_resolution))
         # }
         except: # {
-            logging.error("Error determining mouse location & screen size...")
+            self.the_logger.error("Error determining mouse location & screen size...")
         # }
         # TRY THE FOLLOWING
         try: # {
@@ -1610,7 +1687,7 @@ class AgilentQuotesTracker():  # {
                               selected_sap_quote_number,
                               selected_product_number,
                               selected_company_name]
-            logging.info(str(selection_list))
+            self.the_logger.info(str(selection_list))
             selection_string = str("YOU SELECTED:\n"
                                    + selected_time_rec + "\n" + selected_name + "\n"
                                    + selected_email + "\n" + selected_type + "\n"
@@ -1619,7 +1696,7 @@ class AgilentQuotesTracker():  # {
                                    + selected_prodflow_quote_number + "\n" + selected_sap_quote_number + "\n"
                                    + selected_product_number + "\n" + selected_company_name
                                    )
-            logging.info(str(selection_string))
+            self.the_logger.info(str(selection_string))
             ############################################## 
             # CHECK IF ANOTHER WINDOW IS ALREADY OPEN (greaater than 6)
             if len(self.children_num) > 6: # {
@@ -1649,7 +1726,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1660,9 +1737,9 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else: # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
-        logging.info("\t CHILDREN AFTER \n\t\t========>" + str(len(self.children_num)))
+        self.the_logger.info("\t CHILDREN AFTER \n\t\t========>" + str(len(self.children_num)))
     # }
     
     
@@ -1801,7 +1878,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1812,7 +1889,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else: # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
         # TRY THE FOLLOWING
         try: # {
@@ -1835,7 +1912,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -1936,10 +2013,10 @@ class AgilentQuotesTracker():  # {
                                                  )
             # IF THE USER CONFIRMS!
             if str(confirm_box) == "True": # {
-                logging.info("\n\t>>>>>>>>>> USER selected YES!!!")
+                self.the_logger.info("\n\t>>>>>>>>>> USER selected YES!!!")
                 # TRY THE FOLLOWING
                 try: # {
-                    logging.info("COPY " + str(self.num_of_copies.get()) + " ENTRIES !!")
+                    self.the_logger.info("COPY " + str(self.num_of_copies.get()) + " ENTRIES !!")
                     # GET number to copy and set as INT
                     copy_num = int(self.num_of_new_copies.get())
                     # set counter
@@ -1962,7 +2039,7 @@ class AgilentQuotesTracker():  # {
                         the_sap_quote_num = self.sap_quotenum_2copy
                         the_product_number = self.productnum_2copy
                         the_company_name = self.company_2copy
-                        logging.info("le copy # " + str(counter + 1) + ":\n")
+                        self.the_logger.info("le copy # " + str(counter + 1) + ":\n")
                         copy_str = str("time REC: " + self.time_rec_2copy + "\n" 
                                        + "initials: " + self.initials_2copy + "\n"
                                        + "type: " + self.type_2copy + "\n"
@@ -2015,7 +2092,7 @@ class AgilentQuotesTracker():  # {
                         counter += 1
                     # }
                     else: # {
-                        logging.info("fin...")
+                        self.the_logger.info("fin...")
                     # }
                     # gets all values of the select row
                     test_str_library = self.tree.item(self.tree.selection())
@@ -2035,7 +2112,7 @@ class AgilentQuotesTracker():  # {
                     fileE = str("FILE : " + str(fname))
                     lineE = str("LINE : " + str(exc_tb.tb_lineno))
                     messageE = str("MESG : " + "\n" + str(errorMessage))
-                    logging.error("\n" + typeE +
+                    self.the_logger.error("\n" + typeE +
                                   "\n" + fileE +
                                   "\n" + lineE +
                                   "\n" + messageE)
@@ -2046,14 +2123,14 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
                 # }
                 else: # {
-                    logging.info("Operation Completed Successfully...")
+                    self.the_logger.info("Operation Completed Successfully...")
                     # REFRESH TABLE!
                     self.view_records()
                 # }
             # }
             else: # {
                 messagebox.showwarning(title="BACKED OUT", message="did not copy")
-                logging.info("\n\t>>>>>>>>>> USER selected NO!!!")
+                self.the_logger.info("\n\t>>>>>>>>>> USER selected NO!!!")
             # }
         # }
         except: # {
@@ -2066,7 +2143,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -2077,7 +2154,7 @@ class AgilentQuotesTracker():  # {
                                  "\n" + messageE)
         # }
         else: # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
         # [2020-01-23]\\
         """
@@ -2114,6 +2191,51 @@ class AgilentQuotesTracker():  # {
         # }
         """
     # }
+    
+    """
+    def check_version_number(self, the_version_file): # {
+        # TRY THE FOLLOWING
+        try: # {
+            print("CHECKING VER...")
+            # LOAD IN VER FILE
+            df_ver_file = pd.read_csv(self.ver_file, header=None, engine='python')
+            print(df_ver_file)
+            sleep(30)
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            logger.the_logger.info("Operation Completed ")
+        # }
+    # }
+    """
+    
+    def check_version_number_in_thread(self): # {
+        print("THREAD-check-ver")
+        # START THREAD THREAD
+        # [2020-03-02]\\self.thread = Thread(None, self.check_version_number, None, (), {})
+        self.thread = Thread(None, CheckVersionNumber, None, (), {})
+        # [2020-03-02]\\self.thread = Thread(None, RefreshTable, None, (), {})
+        self.thread.start()
+    # }
 
     ######################################################################################################
     # QUOTE NUMBER CONVENTION AND PROGRESS CHECKS #
@@ -2149,12 +2271,12 @@ class AgilentQuotesTracker():  # {
                     result.append(str(meow_ts))
                 # }
                 else:  # {
-                    logging.info("NOT EMPTY!")
+                    self.the_logger.info("NOT EMPTY!")
                 # }
             # }
             # OVERWRITE COL?
             the_df["turn_around"] = result
-            logging.info(the_df)
+            self.the_logger.info(the_df)
             # RETURN DATAFRAME TO REPLACE OLD/OUTDATED ONE
             return the_df
         # }
@@ -2168,7 +2290,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -2179,7 +2301,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
@@ -2202,15 +2324,15 @@ class AgilentQuotesTracker():  # {
                 current_count = int(pickle.load(le_pickle))
             # }
             # DISPLAY VALUE FOR DEBUG
-            logging.info("current count == " + str(current_count))
+            self.the_logger.info("current count == " + str(current_count))
             # INCREASE COUNT
             current_count += 1
             # CREATE STRING WITH COUNT + zero fill
             count_str = str(current_count).zfill(int(number_of_digits))
-            logging.info("count_str == " + str(count_str))
+            self.the_logger.info("count_str == " + str(count_str))
             # CREATE STRING
             file_name_conv = str("T" + count_str)
-            logging.info("FINAL RESULT == " + str(file_name_conv))
+            self.the_logger.info("FINAL RESULT == " + str(file_name_conv))
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -2222,16 +2344,16 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                   "\n" + fileE +
                   "\n" + lineE +
                   "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
         finally:  # {
-            logging.info("... saving COUNT TO PICKLE == " + str(current_count))
+            self.the_logger.info("... saving COUNT TO PICKLE == " + str(current_count))
             # OVERWRITE PICKLE WITH NEW INCREMENTED COUNT
             with open(Path(the_pickle), 'wb') as le_pickle:  # {
                 # SAVE PICKLE AS TYPE INT
@@ -2250,14 +2372,14 @@ class AgilentQuotesTracker():  # {
             # [2020-01-07]\\test_regex = str(self.pf_quote_num.get())
             # [2020-01-09]\\test_regex = str(self.new_pf_quote_num_entry_widget.get())
             test_regex = str(self.new_pf_quote_num.get())
-            logging.info("TEST-REGEX:\t" + str(test_regex))
-            logging.info("\n" + str(self.pf_quote_regex))
+            self.the_logger.info("TEST-REGEX:\t" + str(test_regex))
+            self.the_logger.info("\n" + str(self.pf_quote_regex))
             # display message
             self.message['text'] = ' ===== EDIT QUOTE [!] ===== '
             # CHECK IF THE PF QUOTE # DOESNT MATCH
             if fnmatch.fnmatch(test_regex, str(self.pf_quote_regex)) or fnmatch.fnmatch(test_regex, str('')): # {
                 # keep submit button ACTIVE
-                logging.info("PF-QUOTE-#... PASSES")
+                self.the_logger.info("PF-QUOTE-#... PASSES")
                 event.widget['state'] = tk.ACTIVE
                 # test display message?
                 # [2020-01-14]\\self.left_transient['text'] = ' <<< PF-QUOTE-#... correct >>>'
@@ -2267,7 +2389,7 @@ class AgilentQuotesTracker():  # {
                 test_regex = str(self.new_sap_quote_num.get())
                 if fnmatch.fnmatch(test_regex, str(self.sap_quote_regex)) or fnmatch.fnmatch(test_regex, str('')): # {
                     # keep submit button ACTIVE
-                    logging.info("SAP-QUOTE-#... PASSES")
+                    self.the_logger.info("SAP-QUOTE-#... PASSES")
                     event.widget['state'] = tk.ACTIVE
                     # display message
                     self.message['text'] += '\n <<< SAP-QUOTE-#... correct >>>'
@@ -2275,14 +2397,14 @@ class AgilentQuotesTracker():  # {
                     test_regex = str(self.new_account_id.get())
                     if fnmatch.fnmatch(test_regex, str(self.account_id_regex)): # {
                         # keep submit button ACTIVE
-                        logging.info("ACCOUNT ID... PASSES")
+                        self.the_logger.info("ACCOUNT ID... PASSES")
                         event.widget['state'] = tk.ACTIVE
                         # display message
                         self.message['text'] += '\n <<< ACCOUNT-ID... correct >>>'
                     # }
                     else: # {
                         # keep submit button DISABLED
-                        logging.info("ACCOUNT ID... FAILED")
+                        self.the_logger.info("ACCOUNT ID... FAILED")
                         event.widget['state'] = tk.DISABLED
                         # display message
                         self.message['text'] = " <<< ACCOUNT ID... incorrect >>>"
@@ -2291,7 +2413,7 @@ class AgilentQuotesTracker():  # {
                 # }
                 else: # {
                     # keep submit button DISABED
-                    logging.info("SAP-QUOTE-#... FAILED")
+                    self.the_logger.info("SAP-QUOTE-#... FAILED")
                     event.widget['state'] = tk.DISABLED
                     # display message
                     self.message['text'] += "\n <<< SAP-QUOTE-#... incorrect >>> "
@@ -2300,7 +2422,7 @@ class AgilentQuotesTracker():  # {
             # }
             else: # {
                 # keep submit button DISABLED
-                logging.info("PF-QUOTE-#... FAILED")
+                self.the_logger.info("PF-QUOTE-#... FAILED")
                 event.widget['state'] = tk.DISABLED
                 # display message
                 self.message['text'] += '\n <<< PF-QUOTE-#... incorrect >>>'
@@ -2317,7 +2439,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -2352,10 +2474,10 @@ class AgilentQuotesTracker():  # {
                 display_str += str(self.notes.get())  # ("1.0", tk.END))
                 # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
                 confirm_box = messagebox.askokcancel(title="Confirm Create", message=str(display_str))
-                logging.info(confirm_box)
+                self.the_logger.info(confirm_box)
                 if str(confirm_box) == "True":  # {
                     # IF THE USER SAID YES.... ADD NEW RECORD!
-                    logging.info("...ADDING NEW RECORD...")
+                    self.the_logger.info("...ADDING NEW RECORD...")
                     """
                     ############################################################
                     << CHECK NUMBER OF NEW RECORDS TO ADD >>
@@ -2608,7 +2730,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -2619,7 +2741,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
@@ -2639,7 +2761,7 @@ class AgilentQuotesTracker():  # {
             pass
         # }
         else: # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
     # }
     
@@ -2675,8 +2797,8 @@ class AgilentQuotesTracker():  # {
     # }
 
     def new_records_validated(self):  # {
-        logging.info("NAME:\n <" + str(self.name.get()) + ">")
-        logging.info("TYPE:\n <" + str(self.type_var.get()) + ">")
+        self.the_logger.info("NAME:\n <" + str(self.name.get()) + ">")
+        self.the_logger.info("TYPE:\n <" + str(self.type_var.get()) + ">")
         # TRY THE FOLLOWING
         try:  # {
             return len(str(self.initials.get())) != 0 \
@@ -2699,7 +2821,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -2710,13 +2832,13 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
     
     def updated_records_validated(self, a_product_num, a_pf_num, a_sap_num): # {
-        logging.info("Validating FILE NAME conventions...")
+        self.the_logger.info("Validating FILE NAME conventions...")
         # TRY THE FOLLOWING
         try: # {
             pass
@@ -2727,7 +2849,7 @@ class AgilentQuotesTracker():  # {
     # }
 
     def view_records(self):  # {
-        logging.info("Begin Populating TreeView...")
+        self.the_logger.info("Begin Populating TreeView...")
         # display message
         # [2020-02-06]\\self.message['text'] = " <<< Updating / Refreshing Table >>> "
         # TRY THE FOLLOWING
@@ -2788,7 +2910,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -2799,7 +2921,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
@@ -2816,22 +2938,22 @@ class AgilentQuotesTracker():  # {
         try: #{
             # GET NUMBER OF CHILDREN (of ROOT)
             self.children_num = self.root.winfo_children()
-            logging.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
+            self.the_logger.info("\t CHILDREN BEFORE \n\t\t========>" + str(len(self.children_num)))
         # }
         except: # {
-            logging.error("failed getting the children...")
+            self.the_logger.error("failed getting the children...")
         # }
         # TRY THE FOLLOWING
         try: # {
             # GET MOUSE LOCATION
             self.mouse_location = pyautogui.position()
-            logging.info("MOUSE LOCATION:\n" + str(self.mouse_location))
+            self.the_logger.info("MOUSE LOCATION:\n" + str(self.mouse_location))
             # GET SCREEN RESOLUTION/SIZE
             self.screen_resolution = pyautogui.size()
-            logging.info("SCREEN SIZE:\n" + str(self.screen_resolution))
+            self.the_logger.info("SCREEN SIZE:\n" + str(self.screen_resolution))
         # }
         except: # {
-            logging.error("Error determining mouse location & screen size...")
+            self.the_logger.error("Error determining mouse location & screen size...")
         # }
         # TRY THE FOLLOWING
         try: # {
@@ -3006,13 +3128,13 @@ class AgilentQuotesTracker():  # {
             self.transient.geometry(str('385x255+' + location_str))
             self.transient.resizable(width=False, height=True)
             ##################################################################################
-            # NOTEBOOK WIDGET
+            #### NOTEBOOK WIDGET
             # [2020-01-14]\\transient_tabs = ttk.Notebook(self.right_transient)
             transient_tabs = ttk.Notebook(self.transient)
             # [2020-01-15]\\transient_tabs = ttk.Notebook(self.bottom_transient)
             
             # <><><><><><<><<><><<><><><><><><><><><><><><><><><><><><><><> #
-            # TAB-1 // OLD TRACKING INFO #
+            #### TAB-1 // OLD TRACKING #
             tab_tracking_info = ttk.Frame(master=transient_tabs)
             transient_tabs.add(tab_tracking_info, text='Tracking Info')
             transient_tabs.pack(expand=2, fill=tk.BOTH)
@@ -3076,7 +3198,7 @@ class AgilentQuotesTracker():  # {
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><> #
             
             # <><><><><><><><><><><<><><><><><><><><><><><><><><><><><><> #
-            # TAB-2 // ACCOUNT INFO #
+            #### TAB-2 // ACCOUNT INFO #
             tab_account_info = ttk.Frame(master=transient_tabs)
             transient_tabs.add(tab_account_info, text='Account Info ')
             transient_tabs.pack(expand=2, fill=tk.BOTH)
@@ -3134,7 +3256,7 @@ class AgilentQuotesTracker():  # {
                                                     ).grid(row=3, column=1, padx=10, pady=10, sticky=None)
             
             # <><><><><><><><><><><><><><><><><><><><><><><><><><><<><>< #
-            # TAB-3 // QUOTE INFO #
+            #### TAB-3 // QUOTE INFO #
             tab_quote_info = ttk.Frame(master=transient_tabs)
             validation = tab_quote_info.register(self.account_id_validated)
             transient_tabs.add(tab_quote_info, text='Quote Info ')
@@ -3278,7 +3400,7 @@ class AgilentQuotesTracker():  # {
             transient_tabs.add(tab_notes_section, text='Notes ')
             transient_tabs.pack(expand=2, fill=tk.BOTH)
             
-            # NOTES #
+            #### TAB-4 // NOTES #
             ttk.Label(master=tab_notes_section,
                       text="Notes: "
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
@@ -3323,6 +3445,34 @@ class AgilentQuotesTracker():  # {
             lblframe_help_info_2 = ttk.LabelFrame(master=tab_help_info, text="Section 2")
             lblframe_help_info_2.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             """
+            
+            #### TAB-5 // STATUS TAB
+            #### FOC
+            #### AWAITING TECH REVIEW
+            #### RETURNED / VOID
+            #### SALES REVIEW
+            tab_status = ttk.Frame(master=transient_tabs)
+            transient_tabs.add(tab_status, text='STATUS ')
+            transient_tabs.pack(expand=2, fill=tk.BOTH)
+            
+            ttk.Label(master=tab_status,
+                      text='Status: '
+                      ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
+            # ALLOW USER TO SET STATUS!
+            the_status_var = str("status_var")
+            self.new_status_var = tk.StringVar(master=tab_status, value=the_status_var)
+            new_status_list_box = tk.Listbox(master=tab_status,
+                                             height=10,
+                                             width=36,
+                                             font=("Calibri", 10)
+                                             )
+            # insert [**SELECTABLE VALUES**] INTO LIST BOX
+            new_status_list_box.insert(tk.INSERT, "FOC")
+            new_status_list_box.insert(tk.INSERT, "Awaiting Technical Review")
+            new_status_list_box.insert(tk.INSERT, "Returned/VOID")
+            new_status_list_box.insert(tk.INSERT, "Awating Sales Review")
+            new_status_list_box.grid(row=0, column=1, padx=10, pady=10, sticky='e')
+            
             
             #####################################################################################
             # BUTTON (FRAME)
@@ -3391,8 +3541,8 @@ class AgilentQuotesTracker():  # {
     def open_admin_window(self): # {
         # TRY THE FOLLOWING
         try: # {
-            # self.admin_transient = tk.Toplevel(master=self.root)
             self.admin_transient = tk.Toplevel(master=self.root)
+            # [2020-03-02]\\self.admin_transient = tk.Toplevel(master=the_root)
             self.admin_transient.title("ADMIN TOOLS - Agilent Custom Quotes Request Log")
             self.admin_transient.geometry('500x60+250+250')
             self.admin_transient.resizable(width=False, height=False)
@@ -3773,7 +3923,7 @@ class AgilentQuotesTracker():  # {
 
 # }
 
-# [2020-01-31]\\
+# [2020-01-31]\\//[2020-03-03]
 """
 class RefreshTable(Thread): # {
     
@@ -3798,6 +3948,8 @@ class RefreshTable(Thread): # {
 # }
 """
 
+# [2020-03-02]\\
+"""
 def setup_logger():  # {
     # TRY THE FOLLOWING
     try:  # {
@@ -3832,6 +3984,7 @@ def setup_logger():  # {
 
 
 # }
+"""
 
 # [2020-01-31]\\
 """
@@ -3849,10 +4002,18 @@ def create_threads(): # {
 if __name__ == "__main__":  # {
     # [2020-01-30]\\create_threads()
     # SETUP LOGGER
-    setup_logger()
+    # [2020-03-02]\\setup_logger()
     # [2020-02-12]\\logger = Logger(logging_output_dir="E:/_Quotes_Tracker/log/")
+    # get/set username (person logged in)
+    user = str(os.environ.get("USERNAME"))
+    print("user:\t" + str(user))
+    # create file path for user logs
+    # [2020-03-02]\\user_path= os.path.join("E:/_Quotes_Tracker/log/", user)
+    logger = Logger(logging_output_dir="E:/_Quotes_Tracker/log/").logger
     window = tk.Tk()
-    application = AgilentQuotesTracker(root=window)
+    application = AgilentQuotesTracker(root=window, the_logger=logger)
+    # ver_checker = CheckVersionNumber()
+    application.check_version_number_in_thread()
     # [2020-01-29]\\application.refresh_table()
     # [2020-01-03]\\application.tick()  # BEGIN "COUNTING" TIME(STAMP)
     window.config()
