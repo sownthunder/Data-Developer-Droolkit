@@ -19,7 +19,7 @@ from time import sleep
 import pathlib, glob
 from pathlib import Path
 import fnmatch, shutil
-import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
@@ -48,8 +48,7 @@ class CofA_E_Node(): # {
     f_drive_convention = "*[@]*.pdf"
     g_drive_convention = "[part]*[CofA]*[Lot]*[#]*.pdf"
     
-    def __init__(self, in_directory, out_directory, ignore_list,
-                 check_start, check_end): # {
+    def __init__(self, in_directory, out_directory, ignore_list, check_start, check_end): # {
         ####################################
         # INSTANTIATE/SETUP MAIN VARIABLES #
         self.in_directory = in_directory
@@ -61,8 +60,58 @@ class CofA_E_Node(): # {
         self.main()
     # }
     
+    """
+    TAKES IN:
+    (1) file_path to file 
+    (2) integer to determine WHICH DIRECTION:
+    [XXX-123@XXXXXXXXXX.pdf <or> part XXX-123 CofA Lot# XXXXXXXXXX.pdf]
+    RETURNS: 
+    The create time or modified time, whichever is older
+    """
     def pull_creation_timestamp(self, a_file_path): # {
-        pass
+        # TRY THE FOLLOWING
+        try: # {
+            # FORCE PATH VARIABLE
+            the_path = Path(str(a_file_path))
+            # GET MODIFIED TIME
+            mtime = os.path.getmtime(the_path)
+            # GET CREATE TIME
+            ctime = os.path.getctime(the_path)
+            # CREATE DATE VAR
+            # IF CREATE TIME IS OLDER...
+            if ctime < mtime:  # {
+                # FORMAT DATE VAR as str
+                date_str = str(datetime.fromtimestamp(ctime))
+            # }
+            # ELSE.... MODIFIED TIME IS OLDER...
+            else:  # {
+                # FORMAT DATE VAR as str
+                date_str = str(datetime.fromtimestamp(mtime))
+            # }
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+        # }
+        else:  # {
+            logging.info("Operation Completed Successfully...")
+            # RETURN THE DATE WE PULLED AS STRING
+            return date_str
+        #}
+        finally:  # {
+            logging.info("FINISHED")
+        #}
     # }
     
     def generate_naming_convention(self, the_pdf_path): # {
@@ -88,29 +137,68 @@ class CofA_E_Node(): # {
     (3) list of file types that you are searching for
     (4a) uses self.start
     """
-    def dir_traverse(self, the_directory, ignore_dir_list, 
-                     file_type_list, check_start, check_end): # {
+    def dir_traverse(self, the_directory, ignore_dir_list, file_type_list, 
+                     check_start, check_end): # {
         pass
     # }
     
-    def create_time_idx_frame(the_directory, ignore_dir_list, file_type_list): # {
+    def create_time_idx_frame(self, the_directory): # {
         x = 0
         counter = 0
         # TRY THE FOLLOWING
-        try: # { 
-            # GET/SET START TIME
-            time_start = pd.Timestamp.now()
-            scan_directory = Path(the_directory)
-            # BEGIN OS.WALK
-            for root, dirs, files in os.walk(scan_directory): # {
-                # FOR EACH ITEM IN IGNORE LIST...
-                for item in ignore_dir_list: # {
-                    pass
-                # }
+        try: # {
+            # CREATE LIST VAR of DIRECTORY
+            dir_list = os.listdir(the_directory)
+            logging.info("\tLENGTH OF [dir_list]: " + str((len(dir_list))))
+            # CREATE SERIES OFF LIST
+            d1 = pd.Series(dir_list)
+            d1.astype(dtype=np.str)
+            # CREATE EMPTY DATAFRAME (TO BE FILLED)
+            df_time_idx = pd.DataFrame(data=None, dtype=np.str)
+            # ASSIGN PANDAS SERIES as first column
+            df_time_idx['File'] = d1
+            # CREATE COLUMN VARIABLE TO STORE DATA
+            date_col = []
+            x = 0  # counter
+            # create Series from column
+            d1 = pd.Series(df_time_idx['File'])
+            d1.astype(dtype=np.str)
+            # FOR EACH ROW IN THE COLUMN
+            for row in d1: # {
+                the_str = str(row)
+                file_path = os.path.join(the_directory, the_str)
+                # create date var
+                the_date = self.pull_creation_timestamp(a_file_path=file_path)
+                logging.info("THE_DATE == " + str(the_date))
+                # APPEND TO LIST
+                date_col.append(the_date)
+                x += 1 # increment counter
             # }
+            # CREATE COLUMN FROM LIST
+            df_time_idx['Date'] = date_col
+            # RE-ALIGN DATE AS INDEX
+            df_time_idx.set_index(['Date'], inplace=True)
+            # Display index
+            logging.info("INDEX:\n" + str(df_time_idx.index))
+            # SORT INDEX
+            df_time_idx.sort_index(inplace=True)
+            # EXPORT TO TEMP FOLDER (for meow)
+            df_time_idx.to_csv("C:/data/outbound/CofA_E_Node_SORTED.csv", index=True)
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            print("\n" + typeE +
+                  "\n" + fileE +
+                  "\n" + lineE +
+                  "\n" + messageE)
         # }
     # }
     
@@ -128,10 +216,13 @@ class CofA_E_Node(): # {
         logging.info("\n\tIGNORE_LIST == " + str(self.ignore_list))
         # GET/SET ORIGINAL WORKING DIRECTORY
         self.og_wd = os.getcwd()
+        logging.info("OG-WORKING-DIR == " + str(self.og_wd))
         self.file_list_f = [] # remove duplicate below!!
         self.time_list_f = []
         self.file_list_g = []
         self.time_list_g = []
+        # CREATE INDEX FRAME
+        self.create_time_idx_frame(the_directory=self.in_directory)
     # }
     
 # }

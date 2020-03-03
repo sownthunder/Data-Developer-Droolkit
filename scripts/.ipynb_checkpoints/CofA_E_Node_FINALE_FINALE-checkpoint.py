@@ -48,21 +48,20 @@ class CofA_E_Node(): # {
     f_drive_convention = "*[@]*.pdf"
     g_drive_convention = "[part]*[CofA]*[Lot]*[#]*.pdf"
     
-    def __init__(self, in_directory, out_directory, ignore_list,
-                 check_start, check_end): # {
+    def __init__(self, in_directory, out_directory, ignore_list, check_start, check_end): # {
+        ####################################
+        # INSTANTIATE/SETUP MAIN VARIABLES #
         self.in_directory = in_directory
         self.out_directory = out_directory
         self.ignore_list = ignore_list
-        ####################################
-        # INSTANTIATE/SETUP MAIN VARIABLES #
-        self.file_list_f = [] # remove duplicate below!!
-        self.time_list_f = []
-        self.file_list_g = []
-        self.time_list_g = []
         self.check_start = check_start
         self.check_end = check_end
         # <<< CALL MAIN FUNCTION >>>
         self.main()
+    # }
+    
+    def create_gui(self, root): # {
+        pass
     # }
     
     def pull_creation_timestamp(self, a_file_path): # {
@@ -98,7 +97,45 @@ class CofA_E_Node(): # {
     # }
     
     def create_time_idx_frame(the_directory, ignore_dir_list, file_type_list): # {
-        pass
+        x = 0
+        counter = 0
+        # TRY THE FOLLOWING
+        try: # { 
+            # GET/SET START TIME
+            time_start = pd.Timestamp.now()
+            scan_directory = Path(the_directory)
+            # BEGIN OS.WALK
+            for root, dirs, files in os.walk(scan_directory): # {
+                # FOR EACH ITEM IN IGNORE LIST...
+                for item in ignore_dir_list: # {
+                    # IF THAT ITEM IS IN FACT IN DIRECTORY...
+                    if str(item) in dirs: # {
+                        # REMOVE FROM OS.WALK
+                        dirs.remove(str(item))
+                    # }
+                # }
+                # OTHERWISE IF THERE ARE FILES IN DIRECTORY...
+                for f in files: # {
+                    # FOR EACH ITEM IN 'file_type_list'
+                    for item in file_type_list: # {
+                        # CREATE FILE_MATCH VAR
+                        file_match = str("*" + item)
+                        # DO FNMATCH FOR THIS "item"
+                        if fnmatch.fnmatch(f, file_match): # {
+                            # <<< STRING-OPERATIONS >>>
+                            # ASSEMBLE!
+                            file_path = os.path.join(root, f)
+                            logging.info("\n\tFILE_PATH == " + str(file_path))
+                            # RETURN DATETIME VAR
+                            the_date = self.pull_creation_timestamp(file_path)
+                            }
+                    # }
+                # }
+            # }
+        # }
+        except: # {
+            pass
+        # }
     # }
     
     def send_email(self, send_from, send_to, subject, message, files=[],
@@ -115,6 +152,10 @@ class CofA_E_Node(): # {
         logging.info("\n\tIGNORE_LIST == " + str(self.ignore_list))
         # GET/SET ORIGINAL WORKING DIRECTORY
         self.og_wd = os.getcwd()
+        self.file_list_f = [] # remove duplicate below!!
+        self.time_list_f = []
+        self.file_list_g = []
+        self.time_list_g = []
     # }
     
 # }

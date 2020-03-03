@@ -121,60 +121,12 @@ class Logger(): # {
     # }
 # }
 
-class CheckVersionNumber(Thread): # {
-    
-    def __init__(self): # {
-        # INIT the Thread
-        Thread.__init__(self)
-        self.run()
-    # }
-    
-    def run(self): # {
-        # Run the Thread
-        while 1: # {
-            # TRY THE FOLLOWING
-            try: # {
-                logger.info("CHECKING VER...")
-                # LOAD IN VER FILE
-                df_ver_file = pd.read_csv(AgilentQuotesTracker.ver_file, header=None, engine='python')
-                logger.info(">> CORRECT (current) == " + str(df_ver_file.iloc[0, 0]))
-                logger.info(">> current (actual) == " + str(AgilentQuotesTracker.version_number))
-                sleep(30)
-            # }
-            except: # {
-                errorMessage = str(sys.exc_info()[0]) + "\n"
-                errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
-                errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                typeE = str("TYPE : " + str(exc_type))
-                fileE = str("FILE : " + str(fname))
-                lineE = str("LINE : " + str(exc_tb.tb_lineno))
-                messageE = str("MESG : " + "\n" + str(errorMessage))
-                logger.error("\n" + typeE +
-                              "\n" + fileE +
-                              "\n" + lineE +
-                              "\n" + messageE)
-                messagebox.showerror(title="ERROR!",
-                                     message=typeE +
-                                         "\n" + fileE +
-                                         "\n" + lineE +
-                                         "\n" + messageE)
-            # }
-            else: # {
-                #logger.the_logger.info("Operation Completed ")
-                print("Operation Completed Succesfully")
-            # }
-        # } 
-    # }
-# }
-
 class AgilentQuotesTracker():  # {
-
+    
     #################################################
     #### check if DEV or PROD copy
     if fnmatch.fnmatch(str(sys.argv[0]), "*_dev*"): # {
-        logging.info(">>>> loading DEV >>>>>")
+        print(">>>> loading DEV >>>>>")
         #### set DEV values
         db_filename = "e:/_Quotes_Tracker/dev/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
@@ -183,7 +135,7 @@ class AgilentQuotesTracker():  # {
         ver_file = Path("E:/_Quotes_Tracker/dev/config/ver_no.txt")
     # }
     else: # {
-        logging.info(">>>>> loading PROD >>>>>")
+        print(">>>>> loading PROD >>>>>")
         #### set PROD values
         db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
         t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
@@ -192,6 +144,7 @@ class AgilentQuotesTracker():  # {
         ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
     # }
     ##################################################
+    
     #db_filename = "C:/Temp/E/data/quotes_tracker.db"
     #t_count_filename = "C:/Temp/E/config/quotes_t_number.pkl"
     time1 = ""
@@ -212,24 +165,47 @@ class AgilentQuotesTracker():  # {
         CHECK DEV. OR PROD. COPY HERE
         """
         """
+        #################################################
+        #### check if DEV or PROD copy
+        if fnmatch.fnmatch(str(sys.argv[0]), "*_dev*"): # {
+            the_logger.info(">>>> loading DEV >>>>>")
+            #### set DEV values
+            self.db_filename = "e:/_Quotes_Tracker/dev/data/quotes_tracker.db"
+            self.t_count_filename = "e:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
+            # VERSION CONTROL NUMBER
+            self.version_number = "20.03.03"
+            self.ver_file = Path("E:/_Quotes_Tracker/dev/config/ver_no.txt")
+        # }
+        else: # {
+            the_logger.info(">>>>> loading PROD >>>>>")
+            #### set PROD values
+            self.db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
+            self.t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
+            # VERSION CONTROL NUMBER
+            self.version_number = "20.02.14" #01-29
+            self.ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
+        # }
+        ##################################################
+        """
+        """
         CHECK VERSION NO. HERE
         """
         ver_txt = pd.read_csv(self.ver_file, names=['version'], dtype=np.str)
-        print(type(ver_txt))
-        print(ver_txt)
+        the_logger.info(type(ver_txt))
+        the_logger.info(ver_txt)
         self.correct_ver = str(ver_txt["version"].iloc[0])
-        print("CORRECT (current) VERSION NO. == " + str(self.correct_ver))
-        print("current (actual) VERSION NO. == " + str(self.version_number))
+        the_logger.info("CORRECT (current) VERSION NO. == " + str(self.correct_ver))
+        the_logger.info("current (actual) VERSION NO. == " + str(self.version_number))
         # CHECK IF RUNNING MOST RECENT VERSION OF APPLICATION
         if str(self.correct_ver) != str(self.version_number): # {
-            print("FAILLLLLLL! qutting in 5...")
+            the_logger.info("FAILLLLLLL! qutting in 5...")
             sleep(5)
             sys.exit(69)
         # }
         # [2020-02-12]\\self.the_logger = the_logger
         self.root = root
         self.root.title("Agilent Customs Quotes Request Log")
-        logging.info("SCRIPT NAME == " + str(sys.argv[0]))
+        the_logger.info("SCRIPT NAME == " + str(sys.argv[0]))
         self.root.resizable(width=True, height=True)
         """
         # SET WINDOW DIMENSIONS
@@ -1398,21 +1374,49 @@ class AgilentQuotesTracker():  # {
     # }
     
     def _column_select(self): # {
-        str_row = self.tree.item(self.tree.selection())
-        print(str_row)
-        # [2020-02-29]\\str_heading = self.tree.heading(str_row)
-        # [2020-02-29]\\print(str_heading)
-        item = self.tree.selection()
-        #item = self.tree.heading(column=0)['text']
-        print("ITEM == " + str(item))
-        print(self.tree.heading(column=0)['text'])
-        print(str(item))
-        is_open = bool(self.tree.item(item)['open'])
-        print("is_open:\t" + str(is_open))
-        heading_2 = str(self.tree.heading(column="Time Rec.")['text'])
-        print(heading_2)
-        show_heading = self.tree["columns"]
-        print("HEADINGS == " + str(show_heading))
+        # TRY THE FOLLOWING:
+        try: # {
+            str_row = self.tree.item(self.tree.selection())
+            print(str_row)
+            # [2020-02-29]\\str_heading = self.tree.heading(str_row)
+            # [2020-02-29]\\print(str_heading)
+            item = self.tree.selection()
+            #item = self.tree.heading(column=0)['text']
+            print("ITEM == " + str(item))
+            print(self.tree.heading(column=0)['text'])
+            print(str(item))
+            is_open = bool(self.tree.item(item)['open'])
+            print("is_open:\t" + str(is_open))
+            heading_2 = str(self.tree.heading(column="Time Rec.")['text'])
+            print(heading_2)
+            heading_3 = str(self.tree.heading(column=self.tree.selection()))
+            print(heading_3)
+            show_heading = self.tree["columns"]
+            print("HEADINGS == " + str(show_heading))
+        # } 
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            self.the_logger.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            self.the_logger.info("Operation Completed Successfully...")
+        # }
     # }
     
     def clear_create_tab(self): # {
@@ -2971,8 +2975,8 @@ class AgilentQuotesTracker():  # {
                 yend = str(self.mouse_location).rfind(')', 0, len(str(self.mouse_location)))
                 x_val = int(str(self.mouse_location)[xindex+2:xend])
                 y_val = int(str(self.mouse_location)[yindex+2:yend])
-                logging.info("X == " + str(x_val))
-                logging.info("Y == " + str(y_val))
+                self.the_logger.info("X == " + str(x_val))
+                self.the_logger.info("Y == " + str(y_val))
                 # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
                 location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
                 self.search_box.geometry(str('450x175+' + location_str))
@@ -3040,7 +3044,7 @@ class AgilentQuotesTracker():  # {
                            #width=30
                            ).pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
                 self.search_box.focus_set()
-                print("FOCUS == " + str(self.search_box.focus_get()))
+                self.the_logger.info("FOCUS == " + str(self.search_box.focus_get()))
                 
                 
                 # GIVE FOCUS TO (ENTRY) SEARCH BOX
@@ -3059,7 +3063,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -3084,9 +3088,9 @@ class AgilentQuotesTracker():  # {
     def open_modify_window(self, selected_item, the_selection_list, window_location):  # {
         # TRY THE FOLLOWING
         try:  # {
-            logging.info("...MODIFYING RECORD...")
-            logging.info("SELECTION LIST:\n" + str(the_selection_list))
-            logging.info(the_selection_list[1])
+            self.the_logger.info("...MODIFYING RECORD...")
+            self.the_logger.info("SELECTION LIST:\n" + str(the_selection_list))
+            self.the_logger.info(the_selection_list[1])
             # tracking_number = str(self.tree.item(item)['values'][0])
             # track_num = self.tree.item(self.tree.selection()['text'])
             # old_name = self.tree.item(self.tree.selection())['values'][0]
@@ -3121,8 +3125,8 @@ class AgilentQuotesTracker():  # {
             yend = str(window_location).rfind(')', 0, len(str(window_location)))
             x_val = int(str(window_location)[xindex+2:xend])
             y_val = int(str(window_location)[yindex+2:yend])
-            logging.info("X == " + str(x_val))
-            logging.info("Y == " + str(y_val))
+            self.the_logger.info("X == " + str(x_val))
+            self.the_logger.info("Y == " + str(y_val))
             # CREATE STR TO HOLD X AND Y LOCATION POSITIONS
             location_str = str('' + str(int(x_val-385)) + "+" + str(int(y_val)) + '')
             self.transient.geometry(str('385x255+' + location_str))
@@ -3325,14 +3329,14 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
             # GET RADIO TYPE FROM "selection_list"[10] (old)
             the_radio_sent_var = str(the_selection_list[10])
-            logging.info("\n\t>>>> SENT? <<<< " + str(the_radio_sent_var))
+            self.the_logger.info("\n\t>>>> SENT? <<<< " + str(the_radio_sent_var))
             self.radio_sent_var = tk.BooleanVar(master=self.root, value=the_radio_sent_var)
-            logging.info("\n\t>>> STILL? <<<< " + str(self.radio_sent_var.get()))
+            self.the_logger.info("\n\t>>> STILL? <<<< " + str(self.radio_sent_var.get()))
             # CREATE VAR TO HOLD (new) VALUE
             new_radio_sent_var = tk.BooleanVar(master=tab_quote_info, value=bool(self.radio_sent_var))
             # CREATE RADIO BUTTON ** BASED ON CONDITIONS **
             if bool(self.radio_sent_var.get()) is True: # {
-                logging.info(">>>>>>>>>> IS TRUE!")
+                self.the_logger.info(">>>>>>>>>> IS TRUE!")
                 self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info,
                                                     state=tk.DISABLED,
                                                     value=True,
@@ -3347,7 +3351,7 @@ class AgilentQuotesTracker():  # {
                 self.radio_sent_2.grid(row=3, column=1, columnspan=3, sticky='e', padx=10, pady=10)
             # }
             elif bool(self.radio_sent_var.get()) is False: # {
-                logging.info(">>>>>>>>> IS FALSE!")
+                self.the_logger.info(">>>>>>>>> IS FALSE!")
                 self.radio_sent_1 = ttk.Radiobutton(master=tab_quote_info,
                                                     state=tk.ACTIVE,
                                                     value=True,
@@ -3464,13 +3468,15 @@ class AgilentQuotesTracker():  # {
             new_status_list_box = tk.Listbox(master=tab_status,
                                              height=10,
                                              width=36,
-                                             font=("Calibri", 10)
+                                             font=("Calibri", 10),
+                                             relief=tk.RIDGE,
+                                             selectmode='extended'
                                              )
             # insert [**SELECTABLE VALUES**] INTO LIST BOX
-            new_status_list_box.insert(tk.INSERT, "FOC")
-            new_status_list_box.insert(tk.INSERT, "Awaiting Technical Review")
-            new_status_list_box.insert(tk.INSERT, "Returned/VOID")
-            new_status_list_box.insert(tk.INSERT, "Awating Sales Review")
+            new_status_list_box.insert(0, "FOC")
+            new_status_list_box.insert(tk.END, "Awaiting Technical Review")
+            new_status_list_box.insert(tk.END, "Returned/VOID")
+            new_status_list_box.insert(tk.END, "Awating Sales Review")
             new_status_list_box.grid(row=0, column=1, padx=10, pady=10, sticky='e')
             
             
@@ -3522,7 +3528,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -3533,7 +3539,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else:  # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
 
     # }
@@ -3588,7 +3594,7 @@ class AgilentQuotesTracker():  # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage))
-            logging.error("\n" + typeE +
+            self.the_logger.error("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -3599,7 +3605,7 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
         else: # {
-            logging.info("Operation Completed Successfully...")
+            self.the_logger.info("Operation Completed Successfully...")
         # }
     # }
 
@@ -3637,7 +3643,7 @@ class AgilentQuotesTracker():  # {
         """
         # IF NONE OF THE **IMPORTANT** ENTRY BOXES ARE LEFT EMPTY
         if len(str(newinitials)) != 0 and len(str(newaccountid)) != 0:  # {
-            logging.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
+            self.the_logger.info("UPDATE-RECORD FIELDS ARE ALL FILLED IN COMPLETELY!")
             # SETUP STR TO HOLD THE VALUES THE USER WISHES TO CHANGE
             display_str = "YOU ENTERED:\n\n" 
             display_str += "contact name:\t\t" + str(newname) + "\n"
@@ -3653,7 +3659,7 @@ class AgilentQuotesTracker():  # {
             display_str += "new notes:\n\n" + str(newnotes) + "\n"
             # ASK THE USER IF THEY ARE SURE WITH THEIR COMPLETION?
             confirm_box = messagebox.askokcancel(title="Confirm Update", message=str(display_str))
-            logging.info(confirm_box)
+            self.the_logger.info(confirm_box)
             if str(confirm_box) == "True":  # {
                 # TRY THE FOLLOWING
                 try: # {
@@ -3666,10 +3672,10 @@ class AgilentQuotesTracker():  # {
                     # [2020-01-21]\\SQL_Table = pd.read_sql_table(table_name="quotes", con=conn, index_col=["tracking_number"])
                     # CREATE STR VARIABLE TO HOLD SQL QUERY
                     sql_query = "SELECT * FROM [quotes] WHERE [tracking_number] = '" + str(tracking_number) + "'"
-                    logging.info("THE_QUERY == " + str(sql_query))
+                    self.the_logger.info("THE_QUERY == " + str(sql_query))
                     self.SQL_Table = pd.read_sql_query(sql=str(sql_query),
                                                   con=conn)
-                    logging.info(self.SQL_Table.describe())
+                    self.the_logger.info(self.SQL_Table.describe())
                     """
                     <<<<<<<<<< DETERMINE WHICH ROWS ARE "newly_sent" >>>>>>>>>
                     """
@@ -3735,7 +3741,7 @@ class AgilentQuotesTracker():  # {
                     fileE = str("FILE : " + str(fname))
                     lineE = str("LINE : " + str(exc_tb.tb_lineno))
                     messageE = str("MESG : " + "\n" + str(errorMessage))
-                    logging.error("\n" + typeE +
+                    self.the_logger.error("\n" + typeE +
                                   "\n" + fileE +
                                   "\n" + lineE +
                                   "\n" + messageE)
@@ -3746,14 +3752,14 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
                 # }
                 else: # {
-                    logging.info("[pull-DB_2_DF] Operation Completed Successfully...")
+                    self.the_logger.info("[pull-DB_2_DF] Operation Completed Successfully...")
                     # CLOSE CONNECTION?
                     conn.close()
                 # }
                 # TRY THE FOLLOWING
                 try:  # {
-                    logging.info("UPDATING RECORD...")
-                    logging.info("NEW_SENT RADIO VAR [passed_thru_function] == " + str(newsent))
+                    self.the_logger.info("UPDATING RECORD...")
+                    self.the_logger.info("NEW_SENT RADIO VAR [passed_thru_function] == " + str(newsent))
                     # CHECK IF SENT HAS BEEN SWITCHED!
                     """
                     [2020-01-16]
@@ -3793,12 +3799,12 @@ class AgilentQuotesTracker():  # {
                         else: # {
                             # GET START TIME
                             start_time = pd.Timestamp(ts_input=str(self.SQL_Table["open_time"][0]))
-                            logging.info("START-TIME == " + str(start_time))
+                            self.the_logger.info("START-TIME == " + str(start_time))
                             # CREATE TEMPORARY TIMESTAMP
                             time_meow = pd.Timestamp.now()
                             # DETERMINE TURN_AROUND TIME
                             run_time = str(time_meow - start_time)[:18]
-                            logging.info("RUN-TIME == " + str(run_time))
+                            self.the_logger.info("RUN-TIME == " + str(run_time))
                             # set close time to the current time
                             closing_time = str(time_meow)[:19]
                             # [2020-01-22]\\message_str = "\nclose time: " + str(closing_time) + "\nTurn around: " + str(run_time)
@@ -3808,8 +3814,8 @@ class AgilentQuotesTracker():  # {
                             """
                         # }
                         # CHECKED IF THERE IS NO TURN AROUND TIME
-                        logging.info("YES THERE IS TURN AROUND! NO NEED TO UPDATE CLOSE TIME")
-                        logging.info(self.SQL_Table["close_time"][0])
+                        self.the_logger.info("YES THERE IS TURN AROUND! NO NEED TO UPDATE CLOSE TIME")
+                        self.the-logger.info(self.SQL_Table["close_time"][0])
                         query = 'UPDATE quotes ' \
                                 'SET name=?, email=?, type=?, sent=?, close_time=?, turn_around=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=?'
@@ -3829,14 +3835,14 @@ class AgilentQuotesTracker():  # {
                     # [2019-12-30]... ACCOUNT_ID, PRODFLOW QUOTE #, SAP QUOTE #
                     # [2020-01-07]... COMPANY NAME
                     else:  # {
-                        logging.info("\n\t\t\t>>>>>>> NOT SWITCH [sent] OVER!")
+                        self.the_logger.info("\n\t\t\t>>>>>>> NOT SWITCH [sent] OVER!")
                         # CLOSING TIME == OLD CLOSING TIME
                         query = 'UPDATE quotes SET name=?, email=?, type=?, notes=?, initials=?, account_id=?, prodflow_quote_number=?, sap_quote_number=?, company_name=?, product_number=?' \
                                 'WHERE tracking_number=? '
                         parameters = (newname, newemail, the_type, newnotes, newinitials,
                                       newaccountid, newpfnum, newsapnum, newcompanyname, newproductnum,
                                       tracking_number)
-                        logging.info("QUERY:\n" + str(query) + "\nPARAMS:\n" + str(parameters))
+                        self.the_logger.info("QUERY:\n" + str(query) + "\nPARAMS:\n" + str(parameters))
                         # EXECUTE
                         self.execute_db_query(query, parameters)
                         self.transient.destroy()
@@ -3855,7 +3861,7 @@ class AgilentQuotesTracker():  # {
                     fileE = str("FILE : " + str(fname))
                     lineE = str("LINE : " + str(exc_tb.tb_lineno))
                     messageE = str("MESG : " + "\n" + str(errorMessage))
-                    logging.error("\n" + typeE +
+                    self.the_logger.error("\n" + typeE +
                                   "\n" + fileE +
                                   "\n" + lineE +
                                   "\n" + messageE)
@@ -3866,11 +3872,11 @@ class AgilentQuotesTracker():  # {
                                                  "\n" + messageE)
                 # }
                 else:  # {
-                    logging.info("Operation Completed Successfully...")
+                    self.the_logger.info("Operation Completed Successfully...")
                 # }
             # }
             else:  # {
-                logging.info("USER SELECTED NOT READY !...")
+                self.the_logger.info("USER SELECTED NOT READY !...")
                 self.transient.destroy()
             # }
         # }
@@ -3997,6 +4003,63 @@ def create_threads(): # {
     # }
 # }
 """
+
+class CheckVersionNumber(Thread): # {
+    
+    def __init__(self): # {
+        # INIT the Thread
+        Thread.__init__(self)
+        self.run()
+    # }
+    
+    def run(self): # {
+        # Run the Thread
+        while 1: # {
+            # TRY THE FOLLOWING
+            try: # {
+                logger.info("CHECKING VER...")
+                # LOAD IN VER FILE
+                df_ver_file = pd.read_csv(AgilentQuotesTracker.ver_file, header=None, engine='python')
+                logger.info(">> CORRECT (current) == " + str(df_ver_file.iloc[0, 0]))
+                logger.info(">> current (actual) == " + str(AgilentQuotesTracker.version_number))
+                # CHECK IF RUNNING MOST RECENT VERSION OF APPLICATION
+                if str(df_ver_file.iloc[0, 0]) != str(AgilentQuotesTracker.version_number): # {
+                    logger.error("FAILLLLLLL! qutting in 5...")
+                    messagebox.showerror(title="Version ERROR!",
+                                         message="Running out-dated version...\nNow exiting....")
+                    sys.exit(69)
+                # }
+                else: # {
+                    sleep(30)
+                # } 
+            # }
+            except: # {
+                errorMessage = str(sys.exc_info()[0]) + "\n"
+                errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+                errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                typeE = str("TYPE : " + str(exc_type))
+                fileE = str("FILE : " + str(fname))
+                lineE = str("LINE : " + str(exc_tb.tb_lineno))
+                messageE = str("MESG : " + "\n" + str(errorMessage))
+                logger.error("\n" + typeE +
+                              "\n" + fileE +
+                              "\n" + lineE +
+                              "\n" + messageE)
+                messagebox.showerror(title="ERROR!",
+                                     message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+            # }
+            else: # {
+                #logger.the_logger.info("Operation Completed ")
+                print("Operation Completed Succesfully")
+            # }
+        # } 
+    # }
+# }
 
 # MAIN BOILERPLATE
 if __name__ == "__main__":  # {
