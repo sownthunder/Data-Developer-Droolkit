@@ -39,6 +39,14 @@ import tkinter.ttk as ttk
 from tkinter import messagebox, filedialog 
 from tkinter import constants, commondialog
 
+"""
+IF SCRIPT IS BEING CALLED ON THE DAILY BASIS (ie scan last night and today)
+*** THEN USE THE OLD ALGORITHIM OF SCANNING ENTIRE DIRECTORY AND CHECK AGAINST
+ EACH INDIVIDUAL FILE SEPERATELY AND CHECK IF WITHIN TIME RANGE... ***
+ 
+ IF SCRIPT IS BEING CALLED AND WANTS >> A SPECIFIC DATE RANGE << THEN 
+ ** CREATE THE IDX FRAME AND SORT INDEX AND FILTER ON TIMESTAMP **
+"""
 class CofA_E_Node(): # {
     
     in_file = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
@@ -183,7 +191,8 @@ class CofA_E_Node(): # {
             # SORT INDEX
             df_time_idx.sort_index(inplace=True)
             # EXPORT TO TEMP FOLDER (for meow)
-            df_time_idx.to_csv("C:/data/outbound/CofA_E_Node_SORTED.csv", index=True)
+            # [2020-03-03]\\df_time_idx.to_csv("C:/data/outbound/CofA_E_Node_SORTED.csv", index=True)
+            return df_time_idx
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -200,6 +209,9 @@ class CofA_E_Node(): # {
                   "\n" + lineE +
                   "\n" + messageE)
         # }
+        else: # {
+            logging.info("Operation Completed Successfully...")
+        # }
     # }
     
     def send_email(self, send_from, send_to, subject, message, files=[],
@@ -211,6 +223,7 @@ class CofA_E_Node(): # {
     << MAIN FUNCTION LOGIC >>
     """
     def main(self): # {
+        self.time_start = pd.Timestamp.now() # create time_start
         logging.info("\n\tIN_DIRECTORY == " + str(self.in_directory))
         logging.info("\n\tOUT_DIRECTORY == " + str(self.out_directory))
         logging.info("\n\tIGNORE_LIST == " + str(self.ignore_list))
@@ -222,7 +235,11 @@ class CofA_E_Node(): # {
         self.file_list_g = []
         self.time_list_g = []
         # CREATE INDEX FRAME
-        self.create_time_idx_frame(the_directory=self.in_directory)
+        df_index = self.create_time_idx_frame(the_directory=self.in_directory)
+        # TEST SHOWING TIME INTERVAL
+        logging.info(df_index["2020-02-14":"2020-02-17"])
+        self.time_end = pd.Timestamp.now() # create time_end
+        logging.info("<< RUN-TIME >>\n" + str(self.time_end - self.time_start))
     # }
     
 # }

@@ -49,6 +49,7 @@ EDITS:
 02/21/20 - BEGIN putting in "check_quote_completion" after "COPY-RECORD" runs
 02/29/20 - header column functionality work-begin (treeview)
 03/02/20 - logger re-implemented (FINALIZED!)
+03/04/20 - STATUS column added to database backend
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -2372,6 +2373,7 @@ class AgilentQuotesTracker():  # {
     def check_quote_convention(self, event): #{
         # TRY THE FOLLOWING
         try: # {
+            print("STATUS == " + str(self.new_status_var.get()))
             # ASSIGN ENTRY INPUT TO STR
             # [2020-01-07]\\test_regex = str(self.pf_quote_num.get())
             # [2020-01-09]\\test_regex = str(self.new_pf_quote_num_entry_widget.get())
@@ -2864,7 +2866,9 @@ class AgilentQuotesTracker():  # {
             # }
             # [2020-01-03]\\query = 'SELECT * FROM quotes ORDER BY name desc'
             # [2020-02-14]\\query = 'SELECT * FROM quotes ORDER BY open_time desc'
-            query = 'SELECT * FROM quotes ORDER BY tracking_number desc'
+            # [2020-03-04]\\query = "SELECT * FROM quotes WHERE [status] != '" + str("void") + "' ORDER BY tracking_number desc"
+            # query = 'SELECT * FROM quotes WHERE [status] is NULL ORDER BY tracking_number desc'
+            query = "SELECT * FROM quotes WHERE [status] is NULL OR [status] != '" + str("void") + "' ORDER BY tracking_number desc"
             quote_tracker_entries = self.execute_db_query(query)
             for row in quote_tracker_entries:  # {
                 # [2020-01-14]\\print("PRINTING ROW:\n\t" + str(row))
@@ -3451,10 +3455,10 @@ class AgilentQuotesTracker():  # {
             """
             
             #### TAB-5 // STATUS TAB
-            #### FOC
-            #### AWAITING TECH REVIEW
-            #### RETURNED / VOID
-            #### SALES REVIEW
+            # FOC
+            # AWAITING TECH REVIEW
+            # RETURNED / VOID
+            # SALES REVIEW
             tab_status = ttk.Frame(master=transient_tabs)
             transient_tabs.add(tab_status, text='STATUS ')
             transient_tabs.pack(expand=2, fill=tk.BOTH)
@@ -3464,7 +3468,17 @@ class AgilentQuotesTracker():  # {
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
             # ALLOW USER TO SET STATUS!
             the_status_var = str("status_var")
-            self.new_status_var = tk.StringVar(master=tab_status, value=the_status_var)
+            # [2020-03-04]\\self.new_status_var = tk.StringVar(master=tab_status, value=the_status_var)
+            self.new_status_var = tk.IntVar(master=tab_status, value= 0)
+            R1 = tk.Radiobutton(tab_status, text="AWAITING SALES REVIEW", variable=self.new_status_var, value = 1)
+            R1.grid(row=1, column=0, padx=10, pady=10, sticky='w')
+            R2 = tk.Radiobutton(tab_status, text="AWAITING TECH REVIEW", variable=self.new_status_var, value = 2)
+            R2.grid(row=1, column=1, padx=10, pady=10, sticky='w')
+            R3 = tk.Radiobutton(tab_status, text="FOC", variable=self.new_status_var, value = 3)
+            R3.grid(row=2, column=0, padx=10, pady=10, sticky='w')
+            R4 = tk.Radiobutton(tab_status, text="RETURNED/VOID", variable=self.new_status_var, value = 4)
+            R4.grid(row=2, column=1, padx=10, pady=10, sticky='w')
+            """
             new_status_list_box = tk.Listbox(master=tab_status,
                                              height=10,
                                              width=36,
@@ -3478,6 +3492,7 @@ class AgilentQuotesTracker():  # {
             new_status_list_box.insert(tk.END, "Returned/VOID")
             new_status_list_box.insert(tk.END, "Awating Sales Review")
             new_status_list_box.grid(row=0, column=1, padx=10, pady=10, sticky='e')
+            """
             
             
             #####################################################################################
