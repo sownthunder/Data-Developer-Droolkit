@@ -31,13 +31,71 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image
 from openpyxl.utils.dataframe import dataframe_to_rows
 import tempfile
+from ttkthemes import ThemedStyle
+import tkinter as tk
+import tkinter.ttk as ttk
+from tkinter import messagebox, filedialog, commondialog
 
 
 class AgilentQCMetrics(): # {
     
     outbound_dir = "C:/data/outbound/"
     
-    def __init__(self, day_range): # {
+    def __init__(self, root, the_logger): # {
+        self.root = root
+        self.root.title("QC Metrics")
+        self.root.geometry('250x250+300+300')
+        self.root.resizable(width=True, height=False)
+        self.create_gui(the_root = self.root)
+    # }
+    
+    def create_gui(self, the_root): # {
+        # TRY THE FOLLOWING
+        try: # { 
+            self.create_ttk_styles(the_root=the_root)
+            self.create_label_frame(the_root=the_root)
+            self.create_main_frame(the_root=the_root)
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    def create_ttk_styles(self, the_root): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # CONFIGURE THE TTK STYLE
+            self.style = ThemedStyle(the_root)
+            # STYLE THEME
+            self.style.set_theme("radiance")
+        # }
+        except:# { 
+            pass
+        # }
+    # }
+    
+    def create_label_frame(self, the_root): # {
+        self.labelframe = ttk.Frame(the_root)
+        self.labelframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+    # }
+    
+    def create_main_frame(self, the_root): # {
+        # TRY THE FOLLOWING
+        try: # {
+            ttk.Label(master=the_root, text="Select Start Date: "
+                      ).grid(row=0, col=0, padx=10, pady=10, sticky='w')
+            ttk.Label(master=the_root, text="Select End Date: "
+                      ).grid(row=0, col=0, padx=10, pady=10, sticky='w')
+        # }
+        except: # {
+            pass
+        # }
+        else: # {
+            pass
+        # }
+    # }
+    
+    def run(self, day_range): # {
         # TRY THE FOLLOWING
         try: # {
             # [2020-02-28]\\self.time_unit = time_unit
@@ -222,7 +280,12 @@ class AgilentQCMetrics(): # {
 # }
 
 if __name__ == "__main__": # {
+    # logger = Logger(logging_output_dir="").loggger
+    window = tk.Tk()
+    application = AgilentQCMetrics(root= window, the_logger=None)
+    window.config()
+    window.mainloop()
     # CALL METRICS CLASS WITH A RANGE OF 1 MONTH
     # [2020-02-28]\\test_metrics = AgilentQCMetrics(time_unit='M', time_value=1)
-    test_metrics = AgilentQCMetrics(day_range=30)
+    # [2020-03-04]\\test_metrics = AgilentQCMetrics(day_range=30)
 # }

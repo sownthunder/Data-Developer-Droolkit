@@ -578,7 +578,7 @@ class AgilentQuotesTracker():  # {
 
     def create_left_side(self, the_root):  # {
         # CREATE FRAME CONTAINER
-        self.leftframe = tk.Frame(the_root)
+        self.leftframe = ttk.Frame(the_root)
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=True) # fill=tk.Both
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.Y, expand=True)
         # [2019-12-12]\\self.leftframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
