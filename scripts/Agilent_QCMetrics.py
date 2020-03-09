@@ -39,13 +39,20 @@ from tkinter import messagebox, filedialog, commondialog
 
 class AgilentQCMetrics(): # {
     
+    user_name = str(os.getlogin()) # get username 
     outbound_dir = "C:/data/outbound/"
+    desktop_dir = "OneDrive - Agilent Technologies/Desktop" #C:/Users/derbates
     
     def __init__(self, root, the_logger): # {
         self.root = root
         self.root.title("QC Metrics")
-        self.root.geometry('250x250+300+300')
-        self.root.resizable(width=True, height=False)
+        self.root.geometry('315x200+300+300')
+        self.root.resizable(width=False, height=False)
+        # Get/Set USERNAME & DESKTOP DIRECTRIES
+        self.user_name_dir = os.path.join("C:/Users/", self.user_name)
+        self.desktop_dir = os.path.join(self.user_name_dir, self.desktop_dir)
+        print(self.user_name_dir)
+        print(self.desktop_dir)
         self.create_gui(the_root = self.root)
     # }
     
@@ -76,25 +83,140 @@ class AgilentQCMetrics(): # {
     
     def create_label_frame(self, the_root): # {
         self.labelframe = ttk.Frame(the_root)
-        self.labelframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+        self.labelframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     # }
     
     def create_main_frame(self, the_root): # {
         # TRY THE FOLLOWING
         try: # {
-            ttk.Label(master=the_root, text="Select Start Date: "
-                      ).grid(row=0, col=0, padx=10, pady=10, sticky='w')
-            ttk.Label(master=the_root, text="Select End Date: "
-                      ).grid(row=0, col=0, padx=10, pady=10, sticky='w')
+            self.mainframe = ttk.Frame(self.labelframe)
+            self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+            # END DATE LABEL
+            ttk.Label(master=self.mainframe, text="Enter Date: \n(YYYY-MM-DD)"
+                      ).place(x=20, y=20) #.grid(row=0, col=0, padx=10, pady=10) 
+            # CREATE END DATE TK VAR TO HOLD STR
+            self.end_date = tk.StringVar(master=the_root)
+            # ENTRY FOR END DATE
+            ttk.Entry(master=self.mainframe, textvariable=self.end_date
+                      ).place(x=140, y=20) #.grid(row=0, col=1, padx=10, pady=10)
+            # NUM OF DAYS LABEL
+            ttk.Label(master=self.mainframe, text="# of days back: "
+                      ).place(x=20, y=60)# .grid(row=1, col=0, padx=10, pady=10) 
+            self.num_of_days = tk.IntVar(master=the_root, value=1)
+            # NUM OF DAYS SPINBOX
+            ttk.Spinbox(master=self.mainframe, to=100, from_=0, textvariable=self.num_of_days
+                        ).place(x=140, y=55) #.grid(row=1, col=1, padx=10, pady=10)
+            # CREATE STRING TO HOLD POSSIBLE FILENAME
+            # [2020-03-08]\\self.period_str = tk.StringVar(master=the_root, value="Day")
+            self.filename_str = tk.StringVar(master=the_root, value=str(self.end_date.get()))
+            # FILENAME LABELS AND ENTRY BOX
+            ttk.Label(master=self.mainframe, text="Filename: "
+                      ).place(x=20, y= 100)
+            ttk.Entry(master=self.mainframe, textvariable=self.end_date, state=tk.DISABLED
+                      ).place(x=140, y= 100)
+            ttk.Label(master=self.mainframe, text=".xlsx"
+                      ).place(x=275, y= 100)
+            # BROWSE FOR EXPORT LOCATION BUTTON
+            self.export_button = ttk.Button(master=self.mainframe, text="EXPORT TO DESKTOP",
+                       command=self.determine_range, width=25).place(x=20, y = 140)
+            # [2020-03-06]\\self.export_button.bind("<Return>", self.test_event)
+            """
+            # EXPORT LOCATION TK VAR TO HOLD STR
+            self.export_directory = tk.StringVar(master=the_root, value="...")
+            # EXPORT LOCATION ENTRY BOX
+            ttk.Entry(master=self.mainframe, textvariable=self.export_directory,
+                      width=40).place(x=20, y=145)
+            """
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            print("\n" + typeE +
+                             "\n" + fileE +
+                             "\n" + lineE +
+                             "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
         else: # {
             pass
         # }
     # }
     
+    def test_event(self, event): # {
+        print(str(event))
+    # }
+    
+    def determine_range(self): # {
+        print("Determining...\n")
+        #print(str(self.start_date.get()))
+        print(str(self.end_date.get()))
+        print(str(self.num_of_days.get()))
+        #print(str(self.period_str.get()))
+        # CALL RUN
+        self.run(date_input=str(self.end_date.get()), day_range=int(self.num_of_days.get()))
+    # }
+    
+    def run(self, date_input, day_range): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # CREATE DATE OFF INPUT
+            the_date = pd.Timestamp(ts_input=str(date_input))
+            # create day range
+            # [2020-03-08]\\x_days_ago = the_date - pd.Timedelta(unit='D', value=int(day_range))
+            x_days_ago = the_date - timedelta(days = int(the_date))
+            df_x_range = pd.date_range(start=x_days_ago, end=the_date, freq='D')
+            print(list(df_x_range))
+            ###########################################################
+            # CREATE METRICS TABLE FROM CLASS METHOD
+            self.df_metrics_table = self.create_metrics_table()
+            ###########################3###############################
+            df_last_range = self.df_QCMetrics[str(x_days_ago):str(the_date)]
+            print(len(df_last_range))
+            value_list = ['1.0', '2.0', '3.0']
+            # Grab DataFrame rows where column has certain values
+            df_last_range = df_last_range[df_last_range['ProductLevel'].isin(value_list)]
+            """
+            GROUPBY MULTIPLE COLUMNS
+            """
+            df_daily_levels = pd.DataFrame(data=df_last_range.groupby([df_last_range.index, 'ProductLevel'])['PfBatchID'].count())
+            # RENAME COLUMNS
+            df_daily_levels.rename(columns={'PfBatchID': 'Count'}, inplace=True)
+            print(df_daily_levels.info())
+            # SORT INDEX
+            df_daily_levels.sort_index(inplace=True)
+            # UNSTACKED INDEX (remove layer?)
+            df_daily_unstacked_1 = df_daily_levels.unstack(axis=-1)
+            # LIST NUMBER OF COLUMN LEVELS
+            print(len(df_daily_unstacked_1.columns.levels))
+            ##############
+            # DROP LEVEL #
+            ##############
+            df_daily_unstacked_1.columns = df_daily_unstacked_1.columns.droplevel()
+            # FILL NA
+            df_daily_unstacked_1.fillna(value=0, inplace=True)
+            ############################################################################
+            # WORK BOOK FUNCTIONS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            ############################################################################
+            print(self.user_name)
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    # [2020-03-08]\\
+    """
     def run(self, day_range): # {
         # TRY THE FOLLOWING
         try: # {
@@ -102,7 +224,8 @@ class AgilentQCMetrics(): # {
             # [2020-02-28]\\self.time_value = time_value
             self.day_range = day_range
             # get/set current date variable
-            the_date = pd.Timestamp.now()
+            # [2020-03-06]\\the_date = pd.Timestamp.now()
+            the_date = pd.Timestamp(ts_input=str(self.end_date.get()))
             # create variable for a month ago
             one_month_ago = the_date - timedelta(days = int(day_range))
             # [2020-02-28]\\one_month_ago = the_date - pd.Timedelta(unit=str(self.time_unit), value=str(self.time_value))
@@ -157,6 +280,7 @@ class AgilentQCMetrics(): # {
             print("Operation Completed Successfully...")
         # }
     # }
+    """
     
     """
     Referred to as "ProflowII" in SQL-Server

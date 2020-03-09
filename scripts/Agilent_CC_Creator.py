@@ -118,7 +118,11 @@ class CustomCrate(): # {
                 print(Path(a_list))
                 in_directory = Path(a_list)
                 # EMPTY LISTS TO FILL WITH DATA
-                date_col
+                thedir_col = []
+                filename_col = []
+                thedate_col = []
+                lotno_col = []
+                
                 test_glob = str(a_list + "*")
                 print(test_glob)
                 # COUNTER
@@ -169,6 +173,11 @@ class CustomCrate(): # {
                             """
                             # increase count
                             x += 1
+                        # }
+                        sub_glob = os.path.join(in_directory, "*")
+                        # GLOB SUB FOLDERS
+                        for name in sorted(glob.glob(sub_glob + "/*")): # {
+                            print(name)
                         # }
                     # }
                     print("count == " + str(x))
