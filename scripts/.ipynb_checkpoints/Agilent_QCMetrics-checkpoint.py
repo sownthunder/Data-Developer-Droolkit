@@ -41,13 +41,18 @@ class AgilentQCMetrics(): # {
     
     user_name = str(os.getlogin()) # get username 
     outbound_dir = "C:/data/outbound/"
-    desktop_dir = "C:/Users/derbates/OneDrive - Agilent Technologies/Desktop"
+    desktop_dir = "OneDrive - Agilent Technologies/Desktop" #C:/Users/derbates
     
     def __init__(self, root, the_logger): # {
         self.root = root
         self.root.title("QC Metrics")
-        self.root.geometry('300x200+300+300')
+        self.root.geometry('315x200+300+300')
         self.root.resizable(width=False, height=False)
+        # Get/Set USERNAME & DESKTOP DIRECTRIES
+        self.user_name_dir = os.path.join("C:/Users/", self.user_name)
+        self.desktop_dir = os.path.join(self.user_name_dir, self.desktop_dir)
+        print(self.user_name_dir)
+        print(self.desktop_dir)
         self.create_gui(the_root = self.root)
     # }
     
@@ -87,20 +92,30 @@ class AgilentQCMetrics(): # {
             self.mainframe = ttk.Frame(self.labelframe)
             self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             # END DATE LABEL
-            ttk.Label(master=self.mainframe, text="Enter End Date: "
+            ttk.Label(master=self.mainframe, text="Enter Date: \n(YYYY-MM-DD)"
                       ).place(x=20, y=20) #.grid(row=0, col=0, padx=10, pady=10) 
             # CREATE END DATE TK VAR TO HOLD STR
             self.end_date = tk.StringVar(master=the_root)
             # ENTRY FOR END DATE
             ttk.Entry(master=self.mainframe, textvariable=self.end_date
                       ).place(x=140, y=20) #.grid(row=0, col=1, padx=10, pady=10)
-            # .place(x=20, y=60)# .grid(row=1, col=0, padx=10, pady=10) 
-            # .place(x=140, y=60) #.grid(row=1, col=1, padx=10, pady=10)
-            # CREATE PERIOD INTERVAL TK VAR TO HOLD INT
+            # NUM OF DAYS LABEL
+            ttk.Label(master=self.mainframe, text="# of days back: "
+                      ).place(x=20, y=60)# .grid(row=1, col=0, padx=10, pady=10) 
+            self.num_of_days = tk.IntVar(master=the_root, value=1)
+            # NUM OF DAYS SPINBOX
+            ttk.Spinbox(master=self.mainframe, to=100, from_=0, textvariable=self.num_of_days
+                        ).place(x=140, y=55) #.grid(row=1, col=1, padx=10, pady=10)
+            # CREATE STRING TO HOLD POSSIBLE FILENAME
             # [2020-03-08]\\self.period_str = tk.StringVar(master=the_root, value="Day")
-            # SPIN BOX FOR NUMBER OF DAYS
-            
-            # .place(x=20, y= 100)
+            self.filename_str = tk.StringVar(master=the_root, value=str(self.end_date.get()))
+            # FILENAME LABELS AND ENTRY BOX
+            ttk.Label(master=self.mainframe, text="Filename:\n\tQCMetrics_"
+                      ).place(x=20, y= 100)
+            ttk.Entry(master=self.mainframe, textvariable=self.end_date, state=tk.DISABLED
+                      ).place(x=140, y= 100)
+            ttk.Label(master=self.mainframe, text=".xlsx"
+                      ).place(x=275, y= 100)
             # BROWSE FOR EXPORT LOCATION BUTTON
             self.export_button = ttk.Button(master=self.mainframe, text="EXPORT TO DESKTOP",
                        command=self.determine_range, width=25).place(x=20, y = 140)
@@ -144,11 +159,12 @@ class AgilentQCMetrics(): # {
     
     def determine_range(self): # {
         print("Determining...\n")
-        print(str(self.start_date.get()))
+        #print(str(self.start_date.get()))
         print(str(self.end_date.get()))
-        print(str(self.period_str.get()))
+        print(str(self.num_of_days.get()))
+        #print(str(self.period_str.get()))
         # CALL RUN
-        self.run()
+        self.run(date_input=str(self.end_date.get()), day_range=int(self.num_of_days.get()))
     # }
     
     def run(self, date_input, day_range): # {
@@ -167,6 +183,7 @@ class AgilentQCMetrics(): # {
             ###########################3###############################
             df_last_range = self.df_QCMetrics[str(x_days_ago):str(the_date)]
             print(len(df_last_range))
+            value_list = ['1.0', '2.0', '3.0']
             # Grab DataFrame rows where column has certain values
             df_last_range = df_last_range[df_last_range['ProductLevel'].isin(value_list)]
             """
@@ -191,9 +208,78 @@ class AgilentQCMetrics(): # {
             ############################################################################
             # WORK BOOK FUNCTIONS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             ############################################################################
+            print(self.desktop_dir)
+            # CREATE STR VAR for filename convention
+            ts_str = str(the_date)[:10]
+            # CREATE FILENAME VAR
+            filename_var = str("QCMetrics_" + str(ts_str) + ".xlsx")
+            # CREATE FULL WORKBOOK PATH
+            workbook_path = os.path.join(self.desktop_dir, str(filename_var))
+            print("WORKBOOK_PATH == " + str(workbook_path))
+            # CREATE NEW WORKBOOK
+            wb = Workbook()
+            wb.save(workbook_path)
+            # ADD SHEETS TO WORKBOOK
+            # DESGINATE SHEET NAME AND POSITION
+            sheet1 = wb.create_sheet('Table', 0)
+            sheet2 = wb.create_sheet('Graphs', 1)
+            # ACTIVATE WORKSHEET TO WRITE DATAFRAME
+            active = wb['Table']
+            # WRITE DATAFRAME TO ACTIVE WORKSHEET
+            for x in dataframe_to_rows(df_daily_unstacked_1): # {
+                active.append(x)
+            # }
+            # SAVE
+            wb.save(filename_var)
+            # CREATE LINE PLOT VARIABLE
+            plot = df_daily_unstacked_1.plot()
+            # CREATE AREA PLOT VARIABLE
+            area_plot = df_daily_unstacked_1.plot(kind='area')
+            # MATPLOTLIB figure for "line_plot"
+            line_fig = plot.get_figure()
+            # MATPLOTLIB figure for "area_plot"
+            area_fig = area_plot.get_figure()
+            ###################
+            # CREATE TEMP DIR #
+            ###################
+            with tempfile.TemporaryDirectory() as directory_name: # {
+                the_dir = Path(directory_name)
+                print("TEMPORARY DIR == " + str(the_dir))
+                line_img_path = os.path.join(the_dir, str(ts_str) + "_line_plot.png")
+                area_img_path = os.path.join(the_dir, str(ts_str) + "_area_plot.png")
+                
+                # SAVE LINE PLOT
+                line_fig.savefig(line_img_path)
+                # SAVE AREA PLOT
+                area_fig.savefig(area_img_path)
+                # ACTIVATE WORKSHEET
+                active = wb['Graphs']
+                # Insert Plot into Worksheet
+                # Select active sheet and cell reference
+                img_line = Image(line_img_path)
+                active.add_image(img_line, 'A1')
+                # Insert Plot into worksheet
+                # Select active sheet and cell reference
+                img_area= Image(area_img_path)
+                active.add_image(img_area, 'H1')
+                # SAVE WORKBOOK
+                wb.save(filename_str)
+            # }
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
         # }
     # }
     

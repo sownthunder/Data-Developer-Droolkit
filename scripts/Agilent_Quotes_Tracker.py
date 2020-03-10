@@ -50,6 +50,7 @@ EDITS:
 02/29/20 - header column functionality work-begin (treeview)
 03/02/20 - logger re-implemented (FINALIZED!)
 03/04/20 - STATUS column added to database backend
+03/10/10 - MOUSELESS navigation 
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -955,8 +956,9 @@ class AgilentQuotesTracker():  # {
                                        text="CREATE",
                                        # IF COPY AMOUNT IS SET TO ZERO THEN CALL NORMAL CREATE... ELSE CALL "check" which then calls CREATE loops
                                        command=self.add_new_record, # [2020-02-06]\\if int(self.num_of_copies.get()) <= 0 else self.copy_create_check,
-                                       width=20
-                                       ).grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky='nw')
+                                       width=20)
+            self.create_button.grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky='nw')
+            self.create_button.bind("<Return>", self.turn_red)
             # [2020-02-12]\\self.create_button.bind("<Enter>", self.view_records)
             #### CLEAR BUTTON #
             self.clear_button = ttk.Button(master=self.lblframe_create,
@@ -1139,9 +1141,19 @@ class AgilentQuotesTracker():  # {
             self.side_scrollbar = ttk.Scrollbar(master=self.rightframe, orient = tk.VERTICAL)
             self.side_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
             
+            columns = ("Time Rec.","Initials","Type","Company",
+                       "Contact Person","Email Address","Account ID","Product #",
+                       "PF Quote #","SAP Quote #","Sent","Time Sent","Notes")
+            
             # TABLE
+            self.tree = ttk.Treeview(self.rightframe, show='headings', 
+                                     style="mystyle.Treeview", columns=columns, 
+                                     height=30)
+            # [2020-03-10]\\
+            """
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
                                      height=30, columns=13, selectmode='browse')  # height = 20
+            """
             # [2020-02-29]\\
             """
             self.tree["columns"] = (
@@ -1167,8 +1179,14 @@ class AgilentQuotesTracker():  # {
             self.tree.column("Notes", anchor=tk.CENTER, width=175, minwidth=50, stretch=tk.YES)  # NOTES // PRICE
 
             # Definitions of Headings
+            for col in columns: # {
+                self.tree.heading(col, text=col,command=lambda _col=col: self.tree_view_sort_column(self.tree, _col, False))
+            # }
+            """
+            REMOVE BELOW TO TEST
+            """
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
-            self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            # [2020-03-10]\\self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             self.tree.heading('#0', text='Tracking #', anchor=tk.CENTER, command=self._de_select_column)  # 'tracking_number' in BACKEND
             self.tree.heading('Time Rec.', text='Time Rec.', anchor=tk.CENTER, command=lambda: self._column_select()) # "Open_time" in BACKEND
             self.tree.heading('Initials', text='Initials', anchor=tk.CENTER, command=self._column_select)
@@ -1201,6 +1219,9 @@ class AgilentQuotesTracker():  # {
             # [2020-02-12]\\self.tree.bind("<Enter>", self.clear_message_area)
             self.tree.bind("<Enter>", self.clear_message_area)
             # [2020-02-12]\\self.tree.bind("<Leave>", self.view_records)
+            
+            # PACK
+            self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -1226,6 +1247,29 @@ class AgilentQuotesTracker():  # {
             self.the_logger.info("Operation Completed Successfully...")
         # }
 
+    # }
+    
+    def tree_view_sort_column(self, tree, col, reverse): # {
+        # TRY THE FOLLOWING
+        try: # {
+            l = [(tree.set(k, col), k) for k in tree.get_children('')]
+            l.sort(reverse=reverse)
+            
+            # rearrange items in sorted positions
+            for index, (val, k) in enumerate(l): # {
+                tree.move(k, '', index)
+            # }
+            
+            # reverse sort next time
+            tree.heading(col, command=lambda _col=col: self.tree_view_sort_column(tree, _col, not reverse))
+            
+        # }
+        except: # {
+            print("FAIL!")
+        # }
+        else: # {
+            pass
+        # }
     # }
     
     def _select_column(self, item=''): # {
@@ -1384,13 +1428,13 @@ class AgilentQuotesTracker():  # {
             item = self.tree.selection()
             #item = self.tree.heading(column=0)['text']
             print("ITEM == " + str(item))
-            print(self.tree.heading(column=0)['text'])
+            print(self.tree.heading(column=0)["text"])
             print(str(item))
             is_open = bool(self.tree.item(item)['open'])
             print("is_open:\t" + str(is_open))
             heading_2 = str(self.tree.heading(column="Time Rec.")['text'])
             print(heading_2)
-            heading_3 = str(self.tree.heading(column=self.tree.selection()))
+            heading_3 = str(self.tree.heading(column=str_row.text))
             print(heading_3)
             show_heading = self.tree["columns"]
             print("HEADINGS == " + str(show_heading))
@@ -2237,7 +2281,7 @@ class AgilentQuotesTracker():  # {
         print("THREAD-check-ver")
         # START THREAD THREAD
         # [2020-03-02]\\self.thread = Thread(None, self.check_version_number, None, (), {})
-        self.thread = Thread(None, CheckVersionNumber, None, (), {})
+        self.thread = Thread(None, CheckVersionNumber, None, (), {}, daemon=True)
         # [2020-03-02]\\self.thread = Thread(None, RefreshTable, None, (), {})
         self.thread.start()
     # }
@@ -2461,7 +2505,7 @@ class AgilentQuotesTracker():  # {
     # ADD / UPDATE / DELETE FUNCTION BELOW #
     ########################################
 
-    def add_new_record(self):  # {
+    def add_new_record(self, event):  # {
         # TRY THE FOLLOWING
         try:  # {
             # CHECK IF RECORD IS VALIDATED (every box)

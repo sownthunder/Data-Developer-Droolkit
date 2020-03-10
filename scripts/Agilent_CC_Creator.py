@@ -62,6 +62,35 @@ class CustomCrate(): # {
         self.out_directory = Path(self.zip_dir_path)
         # CALL FUNCTION TO CREATE DATE IDX
         self.df_index = self.create_date_idx()
+        # CREATE TEMP DIR/FOLDER TO WORK INSIDE OF;
+        with tempfile.TemporaryDirectory() as directory_name: # {
+            the_dir = Path(directory_name)
+            print("TEMP_DIRECTORY == " + str(the_dir))
+            # ITERATE THROUGH DATAFRAME RETURNED ABOVE
+            for row in self.df_index.itertuples(): # {
+                # CREATE "old_path"
+                old_path = os.path.join(row[1], row[2])
+                # CREATE "temp_path"
+                temp_path = os.path.join(the_dir, row[2])
+                # COPY FILE TO NEW LOCATION
+                shutil.copy2(old_path, temp_path)
+                
+            # }
+            # CALL FUNCTION TO ZIP DIRECTORY WHILE STILL INSIDE
+            self.zip_the_directory(the_dir)
+            # TRY AND FINISH THIS SHIT OFF (copy/move this shit!)
+            print("GLOBBING FOR ZIP FILE !!!")
+            print(str(os.path.join(the_dir, "*.zip")))
+            for name in sorted(glob.glob(str(the_dir) + "/*.zip")): # {
+                print("NAME OF FILE == " + str(name))
+                print(len(sorted(glob.glob(str(the_dir)))))
+                # GET AND SET PATH_NAME
+                zip_path = Path(name)
+                print("ZIP_PATH == " + str(zip_path))
+            # }
+            # COPY ZIP FILE FROM TEMP FOLDER TO TARGET FOLDER
+            shutil.copy2(src=zip_path, dst=self.zip_dir_path)
+        # }
     # }
     
     def create_watermark(self, input_pdf, output, watermark): # {
@@ -105,6 +134,77 @@ class CustomCrate(): # {
         return
     # }
     
+    def get_all_file_paths(self, directory): # {
+         # initializing empty file paths list
+            file_paths = []
+            
+            # crawling through directory and subdirectories
+            for root, directories, files in os.walk(directory): # {
+                for filename in files: # {
+                    # join the two strings in order to form the full filepath
+                    filepath = os.path.join(root, filename)
+                    file_paths.append(filepath)
+                # }
+            # }
+            
+            # returning all file paths
+            return file_paths
+    # }
+    
+    def zip_the_directory(self, directory_to_zip): # {
+        # RE-INSTANTIATE GLOBALS
+        global og_wd
+        # TRY THE FOLLOWING
+        try: # {
+            print("\n\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+            print("\nWORKING DIRECTORY ---BEFORE--- ZIP ==\n" + str(os.getcwd()))
+            # CHANGE WORKING DIRECTORY TO DIRECTORY WE WISH TO ZIP
+            os.chdir(directory_to_zip)
+            # path to folder (NOW currently folder we want to zip)
+            directory = "."  #self.out_directory
+            print("\nWORKING DIRECTORY ---DURING--- ZIP==\n" + str(os.getcwd()))
+            # calling function to get all file paths in the directory
+            file_paths = self.get_all_file_paths(directory)
+            print("\nfollowing files will be zipped:")
+            for file_name in file_paths: # {
+                print(file_name)
+            # }
+            # writing files to a zipfile
+            with ZipFile('Custom_Crate_'
+                         + str(pd.Timestamp.now())[:10]
+                         + ".zip", "w") as zip: # {
+                # Writing each file one by one
+                for file in file_paths: # {
+                    zip.write(file)
+                # }
+            # }
+            print("ALL FILES ZIPPED SUCCESSFULLY!\nXXXXXXXXXXXXXXXXXXXXXX")
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                  "\n" + fileE +
+                  "\n" + lineE +
+                  "\n" + messageE)
+        # }
+        else: # {
+            print("Operation Completed Successfully...")
+        # }
+        finally: # {
+            # CHANGE WORKING DIRECTORY BACK TO ORIGINAL
+            # [2020-03-10]\\os.chdir(self.out_directory)
+            os.chdir(og_wd)
+        # }
+    # }
+    
     def create_date_idx(self): # {
         # TRY THE FOLLOWING
         try: # {
@@ -113,81 +213,96 @@ class CustomCrate(): # {
             df_index = pd.DataFrame(data=None, dtype=np.str)
             # READIN .CSV
             df_batch = pd.read_csv(self.in_file, header=None, names=['Lot_No'], dtype=np.str, engine='python')
+            # COUNTER
+            x = 0
             # FOR EACH PATH LISTED:
-            for a_list in self.list_of_directories: # {
-                print(Path(a_list))
-                in_directory = Path(a_list)
+            for directory in self.list_of_directories: # {
+                # SET "in_directory" to be one from LIST
+                in_directory = Path(directory)
+                print(in_directory)
                 # EMPTY LISTS TO FILL WITH DATA
-                thedir_col = []
-                filename_col = []
-                thedate_col = []
-                lotno_col = []
-                
-                test_glob = str(a_list + "*")
-                print(test_glob)
-                # COUNTER
-                x = 0
+                filepath_col = [] # for FILE DIRECTORY
+                filename_col = [] # for FILE NAME
+                filedate_col = [] # creation DATE
+                lot_num_col = [] # FOR CURRENT LOT #
+                # CREATE REGEX VAR FOR DIR
+                glob_path = str(directory + "**/*.pdf")
+                # FOR EACH LOT_NO 
                 for lot_no in df_batch.itertuples(): # {
-                    # GLOB-ITERATE THRU EACH FILE MATCHING NAME ETC
-                    for name in sorted(glob.glob(in_directory
-                                                 + "*"
-                                                 + str(lot_no[1])
-                                                 + "*")): # {
-                        # CREATE PATH VARIABLE
-                        pdf_path = Path(str(name))
-                        print(os.path.exists(pdf_path))
-                    # }
-                    print("==================== \n" + str(lot_no[1]) + "\n==============")
-                    # CHECK AND CREATE NEW DIR PATH
-                    new_dir_path = os.path.join(self.out_directory, str(lot_no[1]))
-                    # IF 'lot_no' DIRECTORY DOES NOT EXIST:
-                    if not os.path.exists(new_dir_path): # {
-                        # MAKE IT EXIST!
-                        os.makedirs(new_dir_path)
-                    # }
-                    # CREATE TEMP DIR/FOLDER TO WORK INSIDE OF:
-                    with tempfile.TemporaryDirectory() as directory_name: # {
-                        # was: most_recent = ""
-                        the_dir = Path(directory_name)
-                        print("TEMP DIRECTORY == " + str(the_dir))
-                        # GLOB-ITERATE THRU EACH FILE MATCHING NAME ETC
-                        for name in sorted(glob.glob(in_directory
-                                                     + "*"
-                                                     + str(lot_no[1])
-                                                     + "*")): # {
-                            # CREATE PATH VARIABLE
-                            pdf_path = Path(str(name))
-                            print(os.path.exists(pdf_path))
-                            # << COPY/WATERMARK/MOVE PDF >>
-                            """
+                    the_lot_no = str(lot_no[1])
+                    print(" << LOT # " + the_lot_no + " >>\n\n")
+                    # GET A RECURSIVE LIST OF FILE PATHS THAT
+                    # MATCHES FILE TYPE INCLUDING SUB-DIRS
+                    file_list = glob.glob(glob_path, recursive=True)
+                    # Iterate over the list of filepaths & perform on each file
+                    for file_path in file_list: # {
+                        # IF FILE CONTAINS 'our' LOT #
+                        if (str(file_path).find(the_lot_no) != -1): # {
+                            print("\t<<<<< FOUND >>>>>")
+                            # CREATE PDF PATH
+                            pdf_path = Path(file_path)
+                            print("PDF:\n\t" + str(pdf_path))
+                            print("exists: " + str(os.path.exists(pdf_path)))
+                            # GET DIR NAME
+                            dir_name = os.path.dirname(pdf_path)
+                            print("DIR_NAME:\n\t" + str(dir_name))
                             # GET BASE NAME (FILE NAME)
                             file_name = os.path.basename(pdf_path)
-                            # CREATE TEMP PATH
-                            temp_path = os.path.join(the_dir, file_name)
-                            # COPY FILE TO NEW LOCATION
-                            shutil.copy2(pdf_path, temp_path)
-                            # CREATE WATERMARK ON NEW FILE
-                            self.create_watermark(input_pdf=temp_path,
-                                             output=os.path.join(new_dir_path, file_name),
-                                             watermark=self.watermark)
-                            """
-                            # increase count
+                            print("FILE_NAME:\n\t" + str(file_name))
+                            # GET FILE CREATION DATE
+                            file_date = self.pull_creation_timestamp(pdf_path)
+                            print("FILE_DATE:\n\t" + str(file_date))
+                            #####################
+                            # FILL LIST COLUMNS #
+                            #####################
+                            filepath_col.append(str(dir_name))
+                            filename_col.append(str(file_name))
+                            filedate_col.append(str(file_date))
+                            lot_num_col.append(str(the_lot_no))
+                            # INCREASE COUNT
                             x += 1
                         # }
-                        sub_glob = os.path.join(in_directory, "*")
-                        # GLOB SUB FOLDERS
-                        for name in sorted(glob.glob(sub_glob + "/*")): # {
-                            print(name)
+                        else: # {
+                            pass
                         # }
                     # }
-                    print("count == " + str(x))
-                    print("Directory exists after?", str(the_dir.exists()))
-                    print("Contents after:", str(list(the_dir.glob("*"))))
-                    print("told you so")
                 # }
-                # create 'result' DataFrame
-                result = pd.concat([])
+                # CREATE DATAFRAME
+                df_test= pd.DataFrame(data=None, dtype=np.str)
+                # Create Columns?
+                df_test['Directory'] = filepath_col
+                df_test['Filename'] = filename_col
+                df_test['Creation'] = filedate_col
+                df_test['Lot_No'] = lot_num_col
+                # SET INDEX OF DATAFRAME
+                df_test.set_index(['Creation'], inplace=True)
+                # SORT INDEX?
+                df_test.sort_index(inplace=True)
+                # EXPORT ??
+                df_test.to_csv('df_test_' + str(directory)[:1] + "_.csv", index=True)
             # }
+            # APPEND TO MAIN DATAFRAME
+            # [2020-03-10]\\df_index = df_index.append(result)
+            # CONCAT/CREATE "result"
+            result = pd.concat([df_index, df_test])
+            # EXPORT ??
+            result.to_csv('df_result_' + str(pd.Timestamp.now())[:10] + ".csv",
+                          index=True, mode='a')
+            # APPEND TO MAIN DATAFRAME
+            df_index = df_index.append(result)
+            # EXPORT ??
+            df_index.to_csv("df_index_test_" + str(pd.Timestamp.now())[:10] + ".csv",
+                            index=True)
+            # CREATE NEW DATAFRAME OF DROPPED DUPS
+            df_dedupped = df_index.drop_duplicates(subset=['Lot_No'], keep='last')
+            df_dedupped.to_csv("df_dedupped_test.csv", index=True)
+            # RETURN DATAFRAME WITH UNIQUE ROWS etc
+            return df_dedupped
+            """
+            # APPEND TO MAIN DATAFRAME
+            df_index = df_index.append(result)
+            print("COUNT == " + str(x))
+            """
         # }
         except: # {
             print("FAIL!")
@@ -196,17 +311,53 @@ class CustomCrate(): # {
     
     def pull_creation_timestamp(self, a_file_path): # { 
         # TRY THE FOLLOWING
-        try: #{ 
-            pass
+        try: # {
+            # FORCE PATH VARIABLE
+            the_path = Path(str(a_file_path))
+            # GET MODIFIED TIME
+            mtime = os.path.getmtime(the_path)
+            # GET CREATE TIME
+            ctime = os.path.getctime(the_path)
+            # CREATE DATE VAR
+            if ctime < mtime: # {
+                # FORMAT DATE VAR AS str
+                date_str = str(datetime.fromtimestamp(ctime))
+            # }
+            # ELSE.... MODIFIED TIME IS OLDER..
+            else: # {
+                # FORMAT DATE VAR as str
+                date_str = str(datetime.fromtimestamp(mtime))
+            # }
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+        #}
+        else: # {
+            print("Operation Completed Successfully...")
+            return date_str
+        # }
+        finally: # {
+            print("FIN...")
         # }
     # } 
     
 # }
 
 if __name__ == "__main__": # {
+    # INSTANTIATE GLOBAL VARIABLES
+    og_wd = os.getcwd() # GET/SET ORIGINAL WORKING DIRECTORy
     # CREATE TIMESTAMP FOR ZIP FOLDER
     ts = pd.Timestamp.now()
     ts_str = str(ts)[:10]
@@ -214,9 +365,9 @@ if __name__ == "__main__": # {
     # CREATE / CALL MAIN CLASS FUNCTION
     create_crate = CustomCrate(the_date=ts_str, 
                                list_of_directories=['F:/APPS/CofA/',
-                                                    "G:/C of A's/Agilent/",
+                                                    #"G:/C of A's/Agilent/",
                                                     "J:/controlled_docs/SDS/Agilent_SDS/USA/"],
-                               in_file="2020-03-04-batch-list.csv"
+                               in_file="C:/data/inbound/2020-03-05-batch-list.csv"
                                )
 # }
 

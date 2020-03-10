@@ -74,7 +74,7 @@ class AgilentQCMetrics(): # {
             # CONFIGURE THE TTK STYLE
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("radiance")
+            self.style.set_theme("black")
         # }
         except:# { 
             pass
@@ -101,7 +101,7 @@ class AgilentQCMetrics(): # {
                       ).place(x=140, y=20) #.grid(row=0, col=1, padx=10, pady=10)
             # NUM OF DAYS LABEL
             ttk.Label(master=self.mainframe, text="# of days back: "
-                      ).place(x=20, y=60)# .grid(row=1, col=0, padx=10, pady=10) 
+                      ).place(x=20, y=65)# .grid(row=1, col=0, padx=10, pady=10) 
             self.num_of_days = tk.IntVar(master=the_root, value=1)
             # NUM OF DAYS SPINBOX
             ttk.Spinbox(master=self.mainframe, to=100, from_=0, textvariable=self.num_of_days
@@ -110,12 +110,13 @@ class AgilentQCMetrics(): # {
             # [2020-03-08]\\self.period_str = tk.StringVar(master=the_root, value="Day")
             self.filename_str = tk.StringVar(master=the_root, value=str(self.end_date.get()))
             # FILENAME LABELS AND ENTRY BOX
-            ttk.Label(master=self.mainframe, text="Filename: "
-                      ).place(x=20, y= 100)
-            ttk.Entry(master=self.mainframe, textvariable=self.end_date, state=tk.DISABLED
-                      ).place(x=140, y= 100)
+            ttk.Label(master=self.mainframe, text="Filename:\tQCMetrics_"
+                      ).place(x=10, y= 100)
+            ttk.Entry(master=self.mainframe, textvariable=self.end_date, state=tk.DISABLED,
+                      width=16
+                      ).place(x=170, y= 100)
             ttk.Label(master=self.mainframe, text=".xlsx"
-                      ).place(x=275, y= 100)
+                      ).place(x=270, y= 100)
             # BROWSE FOR EXPORT LOCATION BUTTON
             self.export_button = ttk.Button(master=self.mainframe, text="EXPORT TO DESKTOP",
                        command=self.determine_range, width=25).place(x=20, y = 140)
@@ -167,6 +168,10 @@ class AgilentQCMetrics(): # {
         self.run(date_input=str(self.end_date.get()), day_range=int(self.num_of_days.get()))
     # }
     
+    def run_in_thread(self, date_input, day_range): # {
+        pass
+    # }
+    
     def run(self, date_input, day_range): # {
         # TRY THE FOLLOWING
         try: # {
@@ -174,13 +179,20 @@ class AgilentQCMetrics(): # {
             the_date = pd.Timestamp(ts_input=str(date_input))
             # create day range
             # [2020-03-08]\\x_days_ago = the_date - pd.Timedelta(unit='D', value=int(day_range))
-            x_days_ago = the_date - timedelta(days = int(the_date))
+            x_days_ago = the_date - timedelta(days = int(day_range))
             df_x_range = pd.date_range(start=x_days_ago, end=the_date, freq='D')
             print(list(df_x_range))
             ###########################################################
             # CREATE METRICS TABLE FROM CLASS METHOD
-            self.df_metrics_table = self.create_metrics_table()
+            # [2020-03-09]\\self.df_metrics_table = self.create_metrics_table()
+            self.df_QCMetrics = self.create_metrics_table()
             ###########################3###############################
+            # Convert 'QCDate' from String to DateTime
+            self.df_QCMetrics['QCDate'] = pd.to_datetime(self.df_QCMetrics['QCDate'])
+            # Set 'QCMetrics' index to 'QCDate'
+            self.df_QCMetrics.index = self.df_QCMetrics['QCDate']
+            del self.df_QCMetrics['QCDate']
+            # [2020-03-09]\\df_last_month = self.df_QCMetrics[str(x_days_ago):str(the_date)]
             df_last_range = self.df_QCMetrics[str(x_days_ago):str(the_date)]
             print(len(df_last_range))
             value_list = ['1.0', '2.0', '3.0']
@@ -196,7 +208,7 @@ class AgilentQCMetrics(): # {
             # SORT INDEX
             df_daily_levels.sort_index(inplace=True)
             # UNSTACKED INDEX (remove layer?)
-            df_daily_unstacked_1 = df_daily_levels.unstack(axis=-1)
+            df_daily_unstacked_1 = df_daily_levels.unstack(level=-1)
             # LIST NUMBER OF COLUMN LEVELS
             print(len(df_daily_unstacked_1.columns.levels))
             ##############
@@ -208,10 +220,82 @@ class AgilentQCMetrics(): # {
             ############################################################################
             # WORK BOOK FUNCTIONS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             ############################################################################
-            print(self.user_name)
+            print(self.desktop_dir)
+            # CREATE STR VAR for filename convention
+            ts_str = str(the_date)[:10]
+            # CREATE FILENAME VAR
+            filename_var = str("QCMetrics_" + str(ts_str) + ".xlsx")
+            # CREATE FULL WORKBOOK PATH
+            workbook_path = os.path.join(self.desktop_dir, str(filename_var))
+            print("WORKBOOK_PATH == " + str(workbook_path))
+            # CREATE NEW WORKBOOK
+            wb = Workbook()
+            wb.save(workbook_path)
+            # ADD SHEETS TO WORKBOOK
+            # DESGINATE SHEET NAME AND POSITION
+            sheet1 = wb.create_sheet('Table', 0)
+            sheet2 = wb.create_sheet('Graphs', 1)
+            # ACTIVATE WORKSHEET TO WRITE DATAFRAME
+            active = wb['Table']
+            # WRITE DATAFRAME TO ACTIVE WORKSHEET
+            for x in dataframe_to_rows(df_daily_unstacked_1): # {
+                active.append(x)
+            # }
+            # SAVE
+            wb.save(filename_var)
+            # CREATE LINE PLOT VARIABLE
+            plot = df_daily_unstacked_1.plot()
+            # CREATE AREA PLOT VARIABLE
+            area_plot = df_daily_unstacked_1.plot(kind='area')
+            # MATPLOTLIB figure for "line_plot"
+            line_fig = plot.get_figure()
+            # MATPLOTLIB figure for "area_plot"
+            area_fig = area_plot.get_figure()
+            ###################
+            # CREATE TEMP DIR #
+            ###################
+            with tempfile.TemporaryDirectory() as directory_name: # {
+                the_dir = Path(directory_name)
+                print("TEMPORARY DIR == " + str(the_dir))
+                line_img_path = os.path.join(the_dir, str(ts_str) + "_line_plot.png")
+                area_img_path = os.path.join(the_dir, str(ts_str) + "_area_plot.png")
+                print("line_plot_path == " + str(line_img_path))
+                print("area_plot_path == " + str(area_img_path))
+                # SAVE LINE PLOT
+                line_fig.savefig(line_img_path)
+                # SAVE AREA PLOT
+                area_fig.savefig(area_img_path)
+                # ACTIVATE WORKSHEET
+                active = wb['Graphs']
+                # Insert Plot into Worksheet
+                # Select active sheet and cell reference
+                img_line = Image(line_img_path)
+                active.add_image(img_line, 'A1')
+                # Insert Plot into worksheet
+                # Select active sheet and cell reference
+                img_area = Image(area_img_path)
+                active.add_image(img_area, 'H1')
+                # SAVE WORKBOOK
+                wb.save(workbook_path)
+            # }
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
+        # }
+        else: # { 
+            print("Operation Completed Successfully..")
         # }
     # }
     
@@ -380,6 +464,8 @@ class AgilentQCMetrics(): # {
             print(self.df_tblProdflow.info())
             # CREATE METRICS TABLE
             df_metrics_table = pd.merge(self.df_products, self.df_tblProdflow, on='ProductNo', how='right')
+            # DROP ALL ROWS WITHOUT A 'QCDATE' & 'ProductLevel'
+            df_metrics_table.dropna(axis=0, subset=['QCDate', 'ProductLevel'], how='any', inplace=True)
         # }
         except: # { 
             errorMessage = str(sys.exc_info()[0]) + "\n"
