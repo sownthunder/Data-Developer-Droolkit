@@ -1159,6 +1159,7 @@ class AgilentQuotesTracker():  # {
             self.tree["columns"] = (
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
             """
+            # [2020-03-11]\\ EDIT OUT BELOW?
             self.tree['columns'] = (
             "Time Rec.", "Initials", "Type", "Company", 
             "Contact Person", "Email Address", "Account ID", 
@@ -1182,8 +1183,7 @@ class AgilentQuotesTracker():  # {
             for col in columns: # {
                 self.tree.heading(col, text=col,command=lambda _col=col: self.tree_view_sort_column(self.tree, _col, False))
             # }
-            """
-            REMOVE BELOW TO TEST
+            #REMOVE BELOW TO TEST
             """
             # [2019-12-05]\\self.tree.grid(row = 1, column = 0, columnspan = 8, sticky = 'S')
             # [2020-03-10]\\self.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -1201,6 +1201,7 @@ class AgilentQuotesTracker():  # {
             self.tree.heading('Sent', text='Sent', anchor=tk.CENTER) #, command=self._select_column)
             self.tree.heading('Time Sent', text='Time Sent', anchor=tk.CENTER) #, command=self._select_column)       # CLOSE TIME IN BACKEND
             self.tree.heading('Notes', text='Notes', anchor=tk.CENTER) #, command=self._select_column)
+            """
             # [2020-02-28]\\ self.tree.heading("#1" text="Time").bind("<Button-1>", self._column_sort)
             
             # CONFIG SCROLLBAR (horixontal/xview)
@@ -2281,7 +2282,7 @@ class AgilentQuotesTracker():  # {
         print("THREAD-check-ver")
         # START THREAD THREAD
         # [2020-03-02]\\self.thread = Thread(None, self.check_version_number, None, (), {})
-        self.thread = Thread(None, CheckVersionNumber, None, (), {}, daemon=True)
+        self.thread = Thread(None, CheckVersionNumber, None, (), {}, daemon=False)
         # [2020-03-02]\\self.thread = Thread(None, RefreshTable, None, (), {})
         self.thread.start()
     # }

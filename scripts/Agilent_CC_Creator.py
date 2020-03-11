@@ -265,24 +265,50 @@ class CustomCrate(): # {
                         else: # {
                             pass
                         # }
+                        
                     # }
+                    # << CONCAT DATAFRAME ?? >>
+                    # [2020-03-11]\\df_test = pd.DataFrame(data=None, dtype=np.str)
+                    # CREATE EMPTY DATAFRAME FOR EACH INDIVIDUAL DIRECTORY
+                    df_dir = pd.DataFrame(data=None, dtype=np.str)
+                    # CREATE COLUMNS
+                    df_dir['Directory'] = filepath_col
+                    df_dir['Filename'] = filename_col
+                    df_dir['Creation'] = filedate_col
+                    df_dir['Lot_No'] = lot_num_col
+                    # EXPORT ??
+                    df_dir.to_csv('df_dir_' + str(directory)[:1] + '_.csv',
+                                  index=True)
+                    
                 # }
-                # CREATE DATAFRAME
-                df_test= pd.DataFrame(data=None, dtype=np.str)
-                # Create Columns?
-                df_test['Directory'] = filepath_col
-                df_test['Filename'] = filename_col
-                df_test['Creation'] = filedate_col
-                df_test['Lot_No'] = lot_num_col
-                # SET INDEX OF DATAFRAME
-                df_test.set_index(['Creation'], inplace=True)
-                # SORT INDEX?
-                df_test.sort_index(inplace=True)
+                ## << CONCAT DATAFRAME??? >>
+                result = pd.concat([df_index, df_dir])
                 # EXPORT ??
-                df_test.to_csv('df_test_' + str(directory)[:1] + "_.csv", index=True)
+                result.to_csv('df_result_ ' + str(pd.Timestamp.now())[:10] + ",csv",
+                              index=True, mode='a')
+                
             # }
             # APPEND TO MAIN DATAFRAME
             # [2020-03-10]\\df_index = df_index.append(result)
+            # APPEND TO MAIN DATAFRAME
+            df_index = df_index.append(result)
+            # EXPPORT?
+            df_index.to_csv("df_index_test_" + str(pd.Timestamp.now())[:10] + ".csv",
+                            index=True)
+            """
+            # CREATE DATAFRAME
+            df_test= pd.DataFrame(data=None, dtype=np.str)
+            # Create Columns?
+            df_test['Directory'] = filepath_col
+            df_test['Filename'] = filename_col
+            df_test['Creation'] = filedate_col
+            df_test['Lot_No'] = lot_num_col
+            # SET INDEX OF DATAFRAME
+            df_test.set_index(['Creation'], inplace=True)
+            # SORT INDEX?
+            df_test.sort_index(inplace=True)
+            # EXPORT ??
+            df_test.to_csv('df_test_' + str(directory)[:1] + "_.csv", index=True)
             # CONCAT/CREATE "result"
             result = pd.concat([df_index, df_test])
             # EXPORT ??
@@ -293,6 +319,7 @@ class CustomCrate(): # {
             # EXPORT ??
             df_index.to_csv("df_index_test_" + str(pd.Timestamp.now())[:10] + ".csv",
                             index=True)
+            """
             # CREATE NEW DATAFRAME OF DROPPED DUPS
             df_dedupped = df_index.drop_duplicates(subset=['Lot_No'], keep='last')
             df_dedupped.to_csv("df_dedupped_test.csv", index=True)
@@ -305,7 +332,19 @@ class CustomCrate(): # {
             """
         # }
         except: # {
-            print("FAIL!")
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
         # }
     # }
     
@@ -339,7 +378,7 @@ class CustomCrate(): # {
             fileE = str("FILE : " + str(fname))
             lineE = str("LINE : " + str(exc_tb.tb_lineno))
             messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
+            print("\n" + typeE +
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
@@ -364,9 +403,9 @@ if __name__ == "__main__": # {
     print(ts_str)
     # CREATE / CALL MAIN CLASS FUNCTION
     create_crate = CustomCrate(the_date=ts_str, 
-                               list_of_directories=['F:/APPS/CofA/',
+                               list_of_directories=['F:/APPS/CofA/'],
                                                     #"G:/C of A's/Agilent/",
-                                                    "J:/controlled_docs/SDS/Agilent_SDS/USA/"],
+                                                    #"J:/controlled_docs/SDS/Agilent_SDS/USA/"],
                                in_file="C:/data/inbound/2020-03-05-batch-list.csv"
                                )
 # }
