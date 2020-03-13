@@ -531,7 +531,7 @@ class AgilentQuotesTracker():  # {
             # # STYLE THEME
             self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
             # Modify the font of the body
-            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11))
+            self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11), relief="raised")
             # Modify the font of the headings
             self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 13, 'bold'))
             """
@@ -1141,12 +1141,12 @@ class AgilentQuotesTracker():  # {
             self.side_scrollbar = ttk.Scrollbar(master=self.rightframe, orient = tk.VERTICAL)
             self.side_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
             
-            columns = ("Time Rec.","Initials","Type","Company",
+            columns = ("Tracking#","Time Rec.","Initials","Type","Company",
                        "Contact Person","Email Address","Account ID","Product #",
                        "PF Quote #","SAP Quote #","Sent","Time Sent","Notes")
             
             # TABLE
-            self.tree = ttk.Treeview(self.rightframe, show='headings', 
+            self.tree = ttk.Treeview(self.rightframe, show='headings',
                                      style="mystyle.Treeview", columns=columns, 
                                      height=30)
             # [2020-03-10]\\
@@ -1160,11 +1160,14 @@ class AgilentQuotesTracker():  # {
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen")
             """
             # [2020-03-11]\\ EDIT OUT BELOW?
+            """
             self.tree['columns'] = (
             "Time Rec.", "Initials", "Type", "Company", 
             "Contact Person", "Email Address", "Account ID", 
             "Product #", "PF Quote #", "SAP Quote #", "Sent", "Time Sent", "Notes")
-            self.tree.column('#0', anchor=tk.CENTER, width=90, minwidth=85, stretch=tk.NO)  # TRACKING #
+            """
+            # [2020-03-11]\\self.tree.column('#0', anchor=tk.CENTER, width=90, minwidth=85, stretch=tk.NO)  # TRACKING #
+            self.tree.column('Tracking#', anchor=tk.CENTER, width=90, minwidth=85, stretch=tk.NO)  # TRACKING #
             self.tree.column("Time Rec.", anchor=tk.CENTER, width=135, minwidth=120, stretch=tk.NO)  # TIME REC. // NAME
             self.tree.column("Initials", anchor=tk.CENTER, width=60, minwidth=60, stretch=tk.NO)  # INITIALS // EMAIL
             self.tree.column("Type", anchor=tk.CENTER, width=50, minwidth=50, stretch=tk.NO)  # TYPE
@@ -1704,24 +1707,32 @@ class AgilentQuotesTracker():  # {
             item = self.tree.selection()[0]  # which row did you click on
             print("ITEM CLICKED ", str(item))  # variable that represents the row you clicked on
             # [2019-12-12]\\item_2 = self.tree.item(self.tree.selection())  # gets all the values of the selected row
-            # [20190-12-12]\\print('the test_str = ', type(item_2), item_2, '\n') # prints a dictionary of the selected row
-            print(str(self.tree.item(item)['values'][0]))  # prints the first value of the values (the id value)
+            # [2019-12-12]\\print('the test_str = ', type(item_2), item_2, '\n') # prints a dictionary of the selected row
+            print("ROW CLICKED ", str(self.tree.item(item)['values'][0]))  # prints the first value of the values (the id value)
             # [2019-12-12]\\item_2 = str(self.tree.item(self.tree.selection())['columns'][0])
             # [2019-12-12]\\logging.info("ITEM 2 == " + str(item_2))
             # [2019-12-13]\\messagebox.showinfo(title="test:", message="you clicked on:\n" + str(self.tree.item(item, option="text")))
-            selected_tracking_number = str(self.tree.item(item, option="text"))
-            selected_time_rec = str(self.tree.item(item)['values'][1])# WAS 1
-            selected_name = str(self.tree.item(item)['values'][5])  # WAS 1
-            selected_email = str(self.tree.item(item)['values'][6]) # WAS 2
-            selected_type = str(self.tree.item(item)['values'][7])  # WAS 3
-            selected_sent = str(self.tree.item(item)['values'][12])  # WAS 4
-            selected_notes = str(self.tree.item(item)['values'][11])  # WAS 6
-            selected_initials = str(self.tree.item(item)['values'][2])  # WAS 7
-            selected_account_id = str(self.tree.item(item)['values'][3])  # WAS 8
-            selected_prodflow_quote_number = str(self.tree.item(item)['values'][9])  # WAS 9
-            selected_sap_quote_number = str(self.tree.item(item)['values'][10])  # WAS 10
-            selected_product_number = str(self.tree.item(item)['values'][8])  # WAS 11
-            selected_company_name = str(self.tree.item(item)['values'][4])  # WAS 12
+            # [2020-03-11]\\selected_tracking_number = str(self.tree.item(item, option="text"))
+            val_count = 0
+            for value in self.tree.item(item)['values']: # {
+                print(str(val_count))
+                print(value)
+                val_count += 1
+            # }
+            # [2020-03-11]\\print("ROW [VALUES] ", str(self.tree.item(item)['values']))
+            selected_tracking_number = str(self.tree.item(item)['values'][0])
+            selected_time_rec = str(self.tree.item(item)['values'][1])# WAS 1, 1
+            selected_name = str(self.tree.item(item)['values'][5])  # WAS 1, then 5
+            selected_email = str(self.tree.item(item)['values'][6]) # WAS 2, then 6
+            selected_type = str(self.tree.item(item)['values'][3])  # WAS 3, then 7
+            selected_sent = str(self.tree.item(item)['values'][11])  # WAS 4, 12, then 11
+            selected_notes = str(self.tree.item(item)['values'][13])  # WAS 6, 11, then 13
+            selected_initials = str(self.tree.item(item)['values'][2])  # WAS 7, then 2
+            selected_account_id = str(self.tree.item(item)['values'][7])  # WAS 8, 3, then 7
+            selected_prodflow_quote_number = str(self.tree.item(item)['values'][9]) #WAS 9,then 9
+            selected_sap_quote_number = str(self.tree.item(item)['values'][10])  # WAS 10, then 10
+            selected_product_number = str(self.tree.item(item)['values'][8])  # WAS 11, then 8
+            selected_company_name = str(self.tree.item(item)['values'][4])  # WAS 12, then 4
             # NEED ONE MORE HERE
             # CREATE LIST TO HOLD SELECTIONS
             selection_list = [selected_tracking_number,
@@ -1739,6 +1750,7 @@ class AgilentQuotesTracker():  # {
                               selected_company_name]
             self.the_logger.info(str(selection_list))
             selection_string = str("YOU SELECTED:\n"
+                                   + selected_tracking_number + "\n"
                                    + selected_time_rec + "\n" + selected_name + "\n"
                                    + selected_email + "\n" + selected_type + "\n"
                                    + selected_sent + "\n" + selected_notes + "\n"
@@ -1747,6 +1759,8 @@ class AgilentQuotesTracker():  # {
                                    + selected_product_number + "\n" + selected_company_name
                                    )
             self.the_logger.info(str(selection_string))
+            print(str(selection_string))
+            # [2020-03-12]\\sleep(360)
             ############################################## 
             # CHECK IF ANOTHER WINDOW IS ALREADY OPEN (greaater than 6)
             if len(self.children_num) > 6: # {
@@ -1806,7 +1820,8 @@ class AgilentQuotesTracker():  # {
                 print("REQUESTING TRACKING #...")
                 for child in children: # {
                     # variable to hold the cell TEXT ['text']
-                    text_Text = (self.tree.item(child)["text"])
+                    # [2020-03-13]\\text_Text = (self.tree.item(child)["text"])
+                    text_Text = (self.tree.item(child)["values"])
                     print(text_Text)
                     # CREATE VARIABLE CONTAINING TEXT
                     text_to_search = str(text_Text) # int(search_dict.get(str(search_cat)))
@@ -2416,6 +2431,7 @@ class AgilentQuotesTracker():  # {
     # }
     
     def check_quote_convention(self, event): #{
+        print("STATUS RADIO BUTTON == " + str(self.new_status_var.get()))
         # TRY THE FOLLOWING
         try: # {
             print("STATUS == " + str(self.new_status_var.get()))
@@ -2946,7 +2962,7 @@ class AgilentQuotesTracker():  # {
                                 str(row[4]), str(row[7]), str(row[8]), str(row[9]),
                                 str(row[10]), str(row[11]), str(row[12]), str(row[13])]
                 """
-                record_entry = [str(row[5]), str(row[9]), str(row[3]), str(row[14]),
+                record_entry = [str(row[0]), str(row[5]), str(row[9]), str(row[3]), str(row[14]),
                                 str(row[1]), str(row[2]), str(row[10]), str(row[15]),
                                 str(row[11]), str(row[12]), str(row[4]), str(row[6]), str(row[8])]
                 # INSERT RECORD ENTRY INTO TREE
@@ -3135,11 +3151,21 @@ class AgilentQuotesTracker():  # {
     # }
 
     def open_modify_window(self, selected_item, the_selection_list, window_location):  # {
+        # [2020-03-13]\\
+        """
+        print("THE SELECTION LIST:\n")
+        select_val = 0
+        for selection in the_selection_list: # {
+            print(str(select_val))
+            print(str(selection))
+            select_val += 1
+        # }
+        """
         # TRY THE FOLLOWING
         try:  # {
             self.the_logger.info("...MODIFYING RECORD...")
             self.the_logger.info("SELECTION LIST:\n" + str(the_selection_list))
-            self.the_logger.info(the_selection_list[1])
+            self.the_logger.info(the_selection_list[2]) # was 1
             # tracking_number = str(self.tree.item(item)['values'][0])
             # track_num = self.tree.item(self.tree.selection()['text'])
             # old_name = self.tree.item(self.tree.selection())['values'][0]
@@ -3197,7 +3223,7 @@ class AgilentQuotesTracker():  # {
                       text='Tracking #: '
                       ).grid(row=0, column=0, padx=10, pady=10)
             # GET TRACKING NUMBER FROM "selection_list"
-            the_tracking_number = str(the_selection_list[0])
+            the_tracking_number = str(the_selection_list[0]) # was 0, then 1
             # TK VARIABLE TO HOLD INPUT As STR
             self.tracking_num = tk.StringVar(master=tab_tracking_info, 
                                              value=the_tracking_number
@@ -3212,7 +3238,7 @@ class AgilentQuotesTracker():  # {
                       text='Time Received: '
                       ).grid(row=1, column=0, padx=10, pady=10, sticky='e')
             # GET TIME RECIEVED FROM "self.tree" (old)
-            the_time_rec = str(self.tree.item(selected_item)['values'][0])
+            the_time_rec = str(self.tree.item(selected_item)['values'][1])  # WAS 0
             self.open_time = tk.StringVar(master=tab_tracking_info,
                                           value=the_time_rec,
                                           )
@@ -3226,7 +3252,7 @@ class AgilentQuotesTracker():  # {
                       text='Initials: '
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
             # GET INITIALS FROM "selection_list"[1] (old)
-            the_initials = str(the_selection_list[1])
+            the_initials = str(the_selection_list[7]) # was 1, then 2
             self.new_initials = tk.StringVar(master=tab_tracking_info, value=the_initials)
             new_initials_entry_widget = ttk.Entry(master=tab_tracking_info,
                                  state='active',
@@ -3238,7 +3264,7 @@ class AgilentQuotesTracker():  # {
                       text='Type: '
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
             # GET RADIO TYPE FROM "selection_list"[7] (old)
-            self.new_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[7]))
+            self.new_type_var = tk.StringVar(master=tab_tracking_info, value=str(the_selection_list[4])) # was 7, then 8
             radio_type_1 = ttk.Radiobutton(master=tab_tracking_info,
                                   variable=self.new_type_var,
                                   value="web", text="web", state=tk.DISABLED, width=20)
@@ -3261,7 +3287,7 @@ class AgilentQuotesTracker():  # {
                       text='Company Name: '
                       ).grid(row=0, column=0, padx=10, pady=10)
             # GET COMPANY NAME FROM "selection_list"[8] (old)
-            the_company_name = str(the_selection_list[8])
+            the_company_name = str(the_selection_list[12]) # was 8, then 9, 4
             self.new_company_name = tk.StringVar(master=tab_account_info, value=the_company_name)
             new_company_name_entry_widget = ttk.Entry(master=tab_account_info, 
                                                       state='active',
@@ -3274,7 +3300,7 @@ class AgilentQuotesTracker():  # {
                       text='Contact Person: '
                       ).grid(row=1, column=0, padx=10, pady=10)
             # GET CONTACT PERSON FROM "selection_list"[12] (old)
-            the_contact_person = str(the_selection_list[12])
+            the_contact_person = str(the_selection_list[2]) # was 12, 13, then 11, 5
             self.new_name = tk.StringVar(master=tab_account_info, value=the_contact_person)
             new_contact_person_entry_widget = ttk.Entry(master=tab_account_info, 
                                                         state='active',
@@ -3287,7 +3313,7 @@ class AgilentQuotesTracker():  # {
                       text="Email Address: "
                       ).grid(row=2, column=0, padx=10, pady=10)
             # GET EMAIL ADDRESS FROM "selection_list"[2] (old)
-            the_email_address = str(the_selection_list[2])
+            the_email_address = str(the_selection_list[3]) # was 2, then 6
             self.new_email = tk.StringVar(master=tab_account_info, value=the_email_address)
             new_email_address_entry_widget = ttk.Entry(master=tab_account_info, 
                       state='active',
@@ -3300,7 +3326,7 @@ class AgilentQuotesTracker():  # {
                       text="Account ID: "
                       ).grid(row=3, column=0, padx=10, pady=10)
             # GET ACCOUNT ID FROM "selection_list"[3] (old)
-            the_account_id = str(the_selection_list[3])
+            the_account_id = str(the_selection_list[8]) # was 3, then 4, 7
             self.new_account_id = tk.StringVar(master=tab_account_info, value=the_account_id)
             new_account_id_entry_widget = ttk.Entry(master=tab_account_info, 
                                                     state='active',
@@ -3320,7 +3346,7 @@ class AgilentQuotesTracker():  # {
                       text="Product #: "
                       ).grid(row=0, column=0, padx=10, pady=10, sticky=None)
             # GET PRODUCT NUMBER FROM "selection_list"[4] (old)
-            the_product_number = str(the_selection_list[4])
+            the_product_number = str(the_selection_list[11]) # was 4, 5
             self.new_product_number = tk.StringVar(master=tab_quote_info, value=the_product_number)
             new_product_number_entry_widget = ttk.Entry(master=tab_quote_info, 
                                                         state='normal', 
@@ -3340,7 +3366,7 @@ class AgilentQuotesTracker():  # {
                       text="PF Quote #: "
                       ).grid(row=1, column=0, padx=10, pady=10, sticky=None)
             # GET PF QUOTE # FROM "selection_list"[11] (old)
-            the_pf_quote_num = str(the_selection_list[11])
+            the_pf_quote_num = str(the_selection_list[9]) # was 11, 12
             self.new_pf_quote_num = tk.StringVar(master=tab_quote_info, value=the_pf_quote_num)
             """
             ############################################################
@@ -3365,7 +3391,7 @@ class AgilentQuotesTracker():  # {
                       text="SAP Quote #: "
                       ).grid(row=2, column=0, padx=10, pady=10, sticky=None)
             # GET SAP QUOTE # FROM "selection_list"[9] (old)
-            the_sap_quote_num = str(the_selection_list[9]).zfill(7)
+            the_sap_quote_num = str(the_selection_list[10]).zfill(7) # was 9
             self.new_sap_quote_num = tk.StringVar(master=tab_quote_info, value=the_sap_quote_num)
             new_sap_quote_num_entry_widget = ttk.Entry(master=tab_quote_info, 
                                       state='active', 
@@ -3377,7 +3403,7 @@ class AgilentQuotesTracker():  # {
                       text='Sent: '
                       ).grid(row=3, column=0, padx=10, pady=10, sticky=None)
             # GET RADIO TYPE FROM "selection_list"[10] (old)
-            the_radio_sent_var = str(the_selection_list[10])
+            the_radio_sent_var = str(the_selection_list[5]) # was 10, then 11, 10
             self.the_logger.info("\n\t>>>> SENT? <<<< " + str(the_radio_sent_var))
             self.radio_sent_var = tk.BooleanVar(master=self.root, value=the_radio_sent_var)
             self.the_logger.info("\n\t>>> STILL? <<<< " + str(self.radio_sent_var.get()))
@@ -3458,7 +3484,7 @@ class AgilentQuotesTracker():  # {
                       text="Notes: "
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
             # GET NOTES FROM "selection_list"[5] (old)
-            the_notes_var = str(the_selection_list[5])
+            the_notes_var = str(the_selection_list[6]) # was 5, then 6
             self.new_notes_var = tk.StringVar(master=tab_notes_section, value=the_notes_var)
             new_notes_entry_widget = tk.Text(master=tab_notes_section, 
                                              height=10, 
@@ -3512,7 +3538,7 @@ class AgilentQuotesTracker():  # {
                       text='Status: '
                       ).grid(row=0, column=0, padx=10, pady=10, sticky='w')
             # ALLOW USER TO SET STATUS!
-            the_status_var = str("status_var")
+            # [2020-03-13]\\the_status_var = str("status_var")
             # [2020-03-04]\\self.new_status_var = tk.StringVar(master=tab_status, value=the_status_var)
             self.new_status_var = tk.IntVar(master=tab_status, value= 0)
             R1 = tk.Radiobutton(tab_status, text="AWAITING SALES REVIEW", variable=self.new_status_var, value = 1)
@@ -3548,11 +3574,11 @@ class AgilentQuotesTracker():  # {
             submit_button = ttk.Button(self.transient, text="SUBMIT", command=lambda: self.update_record(
                 newname=str(self.new_name.get()), # old_contact_name
                 newemail=str(self.new_email.get()), # old_email_address=
-                the_type=str(the_selection_list[7]), #
+                the_type=str(the_selection_list[3]), # was 7, then 8
                 newcompanyname=str(self.new_company_name.get()), # old_company_name
                 newsent=str(new_radio_sent_var.get()) if self.radio_sent_var.get() is True else str(self.radio_sent_var.get()), 
-                old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()),
-                open_time=str(self.tree.item(selected_item)['values'][0]),
+                old_sent=str(the_selection_list[10]), #str(self.radio_sent_var.get()), # was 10, then 11
+                open_time=str(self.tree.item(selected_item)['values'][1]), # was 0
                 # [2020-01-14]\\newnotes=str(self.new_notes_var.get()), #old_notes=str(the_selection_list[5]),
                 newnotes=str(new_notes_entry_widget.get("1.0", tk.END)),
                 newinitials=str(self.new_initials.get()), #old_initials=str(the_selection_list[1]),
@@ -3560,7 +3586,7 @@ class AgilentQuotesTracker():  # {
                 newproductnum=str(self.new_product_number.get()), #old_product_num=str(the_selection_list[4]),
                 newpfnum=str(self.new_pf_quote_num.get()), #old_pf_num=str(the_selection_list[11]),
                 newsapnum=str(self.new_sap_quote_num.get()), # old_sap_num=str(the_selection_list[9]),
-                tracking_number=str(the_selection_list[0])))
+                tracking_number=str(the_selection_list[0]))) # was 0, then 1
             submit_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             submit_button.bind('<Enter>', self.check_quote_convention)
             submit_button.bind('<Leave>', self.check_quote_convention)
@@ -3679,6 +3705,7 @@ class AgilentQuotesTracker():  # {
                       newproductnum,
                       newpfnum,
                       newsapnum, tracking_number):  # {
+        print("RADIO BUTTON STATUS:\n\t" + str(self.new_status_var.get()))
         # [2020-01-10]\\messagebox.showinfo(message="NEW-SENT: \t" + str(newsent))
         # CALL THE "check_quote_progress() FUNCTION HERE
         # [ 2019-12-27 ] == addition of "initials" into METHOD
