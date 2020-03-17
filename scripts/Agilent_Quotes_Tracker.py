@@ -50,7 +50,11 @@ EDITS:
 02/29/20 - header column functionality work-begin (treeview)
 03/02/20 - logger re-implemented (FINALIZED!)
 03/04/20 - STATUS column added to database backend
-03/10/10 - MOUSELESS navigation 
+03/06/20 - STATUS tab in MODIFY WINDOW
+03/10/20 - MOUSELESS navigation (begins...)
+03/14/20 - VOID BUTTON began...
+03/15/20 - VOID BUTTON ENDED... removed Control + F search + Copy TAB
+03/16/20 - CHANGE E DRIVE TO D DRIVE BECAUSE OF MIGRATION TO SHAREPOINT
 
 LATER:
     - CREATE button to shrink first 3 cols
@@ -130,20 +134,22 @@ class AgilentQuotesTracker():  # {
     if fnmatch.fnmatch(str(sys.argv[0]), "*_dev*"): # {
         print(">>>> loading DEV >>>>>")
         #### set DEV values
-        db_filename = "e:/_Quotes_Tracker/dev/data/quotes_tracker.db"
-        t_count_filename = "e:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
+        db_filename = "d:/_Quotes_Tracker/dev/data/quotes_tracker.db"
+        t_count_filename = "d:/_Quotes_Tracker/dev/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
         version_number = "20.03.03"
-        ver_file = Path("E:/_Quotes_Tracker/dev/config/ver_no.txt")
+        ver_file = Path("D:/_Quotes_Tracker/dev/config/ver_no.txt")
     # }
     else: # {
         print(">>>>> loading PROD >>>>>")
         #### set PROD values
-        db_filename = "e:/_Quotes_Tracker/data/quotes_tracker.db"
-        t_count_filename = "e:/_Quotes_Tracker/config/quotes_t_number.pkl"
+        ##### >>> CHANGE BACK WHEN COMPILING 
+        #### db_filename = "d:/_Quotes_Tracker/data/quotes_tracker.db"
+        db_filename = "c:/data/quotes_tracker.db"
+        t_count_filename = "d:/_Quotes_Tracker/config/quotes_t_number.pkl"
         # VERSION CONTROL NUMBER
-        version_number = "20.02.14" #01-29
-        ver_file = Path("E:/_Quotes_Tracker/config/ver_no.txt")
+        version_number = "20.03.16" #01-29, 02-14
+        ver_file = Path("D:/_Quotes_Tracker/config/ver_no.txt")
     # }
     ##################################################
     
@@ -319,12 +325,15 @@ class AgilentQuotesTracker():  # {
     def execute_db_query(self, query, parameters=()):  # {
         # TRY THE FOLLOWING:
         try:  # {
-            with sqlite3.connect(self.db_filename) as conn:  # {
+            with sqlite3.connect(self.db_filename) as conn: # {
                 cursor = conn.cursor()
                 query_result = cursor.execute(query, parameters)
                 conn.commit()
             # }
-            # [2019-12-11]\\return query_result
+            # [2019-12-11]\\return query_result        
+        # }
+        except sqlite3.OperationalError: # {
+            print("FAILED! ")
         # }
         except:  # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -345,12 +354,12 @@ class AgilentQuotesTracker():  # {
                                          "\n" + fileE +
                                          "\n" + lineE +
                                          "\n" + messageE)
-        # }
+        # } 
         else:  # {
             self.the_logger.info("Operation Completed Successfully...")
             return query_result
-
-    # }
+        # }
+    # } 
     
     """
     EXECUTES SQL QUERY AND RETURNS DATAFRAME FILLED WITH RESULTS
@@ -428,6 +437,7 @@ class AgilentQuotesTracker():  # {
             self.fill_tab_containers(the_root=the_root)
             self.create_right_side(the_root=the_root)
             self.create_tree_view(the_root=the_root)
+            self.create_void_button(the_root=the_root)
             self.view_records()
             # [2020-03-02]\\self.root.config(menu=self.menubar)
             the_root.config(menu=self.menubar)
@@ -502,6 +512,7 @@ class AgilentQuotesTracker():  # {
         # [2020-01-16]\\self.viewmenu.add_separator()
         # [2020-01-16]\\self.viewmenu.add_command(label="Filter Table", command="") # Help index
         self.viewmenu.add_command(label="REFRESH Table", command=self.view_records) # About...
+        self.viewmenu.add_command(label="VIEW VOIDED", command=self.view_records_voided)
         #### VIEW SUB-MENU ^^
         self.menubar.add_cascade(label="View", menu=self.viewmenu)
         self.helpmenu = tk.Menu(master=the_root,
@@ -534,6 +545,8 @@ class AgilentQuotesTracker():  # {
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11), relief="raised")
             # Modify the font of the headings
             self.style.configure("mystyle.Treeview.Heading", font=('Calibri', 13, 'bold'))
+            # CREATE VOID BUTTON STYLE
+            self.style.configure("L.TButton", font=('Courier New', 10, 'bold', 'underline'), relief="ridge")
             """
             # REMOVE THE BORDERS
             self.style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
@@ -626,7 +639,7 @@ class AgilentQuotesTracker():  # {
             self.tab_control.pack(expand=2, fill=tk.BOTH)
             
             # BIND TAB EVENTS
-            self.tab_control.bind("<<NotebookTabChanged>>", self.copy_create_check)
+            # [2020-03-15]\\self.tab_control.bind("<<NotebookTabChanged>>", self.copy_create_check)
             # [2020-02-13]\\self.tab_control.bind("<Return>", self.turn_red)
             
             # [2020-01-15]
@@ -687,9 +700,12 @@ class AgilentQuotesTracker():  # {
             self.lblframe_create.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
             # [2020-02-13]\\self.lblframe_create.bind('<Return>', self.turn_red)
             
-            #### INSTANTIATE COPY Tab
+            #### INSTANTIATE COPY 
+            # [2020-03-15]\\
+            """
             self.lblframe_copy = ttk.Frame(master=self.tab2)
             self.lblframe_copy.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+            """
             
             # Create the IMPORT Tab Container
             # [2020-02-05]\\self.lblframe_import = ttk.Frame(master=self.tab3)
@@ -1022,9 +1038,12 @@ class AgilentQuotesTracker():  # {
         else:  # {
             self.the_logger.info("[CREATE-TAB] Operation Completed Successfully...")
         # }
+        
+        
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()(()()()()())
         #### () COPY TAB CONTENTS () 
         # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()() #
+        """
         # TRY THE FOLLOWING
         try: # {
             # SELECTED TRACKING # (label)
@@ -1112,6 +1131,7 @@ class AgilentQuotesTracker():  # {
         else: # {
             self.the_logger.info("[COPY-TAB] Operation Completed Successfully...")
         # }
+        """
     # }
 
     def create_right_side(self, the_root):  # {
@@ -1131,6 +1151,24 @@ class AgilentQuotesTracker():  # {
         # BIND FUNCTIONS TO FRAME
         # [2020-01-10]\\self.rightframe.bind('<Enter>', self.clear_message_area)
     # }
+    
+    def create_void_button(self, the_root): # {
+        # TRY THE FOLLOWING:
+        try: # {
+            """
+            <<< VOID BUTTON >>
+            """
+            self.void_button = ttk.Button(master=self.rightframe, text="<<< VOID SELECTION >>>",
+                                          style="L.TButton", width=20)
+            self.void_button.pack(side=tk.RIGHT, fill=tk.Y, expand=True)
+            
+            self.void_button.bind("<Button-1>", self.void_record)
+            # [2020-03-14]\\self.void_button.bind("<Enter>", self.void_record)
+        # }
+        except: # {
+            pass
+        # }
+    # }
 
     def create_tree_view(self, the_root):  # {
         # TRY THE FOLLOWING
@@ -1148,7 +1186,7 @@ class AgilentQuotesTracker():  # {
             # TABLE
             self.tree = ttk.Treeview(self.rightframe, show='headings',
                                      style="mystyle.Treeview", columns=columns, 
-                                     height=30)
+                                     height=30, selectmode='browse')
             # [2020-03-10]\\
             """
             self.tree = ttk.Treeview(master=self.rightframe, style="mystyle.Treeview",
@@ -1217,9 +1255,12 @@ class AgilentQuotesTracker():  # {
             
             
             # BIND CLICK ACTIONS/EVENTS
-            self.tree.bind("<<TreeviewSelect>>", self.on_single_click)
+            # [2020-03-15]\\self.tree.bind("<<TreeviewSelect>>", self.on_single_click)
             self.tree.bind("<Double-1>", self.on_double_click)
-            self.tree.bind_all("<Control-f>", self.open_search_window)
+            """
+            <<< CONTROL - F FUNCTION WAS HERE >>>
+            """
+            # [2020-03-15]\\self.tree.bind_all("<Control-f>", self.open_search_window)
             # [2020-02-12]\\self.tree.bind("<Enter>", self.clear_message_area)
             self.tree.bind("<Enter>", self.clear_message_area)
             # [2020-02-12]\\self.tree.bind("<Leave>", self.view_records)
@@ -1276,6 +1317,7 @@ class AgilentQuotesTracker():  # {
         # }
     # }
     
+    """
     def _select_column(self, item=''): # {
         # TRY THE FOLLOWING
         try: # {
@@ -1314,7 +1356,6 @@ class AgilentQuotesTracker():  # {
                 text = self.tree.item(child, 'text')
                 print(text)
             # }
-            """
             for child in children: # {
                 text = self.tree.item(child, 'text')
                 # if text.startswith(self.entry.get()):
@@ -1322,7 +1363,6 @@ class AgilentQuotesTracker():  # {
                     self.tree.selection_set(child)
                 # }
             # }
-            """
             # PRINT NUMBER OF COLUMNS BEING DISPLAYED 
             print("\n\tNUM OF COLS: " + str(len(self.tree["displaycolumns"])))
             # HIDE ALL BUT ONE COLUMN
@@ -1349,7 +1389,9 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
     # }
+    """
     
+    """
     def _de_select_column(self, item=''): # {
         print("DE-SELECTING ALL COLUMNS (showing all)...")
         # TRY THE FOLLOWING
@@ -1381,7 +1423,9 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
     # }
+    """
     
+    """
     def _column_sort(self, col, descending=False): # {
         # TRY THE FOLLOWING
         try: # {
@@ -1421,7 +1465,9 @@ class AgilentQuotesTracker():  # {
                                          "\n" + messageE)
         # }
     # }
+    """
     
+    """
     def _column_select(self): # {
         # TRY THE FOLLOWING:
         try: # {
@@ -1467,6 +1513,7 @@ class AgilentQuotesTracker():  # {
             self.the_logger.info("Operation Completed Successfully...")
         # }
     # }
+    """
     
     def clear_create_tab(self): # {
         # TRY THE FOLLOWING
@@ -2853,7 +2900,7 @@ class AgilentQuotesTracker():  # {
     # }
     
     def turn_red(self, event): # {
-        self.message['text'] = 'YOU HIT ENETER BOIII'
+        self.message['text'] = 'COMING SOON'
         print("turn red!")
         # PRIN OUT SELECTED TAB?
         selected_tab = self.tab_control.tabs()
@@ -2993,6 +3040,53 @@ class AgilentQuotesTracker():  # {
             self.the_logger.info("Operation Completed Successfully...")
         # }
 
+    # }
+    
+    def view_records_voided(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # REMOVE CURRENT RECORDS IN TREEVIEW
+            items = self.tree.get_children()
+            for item in items:  # {
+                self.tree.delete(item)
+            # }
+            # CREATE QUERY TO SHOW ONLY RECORDS THAT ARE VOIDED
+            # [2020-03-16]\\INCLUDED "[status] is NULL OR" (to get all including voided)
+            query = "SELECT * FROM quotes WHERE [status] == '" + str("void") + "' ORDER BY tracking_number desc"
+            # EXECUTE QUERY
+            quote_tracker_entries = self.execute_db_query(query)
+            for row in quote_tracker_entries: # {
+                # CREATE RECORD ENTRY JUST LIKE ABOVE FUNCTION
+                record_entry = [str(row[0]), str(row[5]), str(row[9]), str(row[3]), str(row[14]),
+                                str(row[1]), str(row[2]), str(row[10]), str(row[15]),
+                                str(row[11]), str(row[12]), str(row[4]), str(row[6]), str(row[8])]
+                # INSERT RECORD ENTRY INTO TREE
+                self.tree.insert('', 0, text=str(row[0]), values=record_entry)
+            # }
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            self.the_logger.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+        else: # {
+            self.the_logger.info("Operation Completed Successfully...")
+        # }
     # }
     
     def is_valid_account_id(self, the_str): # {
@@ -3525,6 +3619,8 @@ class AgilentQuotesTracker():  # {
             lblframe_help_info_2.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             """
             
+            # [2020-03-15]\\
+            """
             #### TAB-5 // STATUS TAB
             # FOC
             # AWAITING TECH REVIEW
@@ -3549,6 +3645,8 @@ class AgilentQuotesTracker():  # {
             R3.grid(row=2, column=0, padx=10, pady=10, sticky='w')
             R4 = tk.Radiobutton(tab_status, text="RETURNED/VOID", variable=self.new_status_var, value = 4)
             R4.grid(row=2, column=1, padx=10, pady=10, sticky='w')
+            """
+            
             """
             new_status_list_box = tk.Listbox(master=tab_status,
                                              height=10,
@@ -3975,6 +4073,97 @@ class AgilentQuotesTracker():  # {
         # }
 
     # }
+    
+    def void_record(self, event): # {
+        # TRY THE FOLLLOWING
+        try: # {
+            # GET SELECTED ROW
+            str_row = self.tree.item(self.tree.selection())
+            print("STR ROW == " + str(str_row))
+            #item = self.tree.selection()[0] # what row did you click on
+            #print("COL-1 == " + str(item))
+            item = self.tree.selection()[0]
+            print ("item clicked ", item)
+            message_str = "YOU SELECTED\n"
+            tree_id_no = str(self.tree.selection()[0])
+            self.tracking_num2void = str(self.tree.item(item)['values'][0])
+            message_str += "TRACKING:\n"  # [2020-03-15]\\+ str(tracking_num)
+            # [2020-03-15]\\message_str += str(self.tree.item(item)['values'][0])
+            message_str += str(self.tracking_num2void)
+            print(message_str)
+            # [2020-03-15]\\messagebox.showinfo(parent=self.root, title="selection:", message=str(message_str))
+            confirm_void = messagebox.askokcancel(parent=self.root, title='Please Confirm:', message = "Are you sure you wish to void " 
+                                   + str(self.tracking_num2void))
+            print("CONFIRM VOID == " + str(confirm_void))
+            # CHECK USER INPUT
+            if str(confirm_void) == "True": # {
+                # CREATE SEPERATE CONNECTION (temporary) to WRITE TO DB
+                # [2020-03-16]\\self.temp_conn = sqlite3.connect(self.db_filename)
+                # CREATE QUERY TO UPDATE RECORD 7 SET TO VOID
+                query = ''' UPDATE quotes
+                            SET status = ?
+                            WHERE tracking_number = ?'''
+                parameters = ('void', str(self.tracking_num2void))
+                """
+                # CREATE CURSOR FROM TEMP CONENCTION
+                cur = self.temp_conn.cursor()
+                # EXECUTE SCRIPT
+                cur.execute(query, parameters)
+                self.temp_conn.commit()
+                # CLOSE CONNECTION
+                self.temp_conn.close()
+                """
+                voided_entries = self.execute_db_query(query, parameters)
+                # REPOPULATE REE
+                self.view_records()
+                """
+                # RE POPULATE TREE VIEW 
+                for row in voided_entries: # {
+                    # INSERT RECORD ENTRY INTO TREE
+                    self.tree.insert('', 0, text=str(row[0]), values=record_entry)
+                # }
+                """
+                """
+                # create engine
+                # [2020-02-10]\\engine = create_engine('sqlite:///e:/_Quotes_Tracker/data/quotes_tracker.db')
+                engine = create_engine('sqlite:///' + str(self.db_filename))
+                # Create connection to DB (from engine)
+                conn = engine.connect()
+                # Create cursor
+                cur = conn.cursor()
+                # create "VOID TASK"
+                task = ('void', str(self.tracking_num2void))
+                # EXCEUTE TO DB TO VOID TRACKING #
+                cur.execute(query, task)
+                """
+                # RE VIEW RECORDS... (the voided should now be empty)
+                #self.view_records()
+            # }
+            else: # {
+                print("NOT SELECTED ! NO VOIDO !")
+            # }
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage))
+            self.the_logger.error("\n" + typeE +
+                              "\n" + fileE +
+                              "\n" + lineE +
+                              "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                 "\n" + fileE +
+                                 "\n" + lineE +
+                                 "\n" + messageE)
+        # }
+    # }
 
     """
     def updated_records_validated(self, new_name, new_email, new_initials,
@@ -4148,6 +4337,10 @@ class CheckVersionNumber(Thread): # {
     # }
 # }
 
+def main(): # {
+    pass
+# }
+
 # MAIN BOILERPLATE
 if __name__ == "__main__":  # {
     # [2020-01-30]\\create_threads()
@@ -4159,7 +4352,10 @@ if __name__ == "__main__":  # {
     print("user:\t" + str(user))
     # create file path for user logs
     # [2020-03-02]\\user_path= os.path.join("E:/_Quotes_Tracker/log/", user)
-    logger = Logger(logging_output_dir="E:/_Quotes_Tracker/log/").logger
+    # [2020-03-14]\\logger = Logger(logging_output_dir="E:/_Quotes_Tracker/log/").logger
+    # [2020-03-16]\\logger = Logger(logging_output_dir="D:/_Quotes_Tracker/log/").logger
+    logger = Logger(logging_output_dir="D:/_Quotes_Tracker/log/").logger
+    # [2020-03-16]\\logger = Logger(logging_output_dir="C:/data/outbound/").logger
     window = tk.Tk()
     application = AgilentQuotesTracker(root=window, the_logger=logger)
     # ver_checker = CheckVersionNumber()
