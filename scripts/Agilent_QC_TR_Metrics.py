@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 18 14:48:03 2020
+Created on Wed Mar 25 16:21:03 2020
 
-TIS_Metrics
+QC_Metrics (turn around time)
 
 TABLES USED:
     - tblProdflow
-    - ORDERS
+    - PRODUCTS
 
 ===================================================
 - Takes the INPUT OF USER (month?)
 - pulls tables from Prodflow
-- Returns desired matches with "Materials_List.csv"
+- Returns the average turn around time (cycle-days) 
+  PER PRODUCT LEVEL, PER WEEK RANGE (yayyyy)
 ===================================================
 
 @author: derbates
