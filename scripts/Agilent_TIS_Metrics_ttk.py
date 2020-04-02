@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Mar 18 14:48:03 2020
+UPDATED on Thu Apr 02 13:11:00 2020
 
-TIS_Metrics
+TIS_Metrics_ttk (using tkinter library)
 
 TABLES USED:
     - tblProdflow
@@ -31,74 +32,35 @@ from openpyxl.drawing.image import Image
 from openpyxl.utils.dataframe import dataframe_to_rows
 import tempfile
 from ttkthemes import ThemedStyle
+import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox, filedialog, commondialog
-import wx
 
-class MyPanel(wx.Panel): # { 
-    
-    def __init__(self, parent): # {
-        super(MyPanel, self).__init__(parent)
-        
-        b = wx.Button(self, label = 'Greensheet ORDERS', pos = (100,100))
-        b.Bind(wx.EVT_BUTTON, self.btnclk)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
-    # }
-    
-    def OnButtonClicked(self, e): # {
-        print("Panel Received click event. propgated to Frame Class")
-        e.Skip()
-    # }
-    
-    def btnclk(self, e): #{
-        print("Button recieved click event. propogated to Panel Class")
-        e.Skip()
-    # }
-# }
-
-class Agilent_TIS_Metrics(wx.Frame): # {
+class Agilent_TIS_Metrics(): # {
     
     user_name = str(os.getlogin()) # get username
     outbound_dir = "C:/data/outbound/" + str(pd.Timestamp.now())[:10]
     desktop_dir = "OneDrive - Agilent Technologies/Desktop"
     
-    def __init__(self, parent): # {
-        super(Agilent_TIS_Metrics, self).__init__(parent)
-        #self.root.title("TIS Metrics")
-        #self.root.geometry('315x200+300+300')
-        #self.root.resizable(width=False, height=False)
+    def __init__(self, root, the_logger): # {
+        self.root.title("TIS Metrics")
+        self.root.geometry('315x200+300+300')
+        self.root.resizable(width=False, height=False)
         # Get/Set USERNAME & DESKTOP DIRECTORIES
         self.user_name_dir = os.path.join("C:/Users/", self.user_name)
         self.desktop_dir = os.path.join(self.user_name_dir, self.desktop_dir)
         print(self.user_name_dir)
         print(self.desktop_dir)
         # INITALIZE UI
-        self.InitUI()
+        self.create_gui(the_root = self.root)
     # }
     
-    def InitUI(self): # {
-        
-        mpn1 = MyPanel(self)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
-        self.SetTitle("Agilent TIS Custom Metrics")
-        self.Centre()
-        self.Show(True)
-        """
-        frm1 = MyFrame(self)
-        self.SetTitle("TIS Metrics")
-        self.Centre()
-        self.frame.Show(True)
-        """
-        
-    # }
-    
-    def OnButtonClicked(self, e): # {
+    def create_gui(self, the_root): # {
         # TRY THE FOLLOWING
         try: # {
-            print("click event recieved by frame class")
-            print("attempting to run...")
-            self.run()
-            e.Skip()
+            self.create_ttk_styles(the_root=the_root)
+            self.create_label_frame(the_root=the_root)
+            self.create_main_frame(the_root=the_root)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -114,7 +76,81 @@ class Agilent_TIS_Metrics(wx.Frame): # {
                   "\n" + fileE + 
                   "\n" + lineE + 
                   "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
+    # }
+    
+    def create_ttk_styles(self, the_root): # {
+        # TRY THE FOLLOWING
+        try: # {
+            self.style = ThemedStyle(the_root)
+            # STYLE THEME
+            self.style.set_theme("equilux")
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+    # }
+    
+    def create_label_frame(self, the_root): # {
+        self.labelframe = ttk.Frame(the_root)
+        self.labelframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    # }
+    
+    def create_main_frame(self, the_root): # {
+        # TRY THE FOLLOWING
+        try: # {
+            self.mainframe = ttk.Frame(self.labelframe)
+            self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+            # END DATE LABEL
+            ttk.Label(master=self.mainframe, text="Enter Date: \n(YYYY-MM-DD)"
+                     ).pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
+        # }
+    # }
+    
+    def determine_range(self, the_root): # {
+        pass
     # }
     
     def run(self): # {
@@ -143,6 +179,11 @@ class Agilent_TIS_Metrics(wx.Frame): # {
                   "\n" + fileE + 
                   "\n" + lineE + 
                   "\n" + messageE)
+            messagebox.showerror(title="ERROR!",
+                                 message=typeE +
+                                         "\n" + fileE +
+                                         "\n" + lineE +
+                                         "\n" + messageE)
         # }
         else: # {
             print("Operation Completed Successfully...")
@@ -299,9 +340,10 @@ class Agilent_TIS_Metrics(wx.Frame): # {
 def main(): # { 
     # TRY THE FOLLOWING
     try: # {
-        app = wx.App()
-        Agilent_TIS_Metrics(None)
-        app.MainLoop()
+        window = tk.Tk()
+        application = Agilent_TIS_Metrics(root = window, the_logger=None)
+        window.config()
+        window.mainloop()
     # }
     except: # {
         errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -316,7 +358,12 @@ def main(): # {
         print("\n" + typeE + 
               "\n" + fileE + 
               "\n" + lineE + 
-              "\n" + messageE)
+                "\n" + messageE)
+        messagebox.showerror(title="ERROR!",
+                             message=typeE +
+                             "\n" + fileE +
+                             "\n" + lineE +
+                             "\n" + messageE)
     # }
     else: # {
         print("Operation Completed Successfully...")

@@ -274,7 +274,7 @@ class AgilentQCMetrics(): # {
                 # Insert Plot into worksheet
                 # Select active sheet and cell reference
                 img_area = Image(area_img_path)
-                active.add_image(img_area, 'H1')
+                active.add_image(img_area, 'N1')
                 # SAVE WORKBOOK
                 wb.save(workbook_path)
             # }
