@@ -31,6 +31,8 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image
 from openpyxl.utils.dataframe import dataframe_to_rows
 import tempfile
+import loggimg
+from threading import Thread
 from ttkthemes import ThemedStyle
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -43,14 +45,16 @@ class Agilent_TIS_Metrics(): # {
     desktop_dir = "OneDrive - Agilent Technologies/Desktop"
     
     def __init__(self, root, the_logger): # {
+        self.root = root
+        self.the_logger = the_logger
         self.root.title("TIS Metrics")
         self.root.geometry('315x200+300+300')
-        self.root.resizable(width=False, height=False)
+        self.root.resizable(width=True, height=True)
         # Get/Set USERNAME & DESKTOP DIRECTORIES
         self.user_name_dir = os.path.join("C:/Users/", self.user_name)
         self.desktop_dir = os.path.join(self.user_name_dir, self.desktop_dir)
-        print(self.user_name_dir)
-        print(self.desktop_dir)
+        print("USER DIR == " + str(self.user_name_dir))
+        print("DESKTOP == " + str(self.desktop_dir))
         # INITALIZE UI
         self.create_gui(the_root = self.root)
     # }
@@ -89,7 +93,7 @@ class Agilent_TIS_Metrics(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("equilux")
+            self.style.set_theme("scidblue")
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -115,17 +119,38 @@ class Agilent_TIS_Metrics(): # {
     
     def create_label_frame(self, the_root): # {
         self.labelframe = ttk.Frame(the_root)
-        self.labelframe.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.labelframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
     # }
     
     def create_main_frame(self, the_root): # {
         # TRY THE FOLLOWING
         try: # {
             self.mainframe = ttk.Frame(self.labelframe)
-            self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+            self.mainframe.pack(anchor=tk.CENTER, fill=tk.X, expand=True)
             # END DATE LABEL
-            ttk.Label(master=self.mainframe, text="Enter Date: \n(YYYY-MM-DD)"
-                     ).pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
+            ttk.Label(master=self.mainframe, text="Enter START Date: \n(YYYY-MM-DD)"
+                     ).pack(anchor=tk.NW, fill=tk.BOTH, expand=False)
+            # END DATE ENTRY BOX
+            self.end_date = ttk.Entry(master=self.mainframe, text=str(pd.Timestamp.now())[:10])
+            self.end_date.pack(anchor=tk.E, fill=tk.BOTH, expand=False)
+            # START DATE LABEL
+            ttk.Label(master=self.mainframe, text="Enter END Date: \n(YYYY-MM-DD)"
+                     ).pack(anchor=tk.W, fill=tk.BOTH, expand=False)
+            # START DATE ENTRY BOX
+            self.start_date = ttk.Entry(master=self.mainframe, text="YYYY-MM-DD")
+            self.start_date.pack(anchor=tk.NE, fill=tk.BOTH, expand=False)
+            # .CSV FILE IMPORT BUTTON
+            self.csv_import = ttk.Button(master=self.mainframe, text="Import MATERIALS .csv",
+                                    command=self.import_materials_file
+                                    )
+            self.csv_import.pack(anchor=tk.S, fill=tk.BOTH, expand=False)
+            #####################################
+            # EXPORT FILE LOCATION BUTTON / RUN # 
+            #####################################
+            self.export_button = ttk.Button(master=self.mainframe, text="<< RUN >>",
+                                       state=tk.DISABLED, command=self.select_export_path
+                                      )
+            self.export_button.pack(anchor=tk.S, fill=tk.BOTH, expand=False)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -149,21 +174,117 @@ class Agilent_TIS_Metrics(): # {
         # }
     # }
     
-    def determine_range(self, the_root): # {
-        pass
-    # }
-    
-    def run(self): # {
+    def import_materials_file(self): # {
         # TRY THE FOLLOWING
         try: # {
-            # Create date
-            the_date = pd.Timestamp.now()
+            print("IMPORTING <<materials>> file...")
+            self.materials_file_path = Path(filedialog.askopenfilename(title="Select MATERIALS .csv:"))
+            # IMPORT FILEPATH INTO DATAFRAME
+            self.df_infile = pd.read_csv(self.materials_file_path, columns=['ProductNo'], 
+                                         dtype=np.str, engine='python')
+            # CREATE SERIES 
+            self.materials_file = pd.Series(data=self.df_infile['ProductNo'])
+            print("df_infile:\n" + str(self.df_infile.info()))
+            print("SERIES:\n" + str(self.materials_file))
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    def select_export_path_in_thread(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            pass
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    def select_export_path(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            print("Selecting EXPORT location...")
+            self.export_file_path = Path(filedialog.asksavedir(title="Select EXPORT Location:"))
+            # CREATE FILE PATH FOR THE export .csv
+            self.export_file_path = os.path.join(self.export_file_path, "TIS-Material-Merge-"
+                                                + str(pd.Timestamp.now())[:10]
+                                                + ".csv")
+            # CALL DETERMINE RANGE() (to begin run)
+            self.determine_range()
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    def determine_range(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            print("DETERMINING RANGE....")
+            # CREATE CLASS VARIABLES FOR START TIME
+            the_end_date = str(self.end_date.get())
+            # CREATE CLASS VARIABLE FOR END TIME (off input)
+            the_start_date = str(self.start_date.get())
+            # DETERMINE NUMBER OF DAYS
+            num_of_days = pd.Timedelta(the_end_date - the_start_date)
+            # CALL RUN
+            self.run(date_input=the_end_date, day_range=num_of_days)
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
+    def run(self, date_input, day_range): # {
+        # TRY THE FOLLOWING
+        try: # {
+            # Create date (OFF INPUT)
+            the_date = pd.Timestamp(ts_input=str(date_input))
+            # create day range
+            x_days_ago = the_date - timedelta(days = int(day_range))
+            df_x_range = pd.date_range(start=x_days_ago, end=the_date, freq='D')
+            print(str(df_x_range))
             # CREATE METRICS TABLE FROM CLASS METHOD
             # (returning only time-series we want??)
             self.df_metrics_table = self.create_metrics_table(
-                time_start="2019-11-01",
-                time_end="2020-03-01"
+                time_start=x_days_ago, # "2019-11-01"
+                time_end=the_date # "2020-03-01"
                 )
+            """
+            <<< CREATE COPY OF DATAFRAME WITH **NO INDEX** >>
+            """
+            df_metrics_no_idx = pd.DataFrame(data=self.df_metrics_table)
+            """
+            <<< SET INDEX BUT ALSO KEEP AS COLUMN >>>
+            """
+            self.df_metrics_table.set_index(['QCDate'], drop=False, inplace=True)
+            """
+            <<< CHANGE DATA-TYPES OF COLUMNS >>
+            """
+            # CREATE EMPTY DATAFRAME TO HOLD SPECIFIC TIS DATA
+            df_TIS_metrics = pd.DataFrame(data=None, dtype=np.str, index=df_x_range) #i ndex = df_x_range / NONE
+            # ADD IN COLUMNS
+            df_TIS_metrics['QCDate'] = self.df_metrics_table['QCDate']
+            df_TIS_metrics['OrderID'] = self.df_metrics_table['OrderID']
+            df_TIS_metrics['ProductNo'] = self.df_metrics_table['ProductNo']
+            df_TIS_metrics["Volume"] = self.df_metrics_table["Volume"]
+            df_TIS_metrics["BuildByDate"] = self.df_metrics_table["BuildByDate"]
+            df_TIS_metrics["OrderDate"] = self.df_metrics_table["OrderDate"]
+            df_TIS_metrics["PrepDate"] = self.df_metrics_table["PrepDate"]
+            df_TIS_metrics["PrepVolume"] = self.df_metrics_tableh["PrepVolume"]
+            df_TIS_metrics["UnitizeNLT"] = self.df_metrics_table["UnitizeNLT"]
+            df_TIS_metrics["ShipNLTDate"] = self.df_metrics_table["ShipNLTDate"]
+            df_TIS_metrics["BulkQCDate"] = self.df_metrics_table["BulkQCDate"]
+            df_TIS_metrics["AmpDate"] = self.df_metrics_table["AmpDate"]
+            df_TIS_metrics["GreenSheet"] = self.df_metrics_table["GreenSheet"]
+            df_TIS_metrics["SOLink"] = self.df_metrics_table["SOLink"]
+            df_TIS_metrics["Notes"] = self.df_metrics_table["Notes"]
+            # MERGE WITH MATERIALS IN FILE
+            df_merge = pd.merge(df_TIS_metrics, self.df_infile, on='ProductNo', how='inner')
+            # EXPORT .CSV TO LOCATION CHOSEN BY USER
+            df_merge.to_csv(self.export_file_path, index=True)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
