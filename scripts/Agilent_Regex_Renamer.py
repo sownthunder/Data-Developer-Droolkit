@@ -75,7 +75,7 @@ class Logger(): # {
     # }
 # }
 
-class Agilent_Directory_Digger(): # {
+class Agilent_Regex_Renamer(): # {
     
     user_name = str(os.getlogin()) # get username
     outbound_dir = "C:/data/outbound/" + str(pd.Timestamp.now())[:10]
@@ -85,8 +85,8 @@ class Agilent_Directory_Digger(): # {
         print("init")
         self.root = root
         self.the_logger = the_logger
-        self.root.title("Agilent Directory Digger")
-        self.root.geometry('450x155+300+300')
+        self.root.title("Agilent Regex Renamer")
+        self.root.geometry('325x355+300+300')
         self.root.resizable(width=False, height=False)
         # Get/SetUSERNAME & DESKTOP DIRECTORIES
         self.user_name_dir = os.path.join("C:/Users/", self.user_name)
@@ -101,27 +101,16 @@ class Agilent_Directory_Digger(): # {
         # TRY THE FOLLOWING
         try: # {
             self.create_ttk_styles(the_root=the_root)
-            # [2020-04-09]\\self.create_main_frame(the_root=the_root)
         # }
         except: # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
-                          "\n" + fileE +
-                          "\n" + lineE +
-                          "\n" + messageE)
+            pass
         # }
         """
         <<< CREATE GUI >>
         """
-        # TRY THE FOLLOWING
+        #####################
+        # TRY THE FOLLOWING #
+        #####################
         try: # {
             # TTK BUTTON for Directory Selector
             self.dir_select = ttk.Button(master=the_root, text="Select Directory",
@@ -131,7 +120,7 @@ class Agilent_Directory_Digger(): # {
             self.dir_select_var = tk.StringVar(master=the_root)
             # ENTRY BOX TO SHOW DIRECTORY USER SELECTED
             ttk.Entry(master=the_root, textvariable=self.dir_select_var, 
-                      state=tk.DISABLED, width=50
+                      state=tk.DISABLED#, width=50
                       ).grid(row=0, column=1, padx=10, pady=10, sticky='nesw')
             # TTK BUTTON for Export Location
             ttk.Button(master=self.root, text="EXPORT Location",
@@ -141,21 +130,54 @@ class Agilent_Directory_Digger(): # {
             self.export_file_path_var = tk.StringVar(master=the_root)
             # ENTRY BOX TO SHOW EXPORT LOCATION
             ttk.Entry(master=the_root, textvariable=self.export_file_path_var,
-                      state=tk.DISABLED, width=25
+                      state=tk.DISABLED#, width=25
+                      ).grid(row=1, column=1, padx=10, pady=10, sticky='nesw')
+            ##################################################################
+            # REGEX FRAME 
+            ##################################################################
+            self.regexframe = ttk.LabelFrame(the_root, text="Regex Settings:")
+            self.regexframe.grid(row=2, column=0, columnspan=2, padx=10, pady=10,
+                                 sticky='nesw')
+            # search regex label
+            ttk.Label(master=self.regexframe, text="Search Criteria: "
+                      ).grid(row=0, column=0, padx=10, pady=10, sticky='nesw')
+            # TKINTER VAR TO HOLD REGEX SEARCH CRITERIA
+            self.regex_search_var = tk.StringVar(master=self.regexframe)
+            ttk.Entry(master=self.regexframe, textvariable=self.regex_search_var,
+                      #width=50
+                      ).grid(row=0, column=1, padx=10, pady=10, sticky='nesw')
+            # change-to label
+            ttk.Label(master=self.regexframe, text="Change-To Criteria: "
+                      ).grid(row=1, column=0, padx=10, pady=10, sticky='nesw')
+            # TKINTER VAR TO HOLD CHANGE-TO CRITERIA
+            self.change_to_var = tk.StringVar(master=self.regexframe)
+            ttk.Entry(master=self.regexframe, textvariable=self.change_to_var,
+                      #width=50
                       ).grid(row=1, column=1, padx=10, pady=10, sticky='nesw')
             ###########################
             # CHECK-BUTTONS / OPTIONS #
             ###########################
-            # TKINTER VAR TO HOLD CHECK BUTTON VALS
-            self.check_1 = tk.IntVar(master=the_root, value="Recursive Search")
-            ttk.Checkbutton(master=the_root, text="Recursive Search",
-                            textvariable=self.check_1
-                            ).grid(row=2, column=0, columnspan=1, padx=10, pady=10, sticky='nesw')
+            # TKINTER VAR TO HOLD CHECKBUTTON VALS
+            self.check_1 = tk.IntVar(master=the_root)
+            ttk.Checkbutton(master=self.regexframe, text="In-Place (overwrite)",
+                            variable=self.check_1
+                            ).grid(row=2, column=0, padx=10, pady=10, sticky='nesw')
+            ttk.Checkbutton(master=self.regexframe, text="Recursive Search",
+                            variable=self.check_1
+                            ).grid(row=2, column=1, padx=10, pady=10, sticky='nesw')
+            ttk.Checkbutton(master=self.regexframe, text="Copy/Move/Save Dups",
+                            variable=self.check_1
+                            ).grid(row=3, column=0, padx=10, pady=10, sticky='nesw')
+            ttk.Checkbutton(master=self.regexframe, text="Dry-Run",
+                            variable=self.check_1
+                            ).grid(row=3, column=1, padx=10, pady=10, sticky='nesw')
             # TTK BUTTON TO RUN SCAN (only when locations have been selected)
             self.run_scan = ttk.Button(master=the_root, text="Run",
                                        command=self.run, state=tk.DISABLED
                                        )
-            self.run_scan.grid(row=2, column=1, columnspan=1, padx=10, pady=10, sticky='nesw')
+            # ADD TO GRID (seperate line to avoid NONETYPE error)
+            self.run_scan.grid(row=3, column=0, columnspan=2,
+                                              padx=10, pady=10, sticky='nesw')
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -172,7 +194,6 @@ class Agilent_Directory_Digger(): # {
                           "\n" + lineE +
                           "\n" + messageE)
         # }
-        # [2020-04-09]\\self.create_main_frame(the_root=the_root)
     # }
     
     def create_ttk_styles(self, the_root): # {
@@ -183,48 +204,9 @@ class Agilent_Directory_Digger(): # {
             self.style.set_theme("keramik")
         # }
         except: # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
-                          "\n" + fileE +
-                          "\n" + lineE +
-                          "\n" + messageE)
+            pass
         # }
     # }
-    
-    """
-    def create_main_frame(self, the_root): # {
-        # TRY THE FOLLOWING
-        try: # {
-            self.mainframe = ttk.Frame(the_root)
-            self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
-            
-            
-        # }
-        except: # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
-                          "\n" + fileE +
-                          "\n" + lineE +
-                          "\n" + messageE)
-        # }
-    # }
-    """
     
     def select_dir(self): # {
         # TRY THE FOLLOWING
@@ -236,19 +218,7 @@ class Agilent_Directory_Digger(): # {
             self.dir_select_var.set(str(self.scan_directory))
         # }
         except: # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
-                          "\n" + fileE +
-                          "\n" + lineE +
-                          "\n" + messageE)
+            pass
         # }
     # }
     
@@ -266,7 +236,19 @@ class Agilent_Directory_Digger(): # {
             # self.scan_directory()
         # }
         except: # {
-            print("FAILED !")
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            logging.error("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
         # }
     # }
     
@@ -326,19 +308,7 @@ class Agilent_Directory_Digger(): # {
             pass
         # }
         except: # {
-            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
-            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            typeE = str("TYPE : " + str(exc_type))
-            fileE = str("FILE : " + str(fname))
-            lineE = str("LINE : " + str(exc_tb.tb_lineno))
-            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
-            logging.error("\n" + typeE +
-                          "\n" + fileE +
-                          "\n" + lineE +
-                          "\n" + messageE)
+            pass
         # }
     # }
 # }
@@ -349,7 +319,7 @@ def main(): # {
         # SETUP LOGGER
         logger = Logger(logging_output_dir=".").logger
         window = tk.Tk()
-        application = Agilent_Directory_Digger(root = window, the_logger=logger)
+        application = Agilent_Regex_Renamer(root = window, the_logger=logger)
         window.config()
         window.mainloop()
     # }

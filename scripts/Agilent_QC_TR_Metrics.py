@@ -15,6 +15,8 @@ TABLES USED:
   PER PRODUCT LEVEL, PER WEEK RANGE (yayyyy)
 ===================================================
 
+04/07/20 - began implementing PDF export feature...
+
 @author: derbates
 """
 
@@ -24,9 +26,11 @@ from time import sleep
 from pathlib import Path
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
+import logging
 import pyodbc
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image
@@ -36,6 +40,13 @@ from ttkthemes import ThemedStyle
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox, filedialog, commondialog
+
+class Logger(): # {
+    
+    def __init__(self): # {
+        pass
+    # }
+# }
 
 class Agilent_QC_TR_Metrics(): # {
     
@@ -119,13 +130,16 @@ class Agilent_QC_TR_Metrics(): # {
             # [2020-03-08]\\self.period_str = tk.StringVar(master=the_root, value="Day")
             self.filename_str = tk.StringVar(master=the_root, value=str(self.end_date.get()))
             # FILENAME LABELS AND ENTRY BOX
-            ttk.Label(master=self.mainframe, text="Filename:\tQCMetrics_"
+            ttk.Label(master=self.mainframe, text="Folder Name:\tQCMetrics_"
                       ).place(x=10, y= 100)
             ttk.Entry(master=self.mainframe, textvariable=self.end_date, state=tk.DISABLED,
                       width=16
                       ).place(x=170, y= 100)
+            # [2020-04-07]\\
+            """
             ttk.Label(master=self.mainframe, text=".xlsx"
                       ).place(x=270, y= 100)
+            """
             # BROWSE FOR EXPORT LOCATION BUTTON
             self.export_button = ttk.Button(master=self.mainframe, text="EXPORT TO DESKTOP",
                        command=self.determine_range, width=20).place(x=20, y = 140)
@@ -252,6 +266,13 @@ class Agilent_QC_TR_Metrics(): # {
             # CREATE << GROUPBY >> DATAFRAME
             # [2020-03-30]\\self.df_groupby_levels = pd.DataFrame(data=self.df_total_levels.groupby(['QCDate', 'ProductLevel'])[['PfBatchID'].count()])
             self.ProdsPerDay = self.df_metrics_obv.groupby(['QCDate', str(self.key_type_var.get())])[['PfBatchID']].count()
+            # RENAME COLUMNS
+            self.ProdsPerDay.rename(columns={'PfBatchID':'Count'}, 
+                                    inplace=True)
+            """
+            << PRODS PER DAY UNSTACK >>
+            """
+            self.ProdsPerDay = self.ProdsPerDay.unstack(level=-1)
             """
             <<< EXPORT TO DESKTOP >>>
             """
@@ -373,9 +394,14 @@ class Agilent_QC_TR_Metrics(): # {
             self.df_dashboard.to_csv(os.path.join(self.desktop_dir, "QC-Dashboard-"
                                                   + str(pd.Timestamp.now())[:10]
                                                   + ".csv"), index_label="Level")
-            #############################
-            # WORK BOOK FUNCTION >>>>>>>>>
-            ################################
+            ###################################################################
+            # WORK BOOK FUNCTION (sending to method)
+            ###################################################################
+            self.wb = self.create_excel_workbook
+            #################################################################################
+            # WORK BOOK FUNCTION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            #############################################################################
+            
             print(self.desktop_dir)
             # CREATE STR VAR for filename convention
             ts_str = str(the_date)[:10]
@@ -456,6 +482,31 @@ class Agilent_QC_TR_Metrics(): # {
         # }
         else: # {
             print("Operation Completed Successfully...")
+        # }
+    # }
+    
+    """
+    TAKES IN: 
+    (1) - date as string
+    (2) - filename of OUTPUT file which will be saved at Desktop
+    (3) - dataframe of *DATA* to put in sheet-1
+    (4) - dataframe of *GRAPH* to put in sheet-2
+    RETURNS: Nada, will have output an .xlsx file to location when complete
+    """
+    def create_excel_workbook(self, the_date, file_name, data_df, graph_df): # {
+        # TRY THE FOLLOWING
+        try: # {
+            print(self.desktop_dir)
+            # CREATE STR VAR FOR filename convention
+            ts_str = str(the_date)[:10]
+            # CREATE FILENAME VAR
+            filename_var = str("QC_TR_Metrics_" + str(ts_str) + ".xlsx")
+            # CREATE FULL WORKBOOK PATH
+            workbook_path = os.path.join(self.desktop_dir, str(filename_var))
+            print("WORKBOOK PATH == " + str(workbook_path))
+        # }
+        except: # {
+            pass
         # }
     # }
     
