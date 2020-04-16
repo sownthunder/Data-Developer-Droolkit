@@ -74,7 +74,7 @@ class AgilentQCMetrics(): # {
             # CONFIGURE THE TTK STYLE
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("black")
+            self.style.set_theme("clearlooks")
         # }
         except:# { 
             pass

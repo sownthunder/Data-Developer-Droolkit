@@ -162,7 +162,7 @@ class CofA_E_Node_Wizard(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("keramik")
+            self.style.set_theme("arc") # keramik, clearlooks
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -189,18 +189,20 @@ class CofA_E_Node_Wizard(): # {
             
             # START/END DATE ENTRY/LABELS
             ttk.Label(master=self.mainframe, text="Start-Date:\t"
-                      ).pack(anchor=tk.NW, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
-                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
             ttk.Label(master=self.mainframe, text="End-Date:\t"
-                      ).pack(anchor=tk.SW, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
-                      ).pack(anchor=tk.SE, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
             ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
-                       ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                       ).pack(side=tk.LEFT, fill=tk.X, expand=True)
             
+            """
             ttk.Entry(master=self.mainframe
-                      ).pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+                      ).pack(side=tk.LEFT, fill=tk.X, expand=True)
+            """
             
             # TK VAR for check button selection(s)
             self.check_1 = tk.IntVar(master=self.mainframe)

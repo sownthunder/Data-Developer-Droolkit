@@ -6,6 +6,7 @@ CofA_Task_Scheduler_FINALE
 
 USES:
     Task_Scheduler_v2.py
+    Task_Scheduler_v3.py (v2 just renamed to v3)
 
 
 for clearer and more precsive script/exe naming 
@@ -13,6 +14,7 @@ for clearer and more precsive script/exe naming
 OLD TEXT:
     Created on September 18, 2019 at 01:40 PM - DB
     Edited/Semi-Finalized on September 23, 2019 at 09:51 AM - DB
+    Began Finalizing on April 16, 2020 at 10:23 AM - DB
     ** NEEDS TO BE EDITED FOR ANY COMMAND INPUT !! **
 
 @author: derbates

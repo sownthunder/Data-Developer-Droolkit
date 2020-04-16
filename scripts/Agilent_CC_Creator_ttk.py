@@ -161,7 +161,7 @@ class Agilent_CC_Creator(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("keramik")
+            self.style.set_theme("arc") # clearlooks
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -188,29 +188,39 @@ class Agilent_CC_Creator(): # {
             
             # START/END DATE ENTRY/LABELS
             ttk.Label(master=self.mainframe, text="Start-Date:\t"
-                      ).pack(anchor=tk.NW, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
-                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
             ttk.Label(master=self.mainframe, text="End-Date:\t"
-                      ).pack(anchor=tk.SW, fill=tk.BOTH, expand=False)
+                      ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
-                      ).pack(anchor=tk.SE, fill=tk.BOTH, expand=False)
-            ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
-                       ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                      ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
+            # IMPORT WATERMARK BUTTON
+            self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
+                       )
+            self.import_watermark.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
+            # EXPORT LOCATION BUTTON
+            self.export_button = ttk.Button(master=self.mainframe, text="Select EXPORT Location",
+                                            state=tk.DISABLED)
+            self.export_button.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
             
+            """
             ttk.Entry(master=self.mainframe
-                      ).pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+                      ).pack(side=tk.LEFT, fill=tk.X, expand=True)
+            """
             
             # TK VAR for check button selection(s)
-            self.check_1 = tk.IntVar(master=self.mainframe)
+            # [2020-04-14]\\self.check_1 = tk.IntVar(master=self.mainframe)
+            self.check_cofa = tk.IntVar(master=self.mainframe)
+            self.check_sds = tk.IntVar(master=self.mainframe)
             
-            ttk.Checkbutton(master=self.mainframe, text="Daily CofA Count", 
-                            variable=self.check_1
-                            ).pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            ttk.Checkbutton(master=self.mainframe, text="CofA", 
+                            variable=self.check_cofa
+                            ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             
-            ttk.Checkbutton(master=self.mainframe, text="Check button 2",
-                            variable=self.check_1
-                            ).pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            ttk.Checkbutton(master=self.mainframe, text="SDS",
+                            variable=self.check_sds
+                            ).pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

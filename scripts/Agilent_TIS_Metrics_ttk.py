@@ -26,6 +26,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
+import logging
 import pyodbc
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image
@@ -38,11 +39,51 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox, filedialog, commondialog
 
+class Logger(): # {
+    
+    def __init__(self, logging_output_dir): # {
+        self.logging_output_dir = logging_output_dir
+        # INITIATING THE LOGGER OBJECT
+        self.logger = logging.getLogger(__name__)
+        
+        # set the level of the logger (THIS IS SUPER USEFUL since it enables)
+        # Explanation regarding the logger levels can be found here:
+        # https://docs.python.org/3/howto/logging.html
+        self.logger.setLevel(logging.DEBUG)
+        
+        # Create the logs.log file
+        user_name = str(os.getlogin()) # get username
+        log_file_name = user_name + "." + str(pd.Timetsamp.now())[:10] + "-quotes-use"
+        log_file_path = os.path.join(self.logging_output_dir, str(log_file_name) + ".log")
+        file_handler = logging.FileHandler(log_file_path)
+        
+        # Create the console handler with a higher log level
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.ERROR)
+        
+        # Format the logs structure so that every line would include:
+        # the time, the message, the function, the line #, script and level name
+        formatter = logging.Formatte('%(asctime)s: %(message)s, FROM=%(funcName)s, LINENO=%(lineno)d, %(name)s - %(levelname)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        
+        # Adding the formater handlers
+        self.logger.addHandler(console_handler)
+        self.logger.addHandler(file_handler)
+        
+        # and printing the logs to the console as well
+        self.logger.addHandler(logging.StreamHandler(sys.stdout))
+    # }
+# }
+
 class Agilent_TIS_Metrics(): # {
     
     user_name = str(os.getlogin()) # get username
     outbound_dir = "C:/data/outbound/" + str(pd.Timestamp.now())[:10]
     desktop_dir = "OneDrive - Agilent Technologies/Desktop"
+    
+    # BOOL VALUES TO HOLD "unlock conditions"
+    is_imported = False
     
     def __init__(self, root, the_logger): # {
         self.root = root
@@ -50,6 +91,8 @@ class Agilent_TIS_Metrics(): # {
         self.root.title("TIS Metrics")
         self.root.geometry('315x200+300+300')
         self.root.resizable(width=True, height=True)
+        self.root.minsize(width=100, height=100)
+        self.root.maxsize(width=400, height=400)
         # Get/Set USERNAME & DESKTOP DIRECTORIES
         self.user_name_dir = os.path.join("C:/Users/", self.user_name)
         self.desktop_dir = os.path.join(self.user_name_dir, self.desktop_dir)
@@ -63,7 +106,7 @@ class Agilent_TIS_Metrics(): # {
         # TRY THE FOLLOWING
         try: # {
             self.create_ttk_styles(the_root=the_root)
-            self.create_label_frame(the_root=the_root)
+            # [2020-04-13]\\self.create_label_frame(the_root=the_root)
             self.create_main_frame(the_root=the_root)
         # }
         except: # {
@@ -93,7 +136,7 @@ class Agilent_TIS_Metrics(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("scidblue")
+            self.style.set_theme("arc") # clearlooks, ITFT1, smog, *arc*, winxpblue
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -117,32 +160,41 @@ class Agilent_TIS_Metrics(): # {
         # }
     # }
     
+    # [2020-04-13]\\
+    """
     def create_label_frame(self, the_root): # {
         self.labelframe = ttk.Frame(the_root)
         self.labelframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+        
+        ttk.Label(master=self.labelframe, text="I wish..."
+                  ).pack(anchor=tk.CENTER, fill=tk.BOTH, expand=False)
+        
     # }
+    """
     
     def create_main_frame(self, the_root): # {
         # TRY THE FOLLOWING
         try: # {
-            self.mainframe = ttk.Frame(self.labelframe)
-            self.mainframe.pack(anchor=tk.CENTER, fill=tk.X, expand=True)
-            # START DATE LABEL
+            self.mainframe = ttk.Frame(the_root)
+            # [2020-04-13]\\self.mainframe.pack(anchor=tk.CENTER, fill=tk.X, expand=True)
+            self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
+            
+            # TKINTER VARS TO HOLD INPUT VALUES
+            self.end_date = tk.StringVar(master=the_root, value=str(pd.Timestamp.now())[:10])
+            self.start_date = tk.StringVar(master=the_root, value=None)
+            
+            # START/END DATE & ENTRY LABELS
             ttk.Label(master=self.mainframe, text="Enter START Date: \n(YYYY-MM-DD)"
-                     ).pack(anchor=tk.NW, fill=tk.BOTH, expand=False)
-            # START DATE ENTRY BOX
-            self.start_date = ttk.Entry(master=self.mainframe, text=str(pd.Timestamp.now())[:10])
-            self.start_date.pack(anchor=tk.E, fill=tk.BOTH, expand=False)
-            # END DATE LABEL
-            ttk.Label(master=self.mainframe, text="Enter END Date: \n(YYYY-MM-DD)"
-                     ).pack(anchor=tk.W, fill=tk.BOTH, expand=False)
-            # END DATE ENTRY BOX
-            self.end_date = ttk.Entry(master=self.mainframe, text="YYYY-MM-DD")
-            self.end_date.pack(anchor=tk.NE, fill=tk.BOTH, expand=False)
+                     ).pack(anchor=tk.NW, fill=tk.X, expand=True)
+            ttk.Entry(master=self.mainframe, textvariable=self.start_date
+                      ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
+            ttk.Label(master=self.mainframe, text="Enter END Date:\n(YYYY-MM-DD)"
+                      ).pack(anchor=tk.SW, fill=tk.X, expand=True)
+            ttk.Entry(master=self.mainframe, textvariable=self.end_date
+                      ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
             # .CSV FILE IMPORT BUTTON
             self.csv_import = ttk.Button(master=self.mainframe, text="Import MATERIALS .csv",
-                                    command=self.import_materials_file
-                                    )
+                                    command=self.import_materials_file)
             self.csv_import.pack(anchor=tk.S, fill=tk.BOTH, expand=False)
             #####################################
             # EXPORT FILE LOCATION BUTTON / RUN # 
@@ -269,16 +321,16 @@ class Agilent_TIS_Metrics(): # {
         try: # {
             print("DETERMINING RANGE....")
             # CREATE CLASS VARIABLES FOR START TIME
-            the_end_date = pd.Timestamp(ts_input=str(self.end_date.get()))
+            self.the_end_date = pd.Timestamp(ts_input=str(self.end_date.get()))
             print("THE-END-DATE:\n\t\t" + str(self.end_date.get()))
             # CREATE CLASS VARIABLE FOR END TIME (off input)
-            the_start_date = pd.Timestamp(ts_input=str(self.start_date.get()))
+            self.the_start_date = pd.Timestamp(ts_input=str(self.start_date.get()))
             print("THE-START-DATE:\n\t\t" + str(self.start_date.get()))
             # DETERMINE NUMBER OF DAYS
-            num_of_days = pd.Timedelta(the_end_date - the_start_date)
-            print("NUM OF DAYS:\n\t" + str(num_of_days))
+            self.num_of_days = pd.Timedelta(self.the_end_date - self.the_start_date)
+            print("NUM OF DAYS:\n\t" + str(self.num_of_days))
             # CALL RUN
-            self.run(date_input=the_end_date, day_range=num_of_days)
+            self.run(date_input=self.the_end_date, day_range=self.num_of_days)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -333,6 +385,7 @@ class Agilent_TIS_Metrics(): # {
             df_TIS_metrics = pd.DataFrame(data=None, dtype=np.str, index=None) #index = df_x_range
             # ADD IN COLUMNS
             df_TIS_metrics['QCDate'] = self.df_metrics_table['QCDate']
+            # [2020-04-10]\\df_TIS_metrics['QCDate'] = self.df_tblProdflow['QCDate']
             #df_TIS_metrics['QCDate'] = pd.to_datetime(df_TIS_metrics.index)
             df_TIS_metrics['OrderID'] = self.df_metrics_table['OrderID']
             df_TIS_metrics['ProductNo'] = self.df_metrics_table['ProductNo']
@@ -368,13 +421,96 @@ class Agilent_TIS_Metrics(): # {
             df_merge.set_index(['QCDate'], inplace=True)
             # SORT INDEX (in-place)
             df_merge.sort_index(inplace=True)
+            print(str(df_merge.info()))
+            # After-Index #############################################################
+            # NARROW DOWN EVEN FURTHER (based off Order Date, not QCDATE this time )  #
+            ###########################################################################
+            df_merged = df_merge[(df_merge['OrderDate'] >= x_days_ago) & (df_merge['OrderDate'] <= the_date)]
+            # create index variable with data set to "OrderID"
+            idx_order_id = pd.Index(data=df_merged['OrderID'])
+            """
+            sample = df_merged.sample(15)
+            sample.to_csv(os.path.join(self.export_file_path, "df-merged-"
+                                                     + str(pd.Timestamp.now())[:10]
+                                                     + ".csv"), 
+                          index_label="INDEX:qcdate", 
+                          index=True)
+            """
+            # RESET INDEX SO THERE IS NONE (on a copy)
+            df_merged_no_idx = df_merged.reset_index()
+            """
+            sample_no_idx = df_merged_no_idx.sample(15)
+            sample_no_idx.to_csv(os.path.join(self.export_file_path, "df-merged-no-idx-"
+                                              + str(pd.Timestamp.now())[:10]
+                                              + ".csv"),
+                                 index_label="INDEX:num",
+                                 index=True)
+            """
+            # CREATE * NUMERICAL INDEX * var
+            num_idx = df_merged_no_idx.index
+            df_merged_FINALE = pd.DataFrame(data=df_merged_no_idx, 
+                                            index=num_idx,
+                                            columns=['OrderID', 'ProductNo',
+                                                     'Volume', 'PrepVolume',
+                                                     'OrderDate', 'BuildByDate',
+                                                     'PrepDate', 'BulkQCDate',
+                                                     'UnitizeNLT', 'AmpDate',
+                                                     'GreenSheet', 'QCDate',
+                                                     'ShipNLTDate', 'SOLink', 'Notes'])
+            ##############################
+            # CREATE FILENAME FOR EXPORT #
+            ##############################
+            export_filename_dates = str(x_days_ago)[:10] + "-" + str(the_date)[:10]
+            #################
+            # EXPORT FINALE #
+            #################
+            df_merged_FINALE.to_csv(os.path.join(self.export_file_path, "TIS-Material-Merge-"
+                                                + str(export_filename_dates) + ".csv"),
+                             index=False)
+            # MAKE THE RUN BUTTON LOCKED AGAIN SO USER MUST RE-IMPORT MATEIRALS FILE
+            self.export_button['state'] = tk.DISABLED
+            ##########################################################################
+            ## ALL FAILURES BELOW #
+            ###########################################################################
+            """
+            # CHANGE INDEX to "OrderID" FOR EXPORT
+            # save index as value
+            merge_idx = pd.Index(data=df_merged['OrderID'])
+            csv_idx = pd.Index(data=df_merged['OrderID'])
+            print("CSV-IDX:\n" + str(merge_idx))
+            # CREATE NEW EMPTY DATAFRAME (specifically for exporting...)
+            # df_merged_csv = pd.DataFrame(data=)
+            # SET NEW INDEX BUT KEEP OLD INDEX AS COLUMN , DONT DROP
+            # [2020-04-13]\\df_merged.set_index(['OrderID'], drop=False, inplace=True)
+            df_merged.reindex(columns=['ProductNo', 'Volume',
+                                       'PrepVolume', 'OrderDate',
+                                       'BuildByDate', 'PrepDate',
+                                       'BulkQCDate', 'UnitizeNLT',
+                                       'AmpDate', 'GreenSheet',
+                                       'QCDate', 'ShipNLTDate',
+                                       'SOLink', 'Notes'],
+                              index=num_idx,
+                              copy=False)
+            """
+            # <<<<< USE RE-INDEX >>>> 
+            """
+            df_merged.reindex(index=merge_idx, 
+                              columns=['ProductNo', 'Volume', 'PrepVolume', 
+                                       'OrderDate', 'BuildByDate', 'PrepDate',
+                                       'BulkQCDate', 'UnitizeNLT', 'AmpDate',
+                                       'GreenSheet', 'QCDate', 'ShipNLTDate',
+                                       'SOLink', 'Notes'], copy=False)
+            """
             """
             <<< EXPORT >>>
             """
             # EXPORT .CSV TO LOCATION CHOSEN BY USER
+            # [2020-04-13]\\
+            """
             df_merge.to_csv(os.path.join(self.export_file_path, "TIS-Material-Merge-" 
                                          + str(pd.Timestamp.now())[:10]
                                          + ".csv"), index=True)
+            """
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"

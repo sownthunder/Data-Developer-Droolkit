@@ -86,7 +86,7 @@ class Agilent_Directory_Digger(): # {
         self.root = root
         self.the_logger = the_logger
         self.root.title("Agilent Directory Digger")
-        self.root.geometry('450x155+300+300')
+        self.root.geometry('400x155+300+300')
         self.root.resizable(width=False, height=False)
         # Get/SetUSERNAME & DESKTOP DIRECTORIES
         self.user_name_dir = os.path.join("C:/Users/", self.user_name)
@@ -180,7 +180,7 @@ class Agilent_Directory_Digger(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("keramik")
+            self.style.set_theme("arc")
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

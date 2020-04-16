@@ -123,7 +123,6 @@ class Logger(): # {
         
         # and printing the logs to the console as well
         self.logger.addHandler(logging.StreamHandler(sys.stdout))
-        
     # }
 # }
 
@@ -552,7 +551,7 @@ class AgilentQuotesTracker():  # {
             # [2019-12-31]\\self.style = ttk.Style()
             self.style = ThemedStyle(the_root)
             # # STYLE THEME
-            self.style.set_theme("blue") # radiance, black, scidblue, kroc, keramik, equilux
+            self.style.set_theme("clearlooks") # radiance, black, scidblue, kroc, keramik, equilux, clearlooks, BLUE
             # Modify the font of the body
             self.style.configure("mystyle.Treeview", highlightthickness=4, bd=4, font=('Calibri', 11), relief="raised")
             # Modify the font of the headings

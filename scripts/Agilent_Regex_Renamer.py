@@ -86,7 +86,7 @@ class Agilent_Regex_Renamer(): # {
         self.root = root
         self.the_logger = the_logger
         self.root.title("Agilent Regex Renamer")
-        self.root.geometry('325x355+300+300')
+        self.root.geometry('450x375+300+300')
         self.root.resizable(width=False, height=False)
         # Get/SetUSERNAME & DESKTOP DIRECTORIES
         self.user_name_dir = os.path.join("C:/Users/", self.user_name)
@@ -120,7 +120,7 @@ class Agilent_Regex_Renamer(): # {
             self.dir_select_var = tk.StringVar(master=the_root)
             # ENTRY BOX TO SHOW DIRECTORY USER SELECTED
             ttk.Entry(master=the_root, textvariable=self.dir_select_var, 
-                      state=tk.DISABLED#, width=50
+                      state=tk.DISABLED#, width=25
                       ).grid(row=0, column=1, padx=10, pady=10, sticky='nesw')
             # TTK BUTTON for Export Location
             ttk.Button(master=self.root, text="EXPORT Location",
@@ -201,7 +201,7 @@ class Agilent_Regex_Renamer(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("keramik")
+            self.style.set_theme("arc") # keramik
         # }
         except: # {
             pass

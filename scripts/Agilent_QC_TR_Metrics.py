@@ -94,7 +94,7 @@ class Agilent_QC_TR_Metrics(): # {
         try: # { 
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("blue")
+            self.style.set_theme("arc")
         # }
         except: # {
             pass
@@ -335,6 +335,12 @@ class Agilent_QC_TR_Metrics(): # {
             # FORWARD_FILL
             # [2020-03-30]\\self.forward_fill = self.df_days_in_QC.groupby("ProductLevel")['Cycle_Time(days)'].resample("D").ffill()
             self.days_cycle = pd.DataFrame(data=self.df_days_in_QC.groupby(str(self.key_type_var.get()))['Cycle_Time(days)'].resample("D").mean()).reset_index()
+            """
+            <<< EXPORT TO DESKTOP >>>
+            """
+            filename_var = str("QC-CycleTime-" + str(the_date)[:10] + ".csv")
+            file_path = os.path.join(self.desktop_dir, str(filename_var))
+            self.days_cycle.to_csv(file_path, index=False)
             # EXPORT
             # [2020-03-31]\\
             """
@@ -367,9 +373,9 @@ class Agilent_QC_TR_Metrics(): # {
             level_3_avg = self.level_3s['Cycle_Time(days)'].mean()
             # CREATE LIST TO HOLD AVERAGES
             all_averages = [level_1_avg, level_2_avg, level_3_avg]
-            print("ALL AVERAGES:\n\t" + str(all_averages))
+            print("ALL AVERAGES:\t" + str(all_averages))
             # PRINT ALL NUMBERS (generated above)
-            print("ALL NUBMERS:\n\t" + str(all_numbers))
+            print("ALL NUMBERS:\t" + str(all_numbers))
             # [2020-03-31]\\
             """
             # << EXPORT >>
@@ -383,86 +389,69 @@ class Agilent_QC_TR_Metrics(): # {
                                               + str(pd.Timestamp.now())[:10]
                                               + ".csv"))
             """
+            # GET STRINGS FOR DASHBOARD CREATION
+            x_days_ago_str = str(x_days_ago)[:10]
+            the_date_str = str(the_date)[:10]
             """
-            [[[ CREATE DASHBOARD ]]]
+            [[[ CREATE DASHBOARD (csv) ]]]
             """
             self.create_dashboard(cycle_time=all_averages, n=all_numbers,
-                                  date_range=str(x_days_ago) + " to " + str(the_date))
+                                  date_range=str(x_days_ago_str + " to " + the_date_str))
             """
-            [[[ CREATE DASHBOARD ]]]
+            [[[ EXPORT DASHBOARD (Csv) ]]]
             """
-            self.df_dashboard.to_csv(os.path.join(self.desktop_dir, "QC-Dashboard-"
-                                                  + str(pd.Timestamp.now())[:10]
-                                                  + ".csv"), index_label="Level")
-            ###################################################################
-            # WORK BOOK FUNCTION (sending to method)
-            ###################################################################
-            self.wb = self.create_excel_workbook
-            #################################################################################
-            # WORK BOOK FUNCTION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            #############################################################################
-            
-            print(self.desktop_dir)
-            # CREATE STR VAR for filename convention
+            filename_var = str("QC-Dashboard-" + str(the_date)[:10] + ".csv")
+            file_path = os.path.join(self.desktop_dir, str(filename_var))
+            self.df_dashboard.to_csv(file_path, index_label="Level")
+            """
+            [[[ CREATE LINE-CHART (dashboard) ]]]
+            """
+            self.create_dashboard_plot(the_dashboard_df=self.df_dashboard)
+            # create PLOTs off DataFrame
+            dashboard_plot = self.df_dashboard.plot()
+            # [2020-04-14]\\ cycletime_plot = self.days_cycle.plot()
+            # cycletime_plot = self.df_days_in_QC.plot()
+            prodspday_plot = self.ProdsPerDay.plot()
+            # CREATE MATPLOT LIB FIGURE VARIABLES
+            dashboard_fig = dashboard_plot.get_figure()
+            #cycletime_fig = cycletime_plot.get_figure()
+            prodspday_fig = prodspday_plot.get_figure()
+            # SET TITLES?
+            #dashboard_fig.title("QC Dashboard")
+            #cycletime_fig.title("Average Turn-Around-Time (cycle time)")
+            #prodspday_fig.title("Products Per Day")
+            """
+            plt.plot(self.df_dashboard['Date Range'], self.df_dashboard['n'], color='red', marker='o')
+            plt.title('Total Products Tested Per Week Per Product Type', fontsize=10)
+            plt.xlabel('Date Range', fontsize=10)
+            plt.ylabel('Number of Products',fontsize=10)
+            plt.grid(True)
+            """
+            # [2020-04-14]\\ts_str = str(pd.Timestamp.now())[:10]
             ts_str = str(the_date)[:10]
-            # CREATE FILENAME VAR
-            filename_var = str("QC-Metrics-CycleTime-"
-                               + str(self.key_type_var.get())
-                               + "-" + str(ts_str) + ".xlsx")
-            # CREATE FULL WORKBOOK PATH
-            workbook_path = os.path.join(self.desktop_dir, str(filename_var))
-            print("WORKBOOK PATH == " + str(workbook_path))
-            # CREATE NEW WORKBOOK
-            wb = Workbook()
-            wb.save(workbook_path)
-            # ADD SHEETS TO WORKBOOK
-            # DESGINATE SHEET NAME AND POSITION
-            sheet1 = wb.create_sheet('Table', 0)
-            sheet2 = wb.create_sheet('Graphs', 1)
-            # ACTIVATE WORKSHEET TO WRITE DATAFRAME
-            active = wb['Table']
-            # WRITE DATAFRAME TO ACTIVE WORKSHEET
-            # df_daily_unstacked_1
-            # df_days_cycle
-            for x in dataframe_to_rows(self.df_days_in_QC): # {
-                active.append(x)
-            # }
-            # SAVE
-            wb.save(filename_var)
-            # CREATE LINE PLOT VARIABLE
-            plot = self.ProdsPerDay.plot()
-            # CREATE AREA PLOT VARIABLE
-            area_plot = self.ProdsPerDay.plot(kind='area')
-            # MATPLOTLIB figure for "line_plot"
-            line_fig = plot.get_figure()
-            # MATPLOTLIB figure for "area_plot"
-            area_fig = area_plot.get_figure()
             ###################
             # CREATE TEMP DIR #
             ###################
             with tempfile.TemporaryDirectory() as directory_name: # {
                 the_dir = Path(directory_name)
                 print("TEMPORARY DIR == " + str(the_dir))
-                line_img_path = os.path.join(the_dir, str(ts_str) + "_line_plot.png")
-                area_img_path = os.path.join(the_dir, str(ts_str) + "_area_plot.png")
-                print("line_plot_path == " + str(line_img_path))
-                print("area_plot_path == " + str(area_img_path))
-                # SAVE LINE PLOT
-                line_fig.savefig(line_img_path)
-                # SAVE AREA PLOT
-                area_fig.savefig(area_img_path)
-                # ACTIVATE WORKSHEET
-                active = wb['Graphs']
-                # Insert Plot into Worksheet
-                # Select active sheet and cell reference
-                img_line = Image(line_img_path)
-                active.add_image(img_line, 'A1')
-                # Insert Plot into worksheet
-                # Select active sheet and cell reference
-                img_area = Image(area_img_path)
-                active.add_image(img_area, 'H1')
-                # SAVE WORKBOOK
-                wb.save(workbook_path)
+                dashboard_img_path = os.path.join(the_dir, "_dashboard_plot.png")
+                #cycletime_img_path = os.path.join(the_dir, "_cycletime_plot.png")
+                prodspday_img_path = os.path.join(the_dir, "_prdospday_plot.png")
+                print("dashboard_plot_path == ")
+                print("cycletime_plot_path == ")
+                print("prodspday_plot_path == ")
+                # SAVE PLOTS
+                dashboard_fig.savefig(dashboard_img_path)
+                # cycletime_fig.savefig(cycletime_img_path)
+                prodspday_fig.savefig(prodspday_img_path)
+                ###############################################
+                # <<<<<<<<<< CALL WORKSHEET FUNCTION >>>>>> # 
+                #################################################
+                self.create_excel_workbook(the_date=ts_str, 
+                                           graph_1_path=dashboard_img_path,
+                                           #graph_2_path=cycletime_img_path,
+                                           graph_2_path=prodspday_img_path)
             # }
         # }
         except: # {
@@ -493,7 +482,7 @@ class Agilent_QC_TR_Metrics(): # {
     (4) - dataframe of *GRAPH* to put in sheet-2
     RETURNS: Nada, will have output an .xlsx file to location when complete
     """
-    def create_excel_workbook(self, the_date, file_name, data_df, graph_df): # {
+    def create_excel_workbook(self, the_date, graph_1_path, graph_2_path): # {
         # TRY THE FOLLOWING
         try: # {
             print(self.desktop_dir)
@@ -504,9 +493,96 @@ class Agilent_QC_TR_Metrics(): # {
             # CREATE FULL WORKBOOK PATH
             workbook_path = os.path.join(self.desktop_dir, str(filename_var))
             print("WORKBOOK PATH == " + str(workbook_path))
+            # CREATE NEW WORKBOOK
+            wb = Workbook()
+            wb.save(workbook_path)
+            # ADD SHEETS TO WORKBOOK 
+            # DESIGNATE SHEET NAME AND POSITION
+            sheet1 = wb.create_sheet('Graphs', 0)
+            # ACTIVATE WORKSHEET
+            active = wb['Graphs']
+            # INSERT PLOT INTO WORKSHEET
+            # Select Active sheet and cell reference
+            img_graph_1 = Image(graph_1_path)
+            active.add_image(img_graph_1, 'A1')
+            # INSERT PLOT INTO WORKSHEET
+            # Select Active sheet and cell reference
+            img_graph_2 = Image(graph_2_path)
+            active.add_image(img_graph_2, 'N1')
+            """
+            # INSERT PLOT INTO WORKSHEET
+            # Select Active sheet and cell reference
+            img_graph_3 = Image(graph_3_path)
+            active.add_image(img_graph_3, 'Z1')
+            """
+            # SAVE WORKBOOK
+            wb.save(workbook_path)
         # }
         except: # {
             pass
+        # }
+        else: # {
+            print("Operation Completed Successfully...")
+        # }
+    # }
+    
+    """
+    TAKES IN:
+    (1) DataFrame of Dashboard
+    """
+    def create_dashboard_plot(self, the_dashboard_df): # {
+        ####################################################
+        # TRY TO UNSTACK PREVIOUSLY MADE DATAFRAME
+        try: # {
+            df_unstacked = self.ProdsPerDay.unstack(level=-1)
+            # LIST NUMBER OF COLUMN LEVELS
+            print(len(df_unstacked.columns.levels))
+            ##############
+            # DROP LEVEL #
+            ##############
+            df_unstacked.columns = df_unstacked.columns.droplevel()
+            # FILL NA
+            df_unstacked.fillna(value=0, inplace=True)
+            print(df_unstacked)
+        # }
+        except: # {
+            print("\n <<< FAILED UNSTACKED >>> \n")
+        # }
+        # TRY PULLING DATES AND SHIT
+        #########################################################
+        try: # {
+            # PULL SUb-STRING FROM DATA-COLUMN
+            date_col_str = str(the_dashboard_df.iloc[0, 2])
+            print("DATE-COL-STR == " + date_col_str)
+            # pull START DATE from STR
+            the_start_date = date_col_str[:10]
+            # create index var to get end date out of STR
+            end_date_idx = date_col_str.find('to ', 0)
+            # pull END DATE from STR
+            the_end_date = date_col_str[end_date_idx + 3:len(date_col_str)]
+            print("START-DATE == " + str(the_start_date))
+            print("END-DATE == " + str(the_end_date))
+        # }
+        except: # {
+            pass
+        # }
+        ################################################################
+        # TRY THE FOLLOWING
+        try: # {
+            # CREATE DATE-RANGE/DATETIME-INDEX oFF column
+            the_date_range = pd.date_range(start=the_start_date, 
+                                           end=the_end_date,
+                                           freq='D')
+            print(the_date_range)
+            # CREATE "empty" DATAFRAME, fill with all values just made
+            the_result_df = pd.DataFrame(data=None, index=the_date_range)
+            print(the_result_df)
+        # }
+        except: # {
+            pass
+        # }
+        else: # {
+            print("Operation Completed Successfully...")
         # }
     # }
     
