@@ -195,25 +195,13 @@ class Agilent_CC_Creator(): # {
                       ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
-            # IMPORT WATERMARK BUTTON
-            self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
-                       )
-            self.import_watermark.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
-            # EXPORT LOCATION BUTTON
-            self.export_button = ttk.Button(master=self.mainframe, text="Select EXPORT Location",
-                                            state=tk.DISABLED)
-            self.export_button.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
-            
-            """
-            ttk.Entry(master=self.mainframe
-                      ).pack(side=tk.LEFT, fill=tk.X, expand=True)
-            """
             
             # TK VAR for check button selection(s)
             # [2020-04-14]\\self.check_1 = tk.IntVar(master=self.mainframe)
             self.check_cofa = tk.IntVar(master=self.mainframe)
             self.check_sds = tk.IntVar(master=self.mainframe)
             
+            # CHECK BUTTON FOR PROGRAM OPTIONS/SETTINGS
             ttk.Checkbutton(master=self.mainframe, text="CofA", 
                             variable=self.check_cofa
                             ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -221,6 +209,16 @@ class Agilent_CC_Creator(): # {
             ttk.Checkbutton(master=self.mainframe, text="SDS",
                             variable=self.check_sds
                             ).pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+            
+            # IMPORT-WATERMARK BUTTON
+            self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
+                       )
+            self.import_watermark.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
+            
+            # EXPORT-LOCATION BUTTON
+            self.export_button = ttk.Button(master=self.mainframe, text="Select EXPORT Location",
+                                            state=tk.DISABLED)
+            self.export_button.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

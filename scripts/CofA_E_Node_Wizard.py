@@ -196,24 +196,34 @@ class CofA_E_Node_Wizard(): # {
                       ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
-            ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
-                       ).pack(side=tk.LEFT, fill=tk.X, expand=True)
-            
-            """
-            ttk.Entry(master=self.mainframe
-                      ).pack(side=tk.LEFT, fill=tk.X, expand=True)
-            """
             
             # TK VAR for check button selection(s)
-            self.check_1 = tk.IntVar(master=self.mainframe)
+            self.check_daily_cofa_count = tk.IntVar(master=self.mainframe)
+            self.keep_metadata = tk.IntVar(master=self.mainframe)
+            self.export2folder = tk.IntVar(master=self.mainframe)
+            self.email_files = tk.IntVar(master=self.mainframe)
             
+            # CHECK BUTTON FOR PROGRAM OPTIONS/SETTINGS
             ttk.Checkbutton(master=self.mainframe, text="Daily CofA Count", 
-                            variable=self.check_1
-                            ).pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+                            variable=self.check_daily_cofa_count
+                            ).pack(anchor=tk.CENTER, fill=tk.X, expand=False)
             
-            ttk.Checkbutton(master=self.mainframe, text="Check button 2",
-                            variable=self.check_1
-                            ).pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            ttk.Checkbutton(master=self.mainframe, text="Keep Metadata",
+                            variable=self.keep_metadata
+                            ).pack(anchor=tk.CENTER, fill=tk.X, expand=False)
+            
+            ttk.Checkbutton(master=self.mainframe, text="Export2Folder",
+                            variable=self.export2folder
+                            ).pack(anchor=tk.CENTER, fill=tk.X, expand=False)
+            ttk.Checkbutton(master=self.mainframe, text="Email",
+                            variable=self.email_files
+                            ).pack(anchor=tk.CENTER, fill=tk.X, expand=False)
+            
+            # IMPORT / RUN  BUTTONS
+            ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
+                       ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            ttk.Button(master=self.mainframe, text="Run Wizard"
+                       ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
