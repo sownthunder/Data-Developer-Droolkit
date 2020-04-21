@@ -266,13 +266,24 @@ class Agilent_QC_TR_Metrics(): # {
             # CREATE << GROUPBY >> DATAFRAME
             # [2020-03-30]\\self.df_groupby_levels = pd.DataFrame(data=self.df_total_levels.groupby(['QCDate', 'ProductLevel'])[['PfBatchID'].count()])
             self.ProdsPerDay = self.df_metrics_obv.groupby(['QCDate', str(self.key_type_var.get())])[['PfBatchID']].count()
+            print("\nPRODS-PER-DAY INDEX:\n" + str(self.ProdsPerDay.index))
+            """
+            << FILL NA >>
+            """
+            self.ProdsPerDay.fillna(value=0, inplace=True)
             # RENAME COLUMNS
-            self.ProdsPerDay.rename(columns={'PfBatchID':'Count'}, 
+            # [2020-04-21]\\ count >> level
+            self.ProdsPerDay.rename(columns={'PfBatchID':'Level'}, 
                                     inplace=True)
+            #### CREATE ProdsPerDay THATS ***NOT*** stacked
+            self.UnstackedProds = self.ProdsPerDay.unstack(level=1, fill_value=0)
+            self.UnstackedProds.to_csv(os.path.join(self.desktop_dir, "UnstackedProds-"
+                                                  + str(pd.Timestamp.now())[:10]
+                                                  + ".csv"), index=True)
             """
-            << PRODS PER DAY UNSTACK >>
+            << PRODS PER DAY UNSTACK (same variable) >>
             """
-            self.ProdsPerDay = self.ProdsPerDay.unstack(level=-1)
+            self.ProdsPerDay = self.ProdsPerDay.unstack(level=-1, fill_value=0)
             """
             <<< EXPORT TO DESKTOP >>>
             """
@@ -407,6 +418,9 @@ class Agilent_QC_TR_Metrics(): # {
             [[[ CREATE LINE-CHART (dashboard) ]]]
             """
             self.create_dashboard_plot(the_dashboard_df=self.df_dashboard)
+            """
+            [ ============================================== ]
+            """
             # create PLOTs off DataFrame
             dashboard_plot = self.df_dashboard.plot()
             # [2020-04-14]\\ cycletime_plot = self.days_cycle.plot()
@@ -531,9 +545,41 @@ class Agilent_QC_TR_Metrics(): # {
     (1) DataFrame of Dashboard
     """
     def create_dashboard_plot(self, the_dashboard_df): # {
+        # TRY GET/SET MULTI-INDEX AND DROP IT A LEVEl
+        try: # {
+            prods_idx = self.ProdsPerDay.index
+            print("\n\n\t MULTI-INDEX == " + str(prods_idx))
+        # }
+        except: # {
+            pass
+        # }
+        ####################### 
+        # PRODS PER DAY CHECK #
+        #######################
+        try: # {
+            print(self.ProdsPerDay.head(10))
+            print("SINGLE COLUMN:\n" + str(self.ProdsPerDay.loc['2020-04-20']))
+            print("TYPE == " + str(type(self.ProdsPerDay.loc['2020-04-20'])))
+            self.ProdsPerDay.loc['2020-04-20'].to_csv(os.path.join(self.desktop_dir, "column-"
+                                                               + str(pd.Timestamp.now())[:10]
+                                                               + ".csv"), index=True)
+            # TRY AND GET LEVELS FOR CERTAIN DAYS
+            # LEVEL 1
+            print("LEVEL 1:\t" + str(self.ProdsPerDay.loc['2020-04-20', '1.0']))
+            # LEVEL 2
+            print("LEVEL 2:\t" + str(self.ProdsPerDay.loc['2020-04-20', '2.0']))
+            # LEVEL 3
+            print("LEVEL 3:\t" + str(self.ProdsPerDay.loc['2020-04-20', '3.0']))
+            print("\n ========================================== \n")
+        # }
+        except: # {
+            print("FAILLLL")
+        # }
+        """
         ####################################################
         # TRY TO UNSTACK PREVIOUSLY MADE DATAFRAME
         try: # {
+            # UNSTACK THE INDEX SO ITS JUST QCDATE ??? 
             df_unstacked = self.ProdsPerDay.unstack(level=-1)
             # LIST NUMBER OF COLUMN LEVELS
             print(len(df_unstacked.columns.levels))
@@ -542,14 +588,19 @@ class Agilent_QC_TR_Metrics(): # {
             ##############
             df_unstacked.columns = df_unstacked.columns.droplevel()
             # FILL NA
-            df_unstacked.fillna(value=0, inplace=True)
-            print(df_unstacked)
+            # [2020-04-21]\\ df_unstacked.fillna(value=0, inplace=True)
+            print("\n\n\t df_unstacked == " + str(df_unstacked.head()))
         # }
         except: # {
             print("\n <<< FAILED UNSTACKED >>> \n")
         # }
-        # TRY PULLING DATES AND SHIT
-        #########################################################
+        """
+        ##############################
+        # TRY PULLING DATES AND SHIT #
+        ##############################
+        the_dashboard_df['Start_Date'] = the_dashboard_df['Date Range'].str[:10]
+        the_dashboard_df['End_Date'] = the_dashboard_df['Date Range'].str[-10:]
+        print(the_dashboard_df.head())
         try: # {
             # PULL SUb-STRING FROM DATA-COLUMN
             date_col_str = str(the_dashboard_df.iloc[0, 2])
