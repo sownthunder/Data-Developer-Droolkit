@@ -115,7 +115,7 @@ class Agilent_QC_TR_Metrics(): # {
             ttk.Label(master=self.mainframe, text="Enter Date: \n(YYYY-MM-DD)"
                       ).place(x=20, y=20) #.grid(row=0, col=0, padx=10, pady=10) 
             # CREATE END DATE TK VAR TO HOLD STR
-            self.end_date = tk.StringVar(master=the_root)
+            self.end_date = tk.StringVar(master=the_root, value=str(pd.Timestamp.now())[:10])
             # ENTRY FOR END DATE
             ttk.Entry(master=self.mainframe, textvariable=self.end_date
                       ).place(x=140, y=20) #.grid(row=0, col=1, padx=10, pady=10)
@@ -545,24 +545,56 @@ class Agilent_QC_TR_Metrics(): # {
     (1) DataFrame of Dashboard
     """
     def create_dashboard_plot(self, the_dashboard_df): # {
-        # TRY GET/SET MULTI-INDEX AND DROP IT A LEVEl
         try: # {
-            prods_idx = self.ProdsPerDay.index
-            print("\n\n\t MULTI-INDEX == " + str(prods_idx))
+            # CREATE EMPTY LISTS TO HOLD DATA
+            idx_dates = []
+            level_1 = []
+            level_2 = []
+            level_3 = []
+            for row in self.ProdsPerDay.itertuples(index=True, name='Product'): # {
+                print("INDEX == " + str(row[0]))
+                print("LEVEL 1 COUNT == " + str(row[1]))
+                print("LEVEL 2 COUNT == " + str(row[2]))
+                print("LEVEL 3 COUNT == " + str(row[3]))
+                idx_dates.append(str(row[0]))
+                level_1.append(str(row[1]))
+                level_2.append(str(row[2]))
+                level_3.append(str(row[3]))
+            # }
+            # CREATE SERIES OFF OF LISTS
+            s_level_1 = pd.Series(data=level_1, dtype=np.str)
+            s_level_2 = pd.Series(data=level_2, dtype=np.str)
+            s_level_3 = pd.Series(data=level_3, dtype=np.str)
+            s_idx_dates = pd.Series(data=idx_dates, dtype=np.str)
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
         # }
         ####################### 
         # PRODS PER DAY CHECK #
         #######################
         try: # {
             print(self.ProdsPerDay.head(10))
-            print("SINGLE COLUMN:\n" + str(self.ProdsPerDay.loc['2020-04-20']))
-            print("TYPE == " + str(type(self.ProdsPerDay.loc['2020-04-20'])))
-            self.ProdsPerDay.loc['2020-04-20'].to_csv(os.path.join(self.desktop_dir, "column-"
+            single_column = self.ProdsPerDay.loc['2020-04-20']
+            print("SINGLE COLUMN:\n" + str(single_column))
+            print("TYPE == " + str(type(single_column)))
+            """
+            single_column.to_csv(os.path.join(self.desktop_dir, "column-"
                                                                + str(pd.Timestamp.now())[:10]
-                                                               + ".csv"), index=True)
+                                                               + ".csv"), index=False)
+            """
             # TRY AND GET LEVELS FOR CERTAIN DAYS
             # LEVEL 1
             print("LEVEL 1:\t" + str(self.ProdsPerDay.loc['2020-04-20', '1.0']))
@@ -573,7 +605,19 @@ class Agilent_QC_TR_Metrics(): # {
             print("\n ========================================== \n")
         # }
         except: # {
-            print("FAILLLL")
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
         # }
         """
         ####################################################
@@ -615,22 +659,85 @@ class Agilent_QC_TR_Metrics(): # {
             print("END-DATE == " + str(the_end_date))
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
         # }
-        ################################################################
-        # TRY THE FOLLOWING
+        #################################
+        # CREATE ACTUAL MATPLOTLIB PLOT #
+        #################################
         try: # {
+            """
             # CREATE DATE-RANGE/DATETIME-INDEX oFF column
             the_date_range = pd.date_range(start=the_start_date, 
                                            end=the_end_date,
                                            freq='D')
             print(the_date_range)
+            """
+            # CREATE EMPTY DATAFRAME (to be filled)
+            the_result_df = pd.DataFrame(data=None, dtype=np.str)
+            # ASSIGN SERIES CREATED ABOVE AS COLUMNS
+            the_result_df['Level 1'] = s_level_1
+            the_result_df['Level 2'] = s_level_2
+            the_result_df['Level 3'] = s_level_3
+            the_result_df['Date'] = s_idx_dates
+            # SET INDEX TO DATE COLUMN
+            the_result_df.set_index(['Date'], drop=True, inplace=True)
+            # SORT INDEX
+            the_result_df.sort_index(inplace=True)
+            print(the_result_df)
+            the_result_df.to_csv(os.path.join(self.desktop_dir, "test-result-"
+                                              + str(pd.Timestamp.now())[:10]
+                                              + ".csv"), index=True)
+            test_plot = the_result_df.plot()
+            test_figure = test_plot.get_figure()
+            test_figure.savefig(os.path.join(self.desktop_dir, "test-figure-"
+                                             + str(pd.Timestamp.now())[:10]))
+            """
             # CREATE "empty" DATAFRAME, fill with all values just made
             the_result_df = pd.DataFrame(data=None, index=the_date_range)
             print(the_result_df)
+            """
+            time_1 = the_result_df.index
+            p_level_1 = the_result_df['Level 1']
+            p_level_2 = the_result_df['Level 2']
+            p_level_3 = the_result_df['Level 3']
+            #level_1_plot
+            plt.plot(time_1, p_level_1, color='blue', marker='o')
+            #level_2_plot
+            plt.plot(time_1, p_level_2, color='orange', marker='o')
+            #level_3_plot
+            plt.plot(time_1, p_level_3, color='gray', marker='o')
+            plt.title('Products Per Week Per Product Type', fontsize=14)
+            plt.xlabel('Time', fontsize=14)
+            plt.ylabel('Product Levels', fontsize=14)
+            plt.grid(True)
+            plt.show()
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n\n" + str(errorMessage) + "\n")
+            print("\n" + typeE + 
+                  "\n" + fileE + 
+                  "\n" + lineE + 
+                  "\n" + messageE)
         # }
         else: # {
             print("Operation Completed Successfully...")

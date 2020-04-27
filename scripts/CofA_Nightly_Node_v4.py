@@ -84,7 +84,23 @@ class CofA_Nightly_Node(): # {
         time_today = str(time_start)[:10]
         # GET/SET ORIGINAL WORKING DIRECTORY
         og_wd = os.getcwd()
-        
+        in_file = "C:/data/inbound/Agilent_CofA_Letterhead_03-21-19.pdf"
+        in_directory = "C:/data/outbound/CofA/"
+        out_directory = "F:/APPS/G Drive/C of A's/#Email Node/"
+        #######################
+        f_file_conv_list = [] #
+        f_file_time_list = [] #
+        #######################
+        g_file_conv_list = [] #
+        g_file_time_list = [] #
+        #######################
+        print("TODAY == " + str(time_today))
+        # SUBTRACTION DELTA
+        subtraction_delta = pd.Timedelta(value=1, unit='days')
+        # AND GET YESTERDAYS DATE BY SUBTRACTING
+        time_yesterday = time_start - subtraction_delta
+        yesterstr = str(time_yesterday.date())
+        print("YESTERDAY == " + str(yesterstr))
     # }
 # }
 

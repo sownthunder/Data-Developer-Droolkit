@@ -192,11 +192,11 @@ class CofA_E_Node_Wizard(): # {
             self.entry_end_date = tk.StringVar(master=the_root, value=str(pd.Timestamp.now())[:10])
             
             # START/END DATE ENTRY/LABELS
-            ttk.Label(master=self.mainframe, text="Start-Date:\t"
+            ttk.Label(master=self.mainframe, text="Correction-START:\t"
                       ).pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe, textvariable=self.entry_start_date
                       ).pack(anchor=tk.NE, fill=tk.BOTH, expand=True)
-            ttk.Label(master=self.mainframe, text="End-Date:\t"
+            ttk.Label(master=self.mainframe, text="Correction-END:\t"
                       ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe, textvariable=self.entry_end_date
                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
@@ -205,8 +205,10 @@ class CofA_E_Node_Wizard(): # {
             self.check_daily_cofa_count = tk.IntVar(master=self.mainframe)
             self.keep_metadata = tk.IntVar(master=self.mainframe)
             self.export2folder = tk.IntVar(master=self.mainframe)
-            self.email_files = tk.IntVar(master=self.mainframe)
-            self.zip_files = tk.IntVar(master=self.mainframe)
+            self.email_files = tk.IntVar(master=self.mainframe, value=0)
+            self.zip_files = tk.IntVar(master=self.mainframe, value=0)
+            self.dry_run = tk.IntVar(master=self.mainframe)
+            self.period_index = tk.IntVar(master=self.mainframe)
             
             # CHECK BUTTON FOR PROGRAM OPTIONS/SETTINGS
             ttk.Checkbutton(master=self.mainframe, text="Daily CofA Count", 
@@ -225,6 +227,12 @@ class CofA_E_Node_Wizard(): # {
                             ).pack(side=tk.TOP, fill=tk.X, expand=False)
             ttk.Checkbutton(master=self.mainframe, text="ZIP",
                             variable=self.zip_files
+                            ).pack(side=tk.TOP, fill=tk.X, expand=False)
+            ttk.Checkbutton(master=self.mainframe, text="DRY RUN",
+                            variable=self.dry_run
+                            ).pack(side=tk.TOP, fill=tk.X, expand=False)
+            ttk.Checkbutton(master=self.mainframe, text="Period-Index",
+                            variable=self.period_index
                             ).pack(side=tk.TOP, fill=tk.X, expand=False)
             
             # IMPORT / RUN  BUTTONS
@@ -431,18 +439,26 @@ class CofA_E_Node_Wizard(): # {
                     # }
                 # }
             # }
-            # CREATE SERIES OFF OF LISTS
-            series1 = pd.Series(data=file_dirs, name='File_Dir')
-            series2 = pd.Series(data=file_names, name='File_Name')
-            series3 = pd.Series(data=full_file_paths, name='Full_File_Path')
-            index1 = pd.Index(data=file_timestamps, dtype=np.str)
-            data_columns = (series1, series2, series3)
-            # [2020-04-21]\\data_columns = (file_dirs, file_names, full_file_paths, file_timestamps)
-            # CREATE EMPTY DATAFRAME THAT CONTAINS ALL DATA
-            df_time_idx = pd.DataFrame(data=data_columns, 
-                                       index=index1,
-                                       dtype=np.str,
-                                       copy=True)
+            print("length of dirs == " + str(len(file_dirs)))
+            print("length of names == " + str(len(file_names)))
+            print("length of paths == " + str(len(full_file_paths)))
+            print("length of ts == " + str(len(file_timestamps)))
+            # CREATE SERIES OFF LISTS
+            s_file_dirs = pd.Series(data=file_dirs, dtype=np.str)
+            s_file_names = pd.Series(data=file_names, dtype=np.str)
+            s_full_file_paths = pd.Series(data=full_file_paths, dtype=np.str)
+            s_file_timestamps = pd.Series(data=file_timestamps, dtype=np.str)
+            # CREATE EMPTY DATAFRAME (to be filled)
+            df_time_idx = pd.DataFrame(data=None, dtype=np.str)
+            # ASSIGN THE ABOVE SERIES NOW AS COLUMNS
+            df_time_idx['File_Dir'] = s_file_dirs
+            df_time_idx['File_Name'] = s_file_names
+            df_time_idx['Full_File_Path'] = s_full_file_paths
+            df_time_idx['Creation_Time'] = s_file_timestamps
+            # SET INDEX TO CREATION TIME
+            df_time_idx.set_index(['Creation_Time'], drop=True, inplace=True)
+            # SORT INDEX ?
+            df_time_idx.sort_index(inplace=True)
             return df_time_idx
         # }
         except: # {
@@ -475,7 +491,13 @@ class CofA_E_Node_Wizard(): # {
         print("END == " + str(self.entry_end_date.get()))
         #### TEST DRY-RUN
         self.run(in_directory="F:/APPS/CofA/",
-                 out_directory="C;/Temp/",
+                 out_directory="C:/Temp/",
+                 ignore_dir_list=[''],
+                 check_start=str(self.entry_start_date.get()),
+                 check_end=str(self.entry_end_date.get())
+                 )
+        self.run(in_directory="F:/APPS/G Drive/C of A's/Agilent/",
+                 out_directory="C:/Temp/",
                  ignore_dir_list=[''],
                  check_start=str(self.entry_start_date.get()),
                  check_end=str(self.entry_end_date.get())
@@ -539,6 +561,16 @@ class CofA_E_Node_Wizard(): # {
         """
     # }
     
+    def run_in_thread(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            pass
+        # }
+        except: # {
+            pass
+        # }
+    # }
+    
     """
     << MAIN FUNCTION LOGIC >>
     """
@@ -552,22 +584,28 @@ class CofA_E_Node_Wizard(): # {
             # GET/SET ORIGINAL WORKING DIRECTORY
             self.og_wd = os.getcwd()
             logging.info("OG-WORKING-DIR == " + str(self.og_wd))
-            self.file_list_f = [] # remove duplicate below!!
-            self.time_list_f = []
-            self.file_list_g = []
-            self.time_list_g = []
             # CREATE INDEX FRAME
             df_index = self.create_time_idx_frame(the_directory=in_directory,
                                                   ignore_dir_list=ignore_dir_list,
                                                   file_type_list=['.pdf']
                                                   )
-            print(df_index)
+            self.output_location = filedialog.askdirectory(title="Select OUTPUT")
+            dataframe_filepath = os.path.join(self.output_location,
+                                              "df-index-" + str(pd.Timestamp.now()))
+            df_index.to_csv(dataframe_filepath, index=True)
+            print("df_time_idx == " + str(df_index.info()))
             # TEST SHOWING TIME INTERVAL
-            print(df_index["2020-02-14":"2020-02-17"])
+            print("TIME INTERVAL:\n")
+            print(df_index[str(check_start):str(check_end)])
+            # [2020-04-22]\\print(df_index["2020-02-14":"2020-02-17"])
             # [2020-04-21]\\self.time_end = pd.Timestamp.now() # create time_end
             self.time_end = pd.Timestamp(ts_input=self.entry_end_date.get())
             self.time_start = pd.Timestamp(ts_input=self.entry_start_date.get())
-            logging.info("<< RUN-TIME >>\n" + str(self.time_end - self.time_start))
+            print("<< Date-Range >>\n" + str(self.time_end - self.time_start))
+            # CREATE DATA_RANGE INDEX
+            date_range_idx = pd.date_range(start=self.time_start, end=self.time_end,
+                                           periods=3, freq='D')
+            
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

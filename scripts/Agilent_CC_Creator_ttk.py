@@ -109,7 +109,8 @@ class Agilent_CC_Creator(): # {
         self.root.title("Agilent CC Creator")
         self.root.geometry('427x207+300+300')  # was 275x400
         self.root.resizable(width=True, height=True)
-        self.root.minsize(width=275, height=275)
+        # [2020-04-27]\\self.root.minsize(width=275, height=275)
+        self.root.minsize(width=275, height=125)
         self.root.maxsize(width=500, height=400)
         # Get/Set USERNAME & DESKTOP DIRECTORIES
         
@@ -186,6 +187,8 @@ class Agilent_CC_Creator(): # {
             self.mainframe = ttk.Frame(the_root)
             self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             
+            # [2020-04-27]\\
+            """
             # START/END DATE ENTRY/LABELS
             ttk.Label(master=self.mainframe, text="Start-Date:\t"
                       ).pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
@@ -195,6 +198,11 @@ class Agilent_CC_Creator(): # {
                       ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
+            """
+            
+            # IMPORT [PRODUCT_NO] LIST
+            self.import_product_nos = ttk.Button(master=self.mainframe, text="Import Product #s")
+            self.import_product_nos.pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             
             # TK VAR for check button selection(s)
             # [2020-04-14]\\self.check_1 = tk.IntVar(master=self.mainframe)
@@ -211,8 +219,8 @@ class Agilent_CC_Creator(): # {
                             ).pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
             
             # IMPORT-WATERMARK BUTTON
-            self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf"
-                       )
+            self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf",
+                                               state=tk.DISABLED)
             self.import_watermark.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
             
             # EXPORT-LOCATION BUTTON
