@@ -27,6 +27,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+import seaborn as sns
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
@@ -94,7 +95,7 @@ class Agilent_QC_TR_Metrics(): # {
         try: # { 
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("arc")
+            self.style.set_theme("kroc") # arc
         # }
         except: # {
             pass
@@ -203,6 +204,15 @@ class Agilent_QC_TR_Metrics(): # {
             self.df_dashboard['n'] = n
             self.df_dashboard['Date Range'] = date_range
             print(self.df_dashboard)
+            """
+            <<< SEABORN PLOT ?? >>>
+            """
+            seaborn_test = sns.lineplot(x='Date', y='Product Level(s)', data=self.df_dashboard,
+                         kind='line', hue='Twin_Cities')
+            print(seaborn_test)
+            sea_figure = seaborn_test.get_figure()
+            sea_figure.savefig(os.path.join(self.desktop_dir, "seaborn-test-"
+                                            + str(pd.Timestamp.now())[:10]))
         # }
         except: # {
             print("FAILED CREATING DATAFRAME OF QC_DASHBOARD")
@@ -597,11 +607,11 @@ class Agilent_QC_TR_Metrics(): # {
             """
             # TRY AND GET LEVELS FOR CERTAIN DAYS
             # LEVEL 1
-            print("LEVEL 1:\t" + str(self.ProdsPerDay.loc['2020-04-20', '1.0']))
+            print("LEVEL 1:\t" + str(self.ProdsPerDay.loc['2020-04-20', '1']))
             # LEVEL 2
-            print("LEVEL 2:\t" + str(self.ProdsPerDay.loc['2020-04-20', '2.0']))
+            print("LEVEL 2:\t" + str(self.ProdsPerDay.loc['2020-04-20', '2']))
             # LEVEL 3
-            print("LEVEL 3:\t" + str(self.ProdsPerDay.loc['2020-04-20', '3.0']))
+            print("LEVEL 3:\t" + str(self.ProdsPerDay.loc['2020-04-20', '3']))
             print("\n ========================================== \n")
         # }
         except: # {

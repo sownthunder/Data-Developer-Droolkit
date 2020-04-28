@@ -162,7 +162,7 @@ class CofA_E_Node_Wizard(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("arc") # keramik, clearlooks
+            self.style.set_theme("kroc") # keramik, clearlooks, arc
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -489,19 +489,25 @@ class CofA_E_Node_Wizard(): # {
     def determine_range(self): # {
         print("START == " + str(self.entry_start_date.get()))
         print("END == " + str(self.entry_end_date.get()))
-        #### TEST DRY-RUN
-        self.run(in_directory="F:/APPS/CofA/",
+        #### RETURN TWO DATAFRAME (one for each directory)
+        df1 = self.run(in_directory="F:/APPS/CofA/",
                  out_directory="C:/Temp/",
                  ignore_dir_list=[''],
                  check_start=str(self.entry_start_date.get()),
                  check_end=str(self.entry_end_date.get())
                  )
-        self.run(in_directory="F:/APPS/G Drive/C of A's/Agilent/",
+        df2 = self.run(in_directory="F:/APPS/G Drive/C of A's/Agilent/",
                  out_directory="C:/Temp/",
                  ignore_dir_list=[''],
                  check_start=str(self.entry_start_date.get()),
                  check_end=str(self.entry_end_date.get())
                  )
+        ##########################
+        # COMBINE THE DATAFRAMES #
+        ##########################
+        frames = [df1, df2]
+        result = pd.concat(frames)
+        print("FINAL RESULT:\n" + str(result.info()))
         """
         # TRY THE FOLLOWING
         try: # {
@@ -591,7 +597,8 @@ class CofA_E_Node_Wizard(): # {
                                                   )
             self.output_location = filedialog.askdirectory(title="Select OUTPUT")
             dataframe_filepath = os.path.join(self.output_location,
-                                              "df-index-" + str(pd.Timestamp.now()))
+                                              "df-index-" + str(pd.Timestamp.now())[11:19].replace(':', '-')
+                                              + ".csv")
             df_index.to_csv(dataframe_filepath, index=True)
             print("df_time_idx == " + str(df_index.info()))
             # TEST SHOWING TIME INTERVAL
@@ -603,9 +610,12 @@ class CofA_E_Node_Wizard(): # {
             self.time_start = pd.Timestamp(ts_input=self.entry_start_date.get())
             print("<< Date-Range >>\n" + str(self.time_end - self.time_start))
             # CREATE DATA_RANGE INDEX
-            date_range_idx = pd.date_range(start=self.time_start, end=self.time_end,
-                                           periods=3, freq='D')
-            
+            date_range_idx = pd.date_range(start=self.time_start, 
+                                           end=self.time_end,
+                                           periods=3
+                                           )
+            print("\n DATE-RANGE-IDX:\n" + str(date_range_idx))
+            return df_index
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

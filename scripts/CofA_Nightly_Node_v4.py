@@ -15,6 +15,7 @@ import os, sys, time
 import os.path as op
 from time import sleep
 from pathlib import Path
+import glob, shutil, fnmatch
 import tempfile, logging
 from threading import Timer
 import tkinter as tk
@@ -101,6 +102,70 @@ class CofA_Nightly_Node(): # {
         time_yesterday = time_start - subtraction_delta
         yesterstr = str(time_yesterday.date())
         print("YESTERDAY == " + str(yesterstr))
+        """
+        CREATE GLOB STRINGS
+        """
+        f_glob_str = str("C:/data/outbound/CofA/*_" + yesterstr + "_F_")
+        g_glob_str = str("C:/data/outbound/CofA/*_" + yesterstr + "_G_")
+        print("\n F-GLOB-STRING == " + f_glob_str)
+        print("\n G-GLOB-STRING == " + g_glob_str)
+        """
+        CREATE GLOBBER VARIABLE FROM ABOVE
+        """
+        the_globber = os.listdir(self.in_directory)
+        for globski in the_globber: # {
+            print(globski)
+        # }
+        # GLOB & PRELIMINARY STEPS
+        glob_f_prev = sorted(glob.glob("C:/data/outbound/CofA/*_"
+                                       + yesterstr
+                                       + "_F_*"))
+        print("\n\t GLOB_F_PREVIOUS >>> \n")
+        for name in glob_f_prev: # {
+            print(name)
+        # }
+        glob_f_cur = sorted(glob.glob("C:/data/outbound/CofA/*_"
+                                      + time_today
+                                      + "_F_*"))
+        print("\n\t GLOB_F_CURRENT >>> \n")
+        for name in glob_f_cur: # {
+            print(name)
+        # }
+        glob_g_prev = sorted(glob.glob("C:/data/outbound/CofA/*_"
+                                       + yesterstr
+                                       + "_G_*"))
+        print("\n\t GLOB_F_PREVIOUS >>> \n")
+        for name in glob_g_prev: # {
+            print(name)
+        # }
+        glob_g_cur = sorted(glob.glob("C:/data/outbound/CofA/*_"
+                                          + time_today
+                                          + "_G_*"))
+        print("\n\t GLOB_G_CURRENT >>> \n")
+        for name in glob_g_cur: # {
+            print(name)
+        # }
+        #################
+        # SETUP IMPORTS #
+        #################
+        # set as first element in returned list
+        df1 = pd.read_csv(glob_f_prev[0])
+        # set as first element in returned list
+        df2 = pd.read_csv(glob_f_cur[0])
+        # set as first element in returned list
+        df3 = pd.read_csv(glob_g_prev[0])
+        # set as first element in returned list
+        df4 = pd.read_csv(glob_g_cur[0])
+        print("LEN_D1 == " + str(len(df1)))
+        print("LEN_D2 == " + str(len(df2)))
+        print("LEN_D3 == " + str(len(df3)))
+        print("LEN_D4 == " + str(len(df4)))
+        # SET DIFFERENCE OF TWO DATAFRAMES FOR F_DRIVE IN PANDAS PYTHON
+        f_set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
+        print("LENGTH OF F_DIFF_DF == " + str(len(f_set_diff_df)))
+        # SET DIFFERENCE OF TWO DATAFRAMES FOR G DRIVE IN PANDAS PYTHON
+        g_set_diff_df = pd.concat([df2, df1, df1]).drop_duplicates(keep=False)
+        print("LENGTH OF G_DIFF_DF == " + str(len(g_set_diff_df)))
     # }
 # }
 

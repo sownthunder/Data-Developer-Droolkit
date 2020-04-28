@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr 09 16:47:43 2020
+Created on Tue Apr 28 15:15:15 2020
 
-Agilent_CC_Creator_ttk.py
+Agilent_Quotes_Metrics.py
 
 USES: 
-    - Agilent_CC_Creator
+    - Agilent_CC_Creator_ttk.py
     - Custom_Create_v1
     - Custom_Crate_v2
     
 PURPOSE:
-    - to be used whenever CofA_Nighly_Node_fails...
-    - can choose between two dates
-    - creates *nested* list of CofAs for BOTH:
-        - EACH INDIVIDUAL DAY WITHIN RANGE
-        - The # of CofAs at EOD for EACH DAY
-    (pretty much a histogram of each day between )
-    (the two dates the user picks and shows the )
-    (new CofAs that were made for EACH EVERY DAY )
-
+    - pulls metrics for user between two specified dates
+    
 @author: derbates
 """
 
@@ -106,11 +99,11 @@ class Agilent_CC_Creator(): # {
     def __init__(self, root, the_logger): # {
         self.root = root
         self.the_logger = the_logger
-        self.root.title("Agilent CC Creator")
+        self.root.title("Agilent QUOTES Metrics")
         self.root.geometry('427x207+300+300')  # was 275x400
         self.root.resizable(width=True, height=True)
         # [2020-04-27]\\self.root.minsize(width=275, height=275)
-        self.root.minsize(width=275, height=125)
+        self.root.minsize(width=300, height=125)
         self.root.maxsize(width=500, height=400)
         # Get/Set USERNAME & DESKTOP DIRECTORIES
         
@@ -187,8 +180,6 @@ class Agilent_CC_Creator(): # {
             self.mainframe = ttk.Frame(the_root)
             self.mainframe.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
             
-            # [2020-04-27]\\
-            """
             # START/END DATE ENTRY/LABELS
             ttk.Label(master=self.mainframe, text="Start-Date:\t"
                       ).pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
@@ -198,35 +189,11 @@ class Agilent_CC_Creator(): # {
                       ).pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             ttk.Entry(master=self.mainframe
                       ).pack(anchor=tk.SE, fill=tk.BOTH, expand=True)
-            """
             
             # IMPORT [PRODUCT_NO] LIST
-            self.import_product_nos = ttk.Button(master=self.mainframe, text="Import Product #s")
-            self.import_product_nos.pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
+            self.run_button = ttk.Button(master=self.mainframe, text="Pull (Avg. Turn Around Time)")
+            self.run_button.pack(anchor=tk.SW, fill=tk.BOTH, expand=True)
             
-            # TK VAR for check button selection(s)
-            # [2020-04-14]\\self.check_1 = tk.IntVar(master=self.mainframe)
-            self.check_cofa = tk.IntVar(master=self.mainframe)
-            self.check_sds = tk.IntVar(master=self.mainframe)
-            
-            # CHECK BUTTON FOR PROGRAM OPTIONS/SETTINGS
-            ttk.Checkbutton(master=self.mainframe, text="CofA", 
-                            variable=self.check_cofa
-                            ).pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-            
-            ttk.Checkbutton(master=self.mainframe, text="SDS",
-                            variable=self.check_sds
-                            ).pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-            
-            # IMPORT-WATERMARK BUTTON
-            self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf",
-                                               state=tk.DISABLED)
-            self.import_watermark.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
-            
-            # EXPORT-LOCATION BUTTON
-            self.export_button = ttk.Button(master=self.mainframe, text="Select EXPORT Location",
-                                            state=tk.DISABLED)
-            self.export_button.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

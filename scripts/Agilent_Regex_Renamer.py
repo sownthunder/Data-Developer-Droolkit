@@ -201,7 +201,7 @@ class Agilent_Regex_Renamer(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("arc") # keramik
+            self.style.set_theme("kroc") # keramik, arc
         # }
         except: # {
             pass

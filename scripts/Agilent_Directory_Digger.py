@@ -180,7 +180,7 @@ class Agilent_Directory_Digger(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("arc")
+            self.style.set_theme("kroc") # arc, clearlooks
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

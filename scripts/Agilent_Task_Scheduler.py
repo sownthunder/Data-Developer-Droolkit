@@ -86,7 +86,7 @@ class Agilent_Task_Scheduler(): # {
         try: # {
             self.style = ThemedStyle(the_root)
             # STYLE THEME
-            self.style.set_theme("blue")  # equilux
+            self.style.set_theme("kroc")  # equilux, clearlooks
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -112,12 +112,29 @@ class Agilent_Task_Scheduler(): # {
             self.label_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
             # TK VARIABLE TO HOLD IF WANT OUTPUTTED RESULTS TO CSV
             self.output_csv = tk.IntVar(master=the_root, value=0)
-            # LABEL
+            # BUTTON
+            self.import_button = ttk.Button(master=self.label_frame, text="Import COMMAND list",
+                                            command=self.import_command_list)
+            self.import_button.pack()
+            """
             ttk.Checkbutton(master=self.label_frame, text="Output to .csv", 
                             variable=self.output_csv).pack()
+            """
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
         # }
     # }
     
@@ -126,13 +143,14 @@ class Agilent_Task_Scheduler(): # {
         try: # {
             self.main_frame = ttk.Labelframe(master=the_root)
             self.main_frame.pack(anchor=tk.CENTER, fill=tk.BOTH, expand=True)
-            
+            # [2020-04-28]\\
+            """
             # IMPORT COMMAND LIST TO run thruough and execute
             self.import_button = ttk.Button(master=self.main_frame, text="Import COMMAND list",
                        command=self.import_command_list
                        )
             self.import_button.pack()
-            
+            """
             # BEGIN EXECUTING COMMANDS (disabled at first)
             self.run_commands = ttk.Button(master=self.main_frame, text="RUN",
                                            command=self.begin_loop_in_thread, state=tk.DISABLED
@@ -140,7 +158,19 @@ class Agilent_Task_Scheduler(): # {
             self.run_commands.pack()
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
         # }
     # }
     
@@ -157,7 +187,19 @@ class Agilent_Task_Scheduler(): # {
                 #}
             # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
         # }
     # }
     
@@ -175,7 +217,19 @@ class Agilent_Task_Scheduler(): # {
             pass
         # }
         except: # {
-            pass
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
         # }
     # }
     
