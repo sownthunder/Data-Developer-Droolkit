@@ -220,7 +220,7 @@ class Agilent_CC_Creator(): # {
             
             # IMPORT-WATERMARK BUTTON
             self.import_watermark = ttk.Button(master=self.mainframe, text="Import WATERMARK.pdf",
-                                               state=tk.DISABLED)
+                                               command=self.import_product_nos, state=tk.DISABLED)
             self.import_watermark.pack(anchor=tk.NW, fill=tk.BOTH, expand=True)
             
             # EXPORT-LOCATION BUTTON
@@ -242,6 +242,19 @@ class Agilent_CC_Creator(): # {
                           "\n" + fileE +
                           "\n" + lineE +
                           "\n" + messageE)
+        # }
+    # }
+    
+    def import_product_nos(self): # {
+        # TRY THE FOLLOWING
+        try: # {
+            logger.info("IMPORTY")
+        # }
+        except: # {
+            pass
+        # }
+        else: # {
+            pass
         # }
     # }
     
@@ -328,48 +341,9 @@ class Agilent_CC_Creator(): # {
     # }
     
     def create_time_idx_frame(self, the_directory): # {
-        x = 0
-        counter = 0
         # TRY THE FOLLOWING
         try: # {
-            # CREATE LIST VAR of DIRECTORY
-            dir_list = os.listdir(the_directory)
-            logging.info("\tLENGTH OF [dir_list]: " + str((len(dir_list))))
-            # CREATE SERIES OFF LIST
-            d1 = pd.Series(dir_list)
-            d1.astype(dtype=np.str)
-            # CREATE EMPTY DATAFRAME (TO BE FILLED)
-            df_time_idx = pd.DataFrame(data=None, dtype=np.str)
-            # ASSIGN PANDAS SERIES as first column
-            df_time_idx['File'] = d1
-            # CREATE COLUMN VARIABLE TO STORE DATA
-            date_col = []
-            x = 0  # counter
-            # create Series from column
-            d1 = pd.Series(df_time_idx['File'])
-            d1.astype(dtype=np.str)
-            # FOR EACH ROW IN THE COLUMN
-            for row in d1: # {
-                the_str = str(row)
-                file_path = os.path.join(the_directory, the_str)
-                # create date var
-                the_date = self.pull_creation_timestamp(a_file_path=file_path)
-                logging.info("THE_DATE == " + str(the_date))
-                # APPEND TO LIST
-                date_col.append(the_date)
-                x += 1 # increment counter
-            # }
-            # CREATE COLUMN FROM LIST
-            df_time_idx['Date'] = date_col
-            # RE-ALIGN DATE AS INDEX
-            df_time_idx.set_index(['Date'], inplace=True)
-            # Display index
-            logging.info("INDEX:\n" + str(df_time_idx.index))
-            # SORT INDEX
-            df_time_idx.sort_index(inplace=True)
-            # EXPORT TO TEMP FOLDER (for meow)
-            # [2020-03-03]\\df_time_idx.to_csv("C:/data/outbound/CofA_E_Node_SORTED.csv", index=True)
-            return df_time_idx
+            pass
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"
@@ -399,46 +373,10 @@ class Agilent_CC_Creator(): # {
     """
     << MAIN FUNCTION LOGIC >>
     """
-    def main(self, in_directory, out_directory, ignore_list, check_start, check_end): # {
+    def run(self): # {
         # TRY THE FOLLOWING
         try: # {
-            ################################
-            # INSTANTIATE GLOBAL VARIABLES #
-            in_directory_1 = ""
-            in_directory_2 = ""
-            # [2020-03-02]\\og_wd = os.getcwd() # GET/SET ORIGINAL WORKING DIRECTORY
-            # [2020-03-02]\\file_list_f = []
-            # [2020-03-02]\\time_list_f = []
-            # [2020-03-02]\\file_list_g = []
-            # [2020-03-02]\\time_list_g = []
-            # CREATE TIMESTAMP FOR RIGHT NOW
-            # [2020-03-02]\\ts_now = pd.Timestamp(year=2020, day=29, month=1, hour=5) # hard-coded for testing
-            ts_now = pd.Timestamp.now()
-            # USED TO DETERMINE THE CORRECT "start_time" (one day and five hours prior)
-            # [2020-03-02]\\ts_start_delta = pd.Timedelta(days=1, hours=5)
-            ts_start_delta = pd.Timedelta(days=1)
-            # USED TO DETERMINE THE CORRECT "end_time" (five hours prior)
-            # [2020-03-02]\\ts_end_delta = pd.Timedelta(hours=5)
-            ts_end_delta = pd.Timedelta(hours=1)
-            # SUTRACT and determine "start_time"
-            time_start = ts_now - ts_start_delta
-            logging.info("\n\t START OF SCAN-TIME: " + str(time_start))
-            # SUBTRACT and determine "end_time"
-            time_end = ts_now - ts_end_delta
-            logging.info("\n\tEND OF SCAN-TIME == " + str(time_end))
-            F_Drive_node = CofA_E_Node_Wizard(in_directory="F:/APPS/CofA/",
-                                              out_directory="G:/C of A's/#Email Node/",
-                                              ignore_list=['Archive ERR',
-                                                           'Archive - For all archived CofA, see G Cofa Folder',
-                                                           'Instruction Sheets',
-                                                           'EXPORT ERRORS'],
-                                              check_start=time_start,
-                                              check_end=time_end)
-            G_Drive_node = CofA_E_Node_Wizard(in_directory="G:/C of A's/Agilent/",
-                                              out_directory="G:/C of A's/#Email Node/",
-                                              ignore_list=['#Archive'],
-                                              check_start=time_start,
-                                              check_end=time_end)
+            pass
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
@@ -457,23 +395,7 @@ class Agilent_CC_Creator(): # {
         # }
         # TRY THE FOLLOWING
         try: # {
-            self.time_start = pd.Timestamp.now() # create time_start
-            logging.info("\n\tIN_DIRECTORY == " + str(self.in_directory))
-            logging.info("\n\tOUT_DIRECTORY == " + str(self.out_directory))
-            logging.info("\n\tIGNORE_LIST == " + str(self.ignore_list))
-            # GET/SET ORIGINAL WORKING DIRECTORY
-            self.og_wd = os.getcwd()
-            logging.info("OG-WORKING-DIR == " + str(self.og_wd))
-            self.file_list_f = [] # remove duplicate below!!
-            self.time_list_f = []
-            self.file_list_g = []
-            self.time_list_g = []
-            # CREATE INDEX FRAME
-            df_index = self.create_time_idx_frame(the_directory=self.in_directory)
-            # TEST SHOWING TIME INTERVAL
-            logging.info(df_index["2020-02-14":"2020-02-17"])
-            self.time_end = pd.Timestamp.now() # create time_end
-            logging.info("<< RUN-TIME >>\n" + str(self.time_end - self.time_start))
+            pass
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n\t\t"

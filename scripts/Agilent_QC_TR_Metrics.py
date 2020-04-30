@@ -592,9 +592,9 @@ class Agilent_QC_TR_Metrics(): # {
                   "\n" + lineE + 
                   "\n" + messageE)
         # }
-        ####################### 
-        # PRODS PER DAY CHECK #
-        #######################
+        ###########################
+        ##### PRODS PER DAY CHECK #
+        ###########################
         try: # {
             print(self.ProdsPerDay.head(10))
             single_column = self.ProdsPerDay.loc['2020-04-20']
@@ -649,9 +649,9 @@ class Agilent_QC_TR_Metrics(): # {
             print("\n <<< FAILED UNSTACKED >>> \n")
         # }
         """
-        ##############################
-        # TRY PULLING DATES AND SHIT #
-        ##############################
+        ##################################
+        ##### TRY PULLING DATES AND SHIT #
+        ##################################
         the_dashboard_df['Start_Date'] = the_dashboard_df['Date Range'].str[:10]
         the_dashboard_df['End_Date'] = the_dashboard_df['Date Range'].str[-10:]
         print(the_dashboard_df.head())
@@ -683,9 +683,9 @@ class Agilent_QC_TR_Metrics(): # {
                   "\n" + lineE + 
                   "\n" + messageE)
         # }
-        #################################
-        # CREATE ACTUAL MATPLOTLIB PLOT #
-        #################################
+        #####################################
+        ##### CREATE ACTUAL MATPLOTLIB PLOT #
+        #####################################
         try: # {
             """
             # CREATE DATE-RANGE/DATETIME-INDEX oFF column
@@ -718,21 +718,43 @@ class Agilent_QC_TR_Metrics(): # {
             the_result_df = pd.DataFrame(data=None, index=the_date_range)
             print(the_result_df)
             """
+            #### CREATE LISt-WISE VARIABLES
             time_1 = the_result_df.index
             p_level_1 = the_result_df['Level 1']
             p_level_2 = the_result_df['Level 2']
             p_level_3 = the_result_df['Level 3']
-            #level_1_plot
+            #### CREATE SUb-PLOTS
+            fig,ax=plt.subplots(nrows=1, ncols=3, figsize=(20,5))
+            #### MANIPULATING FIRST AXIS
+            ax[0].plot(time,p_level_1)
+            ax[0].set_xlabel("Time")
+            ax[0].set_ylabel("# of Level 1's")
+            ax[0].set_title('Number of Product')
+            #### MANIPULATING SECOND AXES
+            ax[1].plot(time,p_level_2)
+            ax[1].set_xlabel("TIME")
+            ax[1].set_ylabel("# of Level 2's")
+            ax[1].set_title("Number of Product")
+            # MANIPULATING THIRD AXES 
+            ax[2].plot(time,p_level_3)
+            ax[2].set_xlabel("TIME")
+            ax[2].set_ylabel("# of Level 3's")
+            ax[2].set_title("Number of Product")
+            # save and display the plot
+            plt.show()
+            """
+            #### level_1_plot
             plt.plot(time_1, p_level_1, color='blue', marker='o')
-            #level_2_plot
+            #### level_2_plot
             plt.plot(time_1, p_level_2, color='orange', marker='o')
-            #level_3_plot
+            #### level_3_plot
             plt.plot(time_1, p_level_3, color='gray', marker='o')
             plt.title('Products Per Week Per Product Type', fontsize=14)
             plt.xlabel('Time', fontsize=14)
             plt.ylabel('Product Levels', fontsize=14)
             plt.grid(True)
             plt.show()
+            """
         # }
         except: # {
             errorMessage = str(sys.exc_info()[0]) + "\n"

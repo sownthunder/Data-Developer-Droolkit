@@ -67,15 +67,90 @@ class CofA_Nightly_Node(): # {
     
     def send_mail(self, send_from, send_to, subject, message, files=[],
                   server="cos.smtp.agilent.com", port=587, use_tls=True): # {
-        pass
+        print("SENDING MAIL... DATE == " + str(pd.Timestamp.now())[:10])
+        # TRY THE FOLLOWING
+        try: # {
+            msg = MIMEMultipart()
+            msg['From'] = send_from
+            msg['To'] = COMMASPACE.join(send_to)
+            msg['Date'] = formatdate(localtime=True)
+            msg['Subject'] = subject
+            
+            msg.attach(MIMEText(message))
+            
+            for path in files: # {
+                part = MIMEBase('application', 'octet-stream')
+                with open(path, 'rb') as file: # {
+                    part.set_payload(file.read())
+                # }
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition',
+                                'attachment; filename="{}"'.format(op.basename(path)))
+                msg.attach(part)
+            # }
+            
+            smtp = smtplib.SMTP(server, port)
+            if use_tls: # {
+                smtp.starttls()
+            # }
+            smtp.sendmail(send_from, send_to, msg.as_string())
+            smtp.quit()
+        # }
+        except: # {
+            errorMessage = str(sys.exc_info()[0]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[1]) + "\n\t\t"
+            errorMessage = errorMessage + str(sys.exc_info()[2]) + "\n"
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            typeE = str("TYPE : " + str(exc_type))
+            fileE = str("FILE : " + str(fname))
+            lineE = str("LINE : " + str(exc_tb.tb_lineno))
+            messageE = str("MESG : " + "\n" + str(errorMessage) + "\n")
+            print("\n" + typeE +
+                          "\n" + fileE +
+                          "\n" + lineE +
+                          "\n" + messageE)
+        # }
+        else: # {
+            print("Operation Completed Successfully...")
+        # }
     # }
     
     def pull_creation_timestamp(self, a_file_path): # {
-        pass
+        # TRY THE FOLLOWING
+        try: # {
+            # FORCE PATH VARIABLE
+            the_path = Path(a_file_path)
+            # GET MODIFIED TIME
+            mtime = os.path.getmtime(the_path)
+            # GET CREATE TIME
+            ctime = os.path.getctime(the_path)
+            # CREATE DATE VARIABLE
+            if ctime < mtime: # {
+                # FORMAT DATE VAR as str
+                date_str = str(datetime.fromtimestamp(ctime))
+            # }
+            
+        # }
+        except: # {
+            pass
+        # }
+        else: # {
+            pass
+        # }
     # }
     
     def zip_the_directory(self, directory_to_zip): # {
-        pass
+        # TRY THE FOLLOWING
+        try: # {
+            pass
+        # }
+        except: # {
+            pass
+        # }
+        else: # {
+            pass
+        # }
     # }
     
     def run(self): # {

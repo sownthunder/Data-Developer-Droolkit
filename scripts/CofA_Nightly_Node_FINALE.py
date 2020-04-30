@@ -13,7 +13,7 @@ WAS: "G:/C of A's/Agilent/*"
 PROPER NAMING CONVENTION
 
 -- 2020-04-06: edited for directory changes
-
+-- 2020-04-30: edited for email changes
 
 @author: derbates
 """
@@ -699,9 +699,10 @@ if __name__ == "__main__":  # {
                 # >>>>>>>>>>>>> SEND EMAIL HERE <<<<<<<<<<<<<<<<<<< #
                 # [2019-09-12]... agilent_cofa@agilent.com
                 # [2019-09-23]... removed penny & diluka from email
-                send_mail(send_from="derek.bates@non.agilent.com",
+                # [2020-04-30]... removed myself :( ... goodbye
+                send_mail(send_from="michael.labreche@agilent.com",
                           send_to=["agilent_cofa@agilent.com",
-                                   "derek.bates@non.agilent.com"],
+                                   "michael.labreche@agilent.com"],
                           subject=str(time_today) + "-F-APPS-CofAs-List",
                           message="See File(s) attached. \n Taken from: \n" + str(Path("F:/APPS/CofAs/")),
                           files=f_file_list)
